@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MingleDay">
         <activity
-            android:name=".app.MainActivity"
+            android:name=".app.ui.auth.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

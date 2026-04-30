@@ -1,21 +1,33 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.MingleDay" parent="Theme.AppCompat.Light">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+    <style name="Theme.MingleDay" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:fontFamily">@font/pretendard</item>
+        <item name="android:letterSpacing">0</item>
     </style>
 
-    <style name="Theme.MingleDay" parent="Base.Theme.MingleDay" />
-
-    <style name="MainButton" parent="Widget.AppCompat.Button">
+    <style name="MainButton" parent="Widget.MaterialComponents.Button">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="backgroundTint">@color/primary</item>
+        <item name="android:backgroundTint">@color/button_primary_selector</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:insetLeft">0dp</item>
-        <item name="android:insetRight">0dp</item>
         <item name="android:padding">11dp</item>
+        <item name="android:fontFamily">@font/semibold</item>
+        <item name="cornerRadius">8dp</item>
+    </style>
+
+    <style name="InputBottom">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/input_bottom</item>
+        <item name="android:textColor">@color/content</item>
+        <item name="android:textColorHint">@color/disable</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
     </style>
 </resources>
 
