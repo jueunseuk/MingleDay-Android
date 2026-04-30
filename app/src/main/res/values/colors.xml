@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--  Service Color  -->
+    <color name="primary">#6EC1E4</color>
+    <color name="secondary">#A7D8F2</color>
+    <color name="accent">#4FA3D1</color>
+    <color name="sub_accent">#CDEFFD</color>
+    <color name="highlight">#7ED1B2</color>
+    <color name="bg">#F8FCFF</color>
+    <color name="pink">#FFB3C1</color>
+    <color name="orange">#FFD580</color>
+
+    <!--  Achromatic Color  -->
+    <color name="title">#1A1A1A</color>
+    <color name="content">#4A4A4A</color>
+    <color name="label">#ADB8C3</color>
+    <color name="disable">#C2CCD6</color>
+    <color name="grid">#D6DEE6</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="signature">#FF34D399</color>
 </resources>

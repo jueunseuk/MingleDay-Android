@@ -1,0 +1,42 @@
+<resources>
+    <!--  전역  -->
+    <string name="app_name">밍글데이</string>
+    <string name="schedule_nav">내 일정</string>
+    <string name="mingle_nav">밍글 관리</string>
+    <string name="search_nav">검색</string>
+    <string name="menu_nav">메뉴</string>
+
+    <!--  로그인 및 회원가입  -->
+    <string name="slogan">슬로건</string>
+    <string name="login_button">로그인</string>
+    <string name="signup_button">회원가입</string>
+    <string name="email_label">이메일</string>
+    <string name="email_hint">이메일 입력</string>
+    <string name="password_label">비밀번호</string>
+    <string name="signup_guide">밍글데이가 처음인가요?</string>
+    <string name="signup_move_button">회원가입 하러가기</string>
+    <string name="verification_description">인증번호는 10분간 유효합니다.</string>
+    <string name="verification_for_reset_description">비밀번호 변경을 위해 이메일 인증을 진행합니다.</string>
+    <string name="verification_code_label">인증 코드</string>
+    <string name="verification_code_hint">숫자 6자리 입력</string>
+    <string name="send_button">인증 코드 발송</string>
+    <string name="verification_code_check_description">인증 코드를 받지 못했다면 코드 재전송을 눌러주세요.</string>
+    <string name="verify_code_button">코드 확인</string>
+    <string name="resend_button">코드 재전송</string>
+    <string name="signup_description">서비스 이용을 위해 간단한 정보를 입력해주세요!</string>
+    <string name="name_label">이름</string>
+    <string name="name_hint">2~5자 입력</string>
+    <string name="password_hint1">8~20자 입력</string>
+    <string name="password_hint2">영어, 숫자, 특수문자 모두 포함</string>
+    <string name="password_hint3">특수문자는 ! @ # $ % ^ &amp; * ( ) _ - + = [ ] { } . ?만 허용</string>
+    <string name="password_check_label">비밀번호 확인</string>
+    <string name="password_check_hint1">패스워드 불일치</string>
+    <string name="nickname_label">닉네임</string>
+    <string name="nickname_hint">2~10자 입력</string>
+    <string name="start_mingleday_button">밍글데이 시작하기</string>
+    <string name="view_tutorial_button">밍글데이 튜터리얼 보기</string>
+
+    <string name="reset_password_guide">비밀번호를 잊으셨나요?</string>
+    <string name="reset_password_move_button">비밀번호 변경하기</string>
+
+</resources>

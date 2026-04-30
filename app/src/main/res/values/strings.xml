@@ -1,3 +1,41 @@
 <resources>
+    <!--  전역  -->
     <string name="app_name">MingleDay</string>
+    <string name="schedule_nav">My Schedule</string>
+    <string name="mingle_nav">Mingle Management</string>
+    <string name="search_nav">Search</string>
+    <string name="menu_nav">Menu</string>
+
+    <!--  로그인 및 회원가입  -->
+    <string name="slogan">MingleDay, where we align our day together</string>
+    <string name="login_button">Login</string>
+    <string name="signup_button">Sign Up</string>
+    <string name="email_label">Email</string>
+    <string name="email_hint">Input your email</string>
+    <string name="password_label">Password</string>
+    <string name="signup_guide">Is this your first come?</string>
+    <string name="signup_move_button">Go to Sign Up</string>
+    <string name="verification_description">The authentication code is valid for 10 minutes.</string>
+    <string name="verification_for_reset_description">Email verification is required to change your password.</string>
+    <string name="verification_code_label">Verification Code</string>
+    <string name="verification_code_hint">Input 6 digits Number</string>
+    <string name="send_button">Send Verification Code</string>
+    <string name="verification_code_check_description">If you have not received the authentication code, please press Resend the code.</string>
+    <string name="verify_code_button">Verify Code</string>
+    <string name="resend_button">Send Verification Code Again</string>
+    <string name="signup_description">Please enter simple information to use the service!</string>
+    <string name="name_label">Name</string>
+    <string name="name_hint">Input 2 to 5 digits</string>
+    <string name="password_hint1">Input 8 to 20 digits</string>
+    <string name="password_hint2">Include English, Numbers, and Special Characters</string>
+    <string name="password_hint3">Special characters only allow ! @ # $ % ^ &amp; * ( ) _ - + = [ ] { } . ?</string>
+    <string name="password_check_label">Password Check</string>
+    <string name="password_check_hint1">Incorrect password</string>
+    <string name="nickname_label">Nickname</string>
+    <string name="nickname_hint">Input 2 to 10 digits</string>
+    <string name="start_mingleday_button">Get Started with Mingleday</string>
+    <string name="view_tutorial_button">View the Mingleday Tutorial</string>
+
+    <string name="reset_password_guide">Forget your password?</string>
+    <string name="reset_password_move_button">Reset My Password</string>
 </resources>
