@@ -4,12 +4,24 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@color/white"
+    android:background="@drawable/login_background"
     >
+    <LinearLayout
+        android:id="@+id/logo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/inputWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/signature"
+        style="@style/MainButton"
         android:text="@string/login_button"/>
 </LinearLayout>
