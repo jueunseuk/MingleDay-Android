@@ -1,31 +1,26 @@
 package returns.mingleday.app.data.remote.network
 
-import returns.mingleday.app.data.local.TokenDataStore
 import returns.mingleday.app.data.remote.intercepter.AuthInterceptor
 
-import android.content.Context
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+// API 생성
 object RetrofitClient {
 
-    private const val BASE_URL = "http://returns.ddns.net:8080/api/v1/"
+    private const val BASE_URL = "http://172.30.1.79:8080/api/v1/"
 
     private lateinit var retrofit: Retrofit
 
-    fun init(context: Context) {
-        val tokenDataStore = TokenDataStore(context)
-
-        val authInterceptor = AuthInterceptor(tokenDataStore)
-
+    fun init() {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
 
         val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(authInterceptor)
+            .addInterceptor(AuthInterceptor())
             .addInterceptor(loggingInterceptor)
             .build()
 
@@ -37,6 +32,10 @@ object RetrofitClient {
     }
 
     fun <T> createApi(service: Class<T>): T {
+        check(::retrofit.isInitialized) {
+            "RetrofitClient.init() must be called first"
+        }
+
         return retrofit.create(service)
     }
 }

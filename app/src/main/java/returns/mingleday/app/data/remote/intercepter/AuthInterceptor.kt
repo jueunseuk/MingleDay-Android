@@ -1,29 +1,20 @@
 package returns.mingleday.app.data.remote.intercepter
 
-import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
-import returns.mingleday.app.data.local.TokenDataStore
+import returns.mingleday.app.data.local.TokenProvider
 
-class AuthInterceptor(
-    private val tokenDataStore: TokenDataStore
-) : Interceptor {
+class AuthInterceptor : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val originalRequest = chain.request()
+        val token = TokenProvider.getAccessToken()
 
-        val accessToken = runBlocking {
-            tokenDataStore.getAccessToken()
+        val requestBuilder = chain.request().newBuilder()
+
+        if (!token.isNullOrBlank()) {
+            requestBuilder.addHeader("Authorization", "Bearer $token")
         }
 
-        val newRequest = if (!accessToken.isNullOrBlank()) {
-            originalRequest.newBuilder()
-                .addHeader("Authorization", "Bearer $accessToken")
-                .build()
-        } else {
-            originalRequest
-        }
-
-        return chain.proceed(newRequest)
+        return chain.proceed(requestBuilder.build())
     }
 }

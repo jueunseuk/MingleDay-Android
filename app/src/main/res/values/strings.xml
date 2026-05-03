@@ -5,6 +5,8 @@
     <string name="mingle_nav">Mingle Management</string>
     <string name="search_nav">Search</string>
     <string name="menu_nav">Menu</string>
+    <string name="requesting">Requesting..</string>
+    <string name="saving">Saving..</string>
 
     <!--  로그인 및 회원가입  -->
     <string name="slogan">MingleDay, where we align our day together</string>
@@ -23,19 +25,23 @@
     <string name="verification_code_check_description">If you have not received the authentication code, please press Resend the code.</string>
     <string name="verify_code_button">Verify Code</string>
     <string name="resend_button">Send Verification Code Again</string>
-    <string name="signup_description">Please enter simple information to use the service!</string>
     <string name="name_label">Name</string>
+    <string name="name_description">Please tell me your name to use the service</string>
+    <string name="password_description">Please enter the password to use when logging in</string>
     <string name="name_hint">Input 2 to 5 digits</string>
-    <string name="password_hint1">Input 8 to 20 digits</string>
-    <string name="password_hint2">Include English, Numbers, and Special Characters</string>
-    <string name="password_hint3">Special characters only allow ! @ # $ % ^ &amp; * ( ) _ - + = [ ] { } . ?</string>
+    <string name="password_hint1">• Input 8 to 20 digits</string>
+    <string name="password_hint2">• Include English, Numbers, and Special Characters</string>
+    <string name="password_hint3">• Special characters only allow ! @ # $ % ^ &amp; * ( ) _ - + = [ ] { } . ?</string>
     <string name="password_check_label">Password Check</string>
-    <string name="password_check_hint1">Incorrect password</string>
+    <string name="password_check_hint1">• Incorrect password</string>
     <string name="nickname_label">Nickname</string>
+    <string name="nickname_description">Please set a nickname for anonymous use</string>
     <string name="nickname_hint">Input 2 to 10 digits</string>
     <string name="start_mingleday_button">Get Started with Mingleday</string>
     <string name="view_tutorial_button">View the Mingleday Tutorial</string>
+    <string name="next_button">Next</string>
 
     <string name="reset_password_guide">Forget your password?</string>
     <string name="reset_password_move_button">Reset My Password</string>
+    <string name="reset_password_button">Reset My Password</string>
 </resources>

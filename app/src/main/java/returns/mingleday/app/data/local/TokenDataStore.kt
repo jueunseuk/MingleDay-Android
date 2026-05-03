@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.first
 
 private val Context.dataStore by preferencesDataStore(name = "token_store")
 
+// 디스크 저장
 class TokenDataStore(
     private val context: Context
 ) {
