@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_calendar"
+        android:icon="@drawable/ic_menu_add_schedule"
+        android:title="@string/menu_add_schedule"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_alarm"
+        android:icon="@drawable/ic_menu_notification"
+        android:title="@string/menu_notification"
+        app:showAsAction="always" />
+
+</menu>

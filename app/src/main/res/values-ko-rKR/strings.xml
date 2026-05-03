@@ -7,6 +7,13 @@
     <string name="menu_nav">메뉴</string>
     <string name="requesting">요청 중..</string>
     <string name="saving">저장 중..</string>
+    <string name="menu_schedule">일정</string>
+    <string name="menu_mingle">밍글</string>
+    <string name="menu_search">검색</string>
+    <string name="menu_mymenu">나의 메뉴</string>
+    <string name="menu_add_schedule">일정 추가</string>
+    <string name="menu_notification">알림</string>
+    <string name="top_bar_title">내 일정</string>
 
     <!--  로그인 및 회원가입  -->
     <string name="slogan">함께 어우러지는 우리의 하루, 밍글데이</string>

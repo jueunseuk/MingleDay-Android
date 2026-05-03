@@ -37,4 +37,7 @@ interface AuthApi {
     suspend fun login(
         @Body request: LoginRequest
     ): Response<TokenResponse>
+
+    @POST("auth/logout")
+    suspend fun logout(): Response<SuccessResponse<String>>
 }

@@ -7,6 +7,13 @@
     <string name="menu_nav">Menu</string>
     <string name="requesting">Requesting..</string>
     <string name="saving">Saving..</string>
+    <string name="menu_schedule">Schedule</string>
+    <string name="menu_mingle">Mingle</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_mymenu">My Menu</string>
+    <string name="menu_add_schedule">Add Schedule</string>
+    <string name="menu_notification">Notification</string>
+    <string name="top_bar_title">My Schedule</string>
 
     <!--  로그인 및 회원가입  -->
     <string name="slogan">MingleDay, where we align our day together</string>

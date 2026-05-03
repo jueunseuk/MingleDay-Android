@@ -65,12 +65,9 @@ class AuthRepository {
         }
     }
 
-    suspend fun logout(
-        email: String,
-        password: String,
-    ): ApiResult<TokenResponse> {
-        return safeRawApiCall {
-            authApi.login(LoginRequest(email, password))
+    suspend fun logout(): ApiResult<String> {
+        return safeApiCall {
+            authApi.logout()
         }
     }
 }
