@@ -8,6 +8,7 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -18,7 +19,7 @@ import returns.mingleday.app.data.remote.network.onError
 import returns.mingleday.app.data.remote.network.onException
 import returns.mingleday.app.data.remote.network.onSuccess
 import returns.mingleday.databinding.FragmentSendBinding
-import returns.mingleday.domain.repository.AuthRepository
+import returns.mingleday.app.data.repository.AuthRepository
 
 class SendFragment : Fragment() {
 
@@ -91,11 +92,13 @@ class SendFragment : Fragment() {
                         Log.d("SendFragment", "인증번호 전송 실패: $it")
                         binding.sendVerificationCodeButton.isEnabled = true
                         binding.sendVerificationCodeButton.setText(R.string.send_button)
+                        Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
                     }
                     .onException {
                         Log.e("SendFragment", "인증번호 전송 예외:, $it")
                         binding.sendVerificationCodeButton.isEnabled = true
                         binding.sendVerificationCodeButton.setText(R.string.send_button)
+                        Toast.makeText(requireContext(), R.string.already_exist_email, Toast.LENGTH_LONG).show()
                     }
             }
         }

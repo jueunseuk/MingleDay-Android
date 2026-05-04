@@ -48,9 +48,10 @@
                 android:layout_marginStart="20dp"
                 >
                 <TextView
+                    android:id="@+id/realname_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="real name"
+                    android:text="@string/realname_text"
                     android:textSize="13sp"
                     android:fontFamily="@font/bold"
                     android:textColor="@color/content"
@@ -75,7 +76,8 @@
                             android:textSize="12sp"/>
 
                         <TextView
-                            android:text="헤이준듀"
+                            android:id="@+id/nickname_value"
+                            android:text="@string/nickname_text"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -97,7 +99,8 @@
                             android:textSize="12sp"/>
 
                         <TextView
-                            android:text="24.12.11"
+                            android:id="@+id/register_date_value"
+                            android:text="@string/register_date_text"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -119,7 +122,8 @@
                             android:textSize="12sp"/>
 
                         <TextView
-                            android:text="3"
+                            android:id="@+id/belong_mingle_number_value"
+                            android:text="@string/belong_mingle_number_text"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -200,7 +204,7 @@
             android:text="@string/account_label"
             style="@style/MymenuTitle"/>
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/email_button"
+            android:id="@+id/email_value"
             style="@style/SelectButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

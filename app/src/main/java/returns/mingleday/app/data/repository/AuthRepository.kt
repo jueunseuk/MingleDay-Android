@@ -1,13 +1,13 @@
-package returns.mingleday.domain.repository
+package returns.mingleday.app.data.repository
 
 import returns.mingleday.app.data.remote.api.AuthApi
 import returns.mingleday.app.data.remote.model.auth.EmailCodeRequest
-import returns.mingleday.app.data.remote.model.auth.Purpose
-import returns.mingleday.app.data.remote.model.auth.SignupRequest
-import returns.mingleday.app.data.remote.model.auth.TokenResponse
 import returns.mingleday.app.data.remote.model.auth.EmailMatchRequest
 import returns.mingleday.app.data.remote.model.auth.LoginRequest
 import returns.mingleday.app.data.remote.model.auth.PasswordResetRequest
+import returns.mingleday.app.data.remote.model.auth.Purpose
+import returns.mingleday.app.data.remote.model.auth.SignupRequest
+import returns.mingleday.app.data.remote.model.auth.TokenResponse
 import returns.mingleday.app.data.remote.network.ApiResult
 import returns.mingleday.app.data.remote.network.RetrofitClient
 import returns.mingleday.app.data.remote.network.safeApiCall

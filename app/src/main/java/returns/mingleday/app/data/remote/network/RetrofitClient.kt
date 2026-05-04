@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 // API 생성
 object RetrofitClient {
 
-    private const val BASE_URL = "http://172.30.1.79:8080/api/v1/"
+    private const val BASE_URL = "http://returns.ddns.net:8080/api/v1/"
 
     private lateinit var retrofit: Retrofit
 

@@ -17,7 +17,7 @@ import returns.mingleday.app.data.remote.network.onError
 import returns.mingleday.app.data.remote.network.onException
 import returns.mingleday.app.data.remote.network.onSuccess
 import returns.mingleday.databinding.FragmentInputPasswordBinding
-import returns.mingleday.domain.repository.AuthRepository
+import returns.mingleday.app.data.repository.AuthRepository
 
 class InputPasswordFragment : Fragment() {
 

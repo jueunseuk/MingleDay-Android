@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -19,7 +20,7 @@ import returns.mingleday.app.data.remote.network.onError
 import returns.mingleday.app.data.remote.network.onException
 import returns.mingleday.app.data.remote.network.onSuccess
 import returns.mingleday.databinding.FragmentLoginBinding
-import returns.mingleday.domain.repository.AuthRepository
+import returns.mingleday.app.data.repository.AuthRepository
 
 class LoginFragment : Fragment() {
 
@@ -119,11 +120,16 @@ class LoginFragment : Fragment() {
                         Log.d("LoginFragment", "로그인 실패: $it")
                         binding.loginButton.isEnabled = true
                         binding.loginButton.setText(R.string.login_button)
+                        binding.inputEmailValue.setText("")
+                        binding.inputPasswordValue.setText("")
+                        binding.inputEmailValue.requestFocus()
+                        Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
                     }
                     .onException {
                         Log.e("LoginFragment", "로그인 도중 예외 발생:, $it")
                         binding.loginButton.isEnabled = true
                         binding.loginButton.setText(R.string.login_button)
+                        Toast.makeText(requireContext(), R.string.auth_mismatch, Toast.LENGTH_LONG).show()
                     }
             }
         }

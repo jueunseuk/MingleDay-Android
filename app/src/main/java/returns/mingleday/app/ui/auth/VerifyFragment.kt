@@ -8,6 +8,7 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -18,7 +19,7 @@ import returns.mingleday.app.data.remote.network.onError
 import returns.mingleday.app.data.remote.network.onException
 import returns.mingleday.app.data.remote.network.onSuccess
 import returns.mingleday.databinding.FragmentVerifyBinding
-import returns.mingleday.domain.repository.AuthRepository
+import returns.mingleday.app.data.repository.AuthRepository
 
 class VerifyFragment : Fragment() {
 
@@ -127,11 +128,13 @@ class VerifyFragment : Fragment() {
                         Log.d("SendFragment", "인증번호 확인 실패: $it")
                         binding.checkVerificationCodeButton.isEnabled = true
                         binding.checkVerificationCodeButton.setText(R.string.verify_code_button)
+                        Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
                     }
                     .onException {
                         Log.e("SendFragment", "인증번호 확인 중 예외 발생:, $it")
                         binding.checkVerificationCodeButton.isEnabled = true
                         binding.checkVerificationCodeButton.setText(R.string.verify_code_button)
+                        Toast.makeText(requireContext(), R.string.verification_mismatch, Toast.LENGTH_LONG).show()
                     }
             }
         }
