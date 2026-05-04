@@ -47,8 +47,24 @@
     <string name="start_mingleday_button">Get Started with Mingleday</string>
     <string name="view_tutorial_button">View the Mingleday Tutorial</string>
     <string name="next_button">Next</string>
-
     <string name="reset_password_guide">Forget your password?</string>
     <string name="reset_password_move_button">Reset My Password</string>
     <string name="reset_password_button">Reset My Password</string>
+
+    <!--  마이 메뉴  -->
+    <string name="my_info_label">My Info</string>
+    <string name="language_label">Language</string>
+    <string name="setting_label">Setting</string>
+    <string name="account_label">My Account</string>
+    <string name="register_date_label">Registered At</string>
+    <string name="belong_mingle_number_label">Number of mingle belonging to</string>
+    <string name="logout_button">Logout</string>
+    <string name="withdraw_button">Withdraw</string>
+    <string name="profile_image_description">profile image</string>
+    <string name="email_text">email</string>
+    <string name="realname_text">real name</string>
+    <string name="nickname_text">nickname</string>
+    <string name="register_date_text">register date</string>
+    <string name="belong_mingle_number_text">belong mingle number</string>
+
 </resources>

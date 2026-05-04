@@ -9,6 +9,7 @@
     <color name="bg">#F8FCFF</color>
     <color name="pink">#FFB3C1</color>
     <color name="orange">#FFD580</color>
+    <color name="red">#FF0000</color>
 
     <!--  Achromatic Color  -->
     <color name="title">#1A1A1A</color>

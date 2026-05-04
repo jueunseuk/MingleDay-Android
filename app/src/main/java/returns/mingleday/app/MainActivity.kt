@@ -6,10 +6,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import returns.mingleday.R
-import returns.mingleday.app.ui.mymenu.MingleListFragment
+import returns.mingleday.app.ui.mingle.MingleFragment
 import returns.mingleday.app.ui.mymenu.MymenuFragment
-import returns.mingleday.app.ui.mymenu.ScheduleFragment
-import returns.mingleday.app.ui.mymenu.SearchFragment
+import returns.mingleday.app.ui.schedule.ScheduleFragment
+import returns.mingleday.app.ui.search.SearchFragment
 import returns.mingleday.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.mingle -> {
-                    replaceFragment(MingleListFragment())
+                    replaceFragment(MingleFragment())
                     true
                 }
                 R.id.search -> {

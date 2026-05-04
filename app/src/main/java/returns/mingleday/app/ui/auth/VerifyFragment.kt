@@ -126,10 +126,12 @@ class VerifyFragment : Fragment() {
                     .onError {
                         Log.d("SendFragment", "인증번호 확인 실패: $it")
                         binding.checkVerificationCodeButton.isEnabled = true
+                        binding.checkVerificationCodeButton.setText(R.string.verify_code_button)
                     }
                     .onException {
                         Log.e("SendFragment", "인증번호 확인 중 예외 발생:, $it")
                         binding.checkVerificationCodeButton.isEnabled = true
+                        binding.checkVerificationCodeButton.setText(R.string.verify_code_button)
                     }
             }
         }

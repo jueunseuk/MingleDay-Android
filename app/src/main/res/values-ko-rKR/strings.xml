@@ -47,9 +47,24 @@
     <string name="start_mingleday_button">밍글데이 시작하기</string>
     <string name="view_tutorial_button">밍글데이 튜터리얼 보기</string>
     <string name="next_button">다음</string>
-
     <string name="reset_password_guide">비밀번호를 잊으셨나요?</string>
     <string name="reset_password_move_button">비밀번호 변경하기</string>
     <string name="reset_password_button">비밀번호 변경</string>
+
+    <!--  마이 메뉴  -->
+    <string name="my_info_label">내 정보</string>
+    <string name="language_label">언어</string>
+    <string name="setting_label">설정</string>
+    <string name="account_label">내 계정</string>
+    <string name="register_date_label">가입일</string>
+    <string name="belong_mingle_number_label">소속된 밍글 수</string>
+    <string name="logout_button">로그아웃</string>
+    <string name="withdraw_button">회원탈퇴</string>
+    <string name="profile_image_description">프로필 이미지</string>
+    <string name="email_text">이메일</string>
+    <string name="realname_text">실명</string>
+    <string name="nickname_text">닉네임</string>
+    <string name="register_date_text">가입일</string>
+    <string name="belong_mingle_number_text">소속된 밍글 수</string>
 
 </resources>

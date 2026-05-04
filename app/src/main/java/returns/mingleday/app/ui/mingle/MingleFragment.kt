@@ -1,4 +1,4 @@
-package returns.mingleday.app.ui.mymenu
+package returns.mingleday.app.ui.mingle
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import returns.mingleday.databinding.FragmentMingleListBinding
 
-class MingleListFragment : Fragment() {
+class MingleFragment : Fragment() {
 
     private var _binding: FragmentMingleListBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMingleListBinding.inflate(inflater, container, false)
         return binding.root
     }

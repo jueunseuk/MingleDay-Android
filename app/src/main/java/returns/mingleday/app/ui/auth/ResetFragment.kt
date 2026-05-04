@@ -89,10 +89,12 @@ class ResetFragment : Fragment() {
                     .onError {
                         Log.d("ResetFragment", "인증번호 전송 실패: $it")
                         binding.sendVerificationCodeButton.isEnabled = true
+                        binding.sendVerificationCodeButton.setText(R.string.send_button)
                     }
                     .onException {
                         Log.e("ResetFragment", "인증번호 전송 예외:, $it")
                         binding.sendVerificationCodeButton.isEnabled = true
+                        binding.sendVerificationCodeButton.setText(R.string.send_button)
                     }
             }
         }

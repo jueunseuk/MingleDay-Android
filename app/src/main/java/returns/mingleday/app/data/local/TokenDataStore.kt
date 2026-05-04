@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
 
-private val Context.dataStore by preferencesDataStore(name = "token_store")
+private val Context.dataStore by preferencesDataStore(name = "data_token")
 
 // 디스크 저장
 class TokenDataStore(

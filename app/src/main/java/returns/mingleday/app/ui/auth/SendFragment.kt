@@ -90,10 +90,12 @@ class SendFragment : Fragment() {
                     .onError {
                         Log.d("SendFragment", "인증번호 전송 실패: $it")
                         binding.sendVerificationCodeButton.isEnabled = true
+                        binding.sendVerificationCodeButton.setText(R.string.send_button)
                     }
                     .onException {
                         Log.e("SendFragment", "인증번호 전송 예외:, $it")
                         binding.sendVerificationCodeButton.isEnabled = true
+                        binding.sendVerificationCodeButton.setText(R.string.send_button)
                     }
             }
         }

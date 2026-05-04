@@ -35,6 +35,7 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setUpFocus()
         setupFocusChange()
         setupValidation()
         setupLoginButton()
@@ -52,6 +53,10 @@ class LoginFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+    }
+
+    private fun setUpFocus() {
+        binding.inputEmailValue.requestFocus()
     }
 
     private fun setupFocusChange() {
@@ -113,10 +118,12 @@ class LoginFragment : Fragment() {
                     .onError {
                         Log.d("LoginFragment", "로그인 실패: $it")
                         binding.loginButton.isEnabled = true
+                        binding.loginButton.setText(R.string.login_button)
                     }
                     .onException {
                         Log.e("LoginFragment", "로그인 도중 예외 발생:, $it")
                         binding.loginButton.isEnabled = true
+                        binding.loginButton.setText(R.string.login_button)
                     }
             }
         }
