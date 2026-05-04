@@ -51,6 +51,15 @@
     <string name="reset_password_move_button">비밀번호 변경하기</string>
     <string name="reset_password_button">비밀번호 변경</string>
 
+    <!--  스케줄  -->
+    <string name="my_schedule_title">내 일정</string>
+
+    <!--  밍글  -->
+    <string name="mingle_list_title">밍글 리스트</string>
+
+    <!--  검색  -->
+    <string name="search_title">검색</string>
+
     <!--  마이 메뉴  -->
     <string name="my_info_label">내 정보</string>
     <string name="language_label">언어</string>

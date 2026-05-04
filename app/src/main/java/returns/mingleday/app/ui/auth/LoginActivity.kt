@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import returns.mingleday.app.MainActivity
+import returns.mingleday.app.ui.main.MainActivity
 import returns.mingleday.app.data.local.TokenDataStore
 import returns.mingleday.app.data.local.TokenProvider
 import returns.mingleday.databinding.ActivityLoginBinding

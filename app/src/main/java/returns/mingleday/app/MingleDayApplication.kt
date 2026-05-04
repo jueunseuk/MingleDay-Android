@@ -20,10 +20,10 @@ class MingleDayApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        RetrofitClient.init()
-
         tokenDataStore = TokenDataStore(this)
         settingsDataStore = SettingsDataStore(this)
+
+        RetrofitClient.init(this)
 
         CoroutineScope(Dispatchers.IO).launch {
             val token = tokenDataStore.getAccessToken()

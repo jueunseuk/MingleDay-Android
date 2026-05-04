@@ -17,14 +17,13 @@
         <item name="cornerRadius">8dp</item>
     </style>
 
-    <style name="SelectButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+    <style name="SelectButton" parent="Widget.MaterialComponents.Button">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">13sp</item>
         <item name="android:fontFamily">@font/semibold</item>
         <item name="android:textColor">@color/button_text_selector</item>
         <item name="backgroundTint">@color/button_selector</item>
-        <item name="strokeWidth">1dp</item>
         <item name="cornerRadius">12dp</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>

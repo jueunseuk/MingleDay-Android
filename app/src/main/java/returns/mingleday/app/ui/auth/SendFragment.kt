@@ -14,7 +14,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import returns.mingleday.R
-import returns.mingleday.app.data.remote.model.auth.Purpose
 import returns.mingleday.app.data.remote.network.onError
 import returns.mingleday.app.data.remote.network.onException
 import returns.mingleday.app.data.remote.network.onSuccess

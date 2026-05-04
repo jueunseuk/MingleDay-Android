@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MingleDay">
         <activity
-            android:name=".app.MainActivity"
+            android:name=".app.ui.main.MainActivity"
             android:exported="false" />
         <activity
             android:name=".app.ui.auth.LoginActivity"

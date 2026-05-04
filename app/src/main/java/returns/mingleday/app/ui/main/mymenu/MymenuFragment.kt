@@ -1,4 +1,4 @@
-package returns.mingleday.app.ui.mymenu
+package returns.mingleday.app.ui.main.mymenu
 
 import android.content.Intent
 import android.os.Bundle
@@ -19,10 +19,10 @@ import returns.mingleday.app.data.remote.network.onSuccess
 import returns.mingleday.app.data.repository.AuthRepository
 import returns.mingleday.app.data.repository.UserRepository
 import returns.mingleday.app.ui.auth.LoginActivity
+import returns.mingleday.app.ui.main.MainActivity
 import returns.mingleday.databinding.FragmentMymenuBinding
 import returns.mingleday.util.DateFormatter.formatCustom
 import java.time.LocalDateTime
-
 
 class MymenuFragment : Fragment() {
 
@@ -43,9 +43,45 @@ class MymenuFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (requireActivity() as MainActivity).setToolbarTitle(R.string.my_info_label)
         setupLanguage()
         setupFetchUserInfo()
         setupLogout()
+        setupWithdraw()
+    }
+
+    private fun setupWithdraw() {
+        binding.withdrawButton.setOnClickListener {
+            binding.withdrawButton.isEnabled = false
+            binding.withdrawButton.text = R.string.requesting.toString()
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                authRepository.withdraw()
+                    .onSuccess {
+                        Log.d("MymenuFragment", "회원탈퇴 성공")
+
+                        TokenProvider.clear()
+                        val app = requireActivity().application as MingleDayApplication
+                        app.tokenDataStore.clearTokens()
+
+                        val intent = Intent(requireContext(), LoginActivity::class.java)
+                        startActivity(intent)
+                        requireActivity().finish()
+                    }
+                    .onError {
+                        Log.d("MymenuFragment", "로그아웃 실패: $it")
+                        Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
+                        binding.logoutButton.isEnabled = true
+                        binding.logoutButton.text = R.string.logout_button.toString()
+                    }
+                    .onException {
+                        Log.e("MymenuFragment", "로그아웃 도중 예외 발생:, $it")
+                        Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
+                        binding.logoutButton.isEnabled = true
+                        binding.logoutButton.text = R.string.logout_button.toString()
+                    }
+            }
+        }
     }
 
     private fun setupLogout() {

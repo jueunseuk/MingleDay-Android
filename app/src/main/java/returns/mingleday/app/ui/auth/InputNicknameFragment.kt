@@ -14,7 +14,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import returns.mingleday.R
-import returns.mingleday.app.MainActivity
+import returns.mingleday.app.ui.main.MainActivity
 import returns.mingleday.app.MingleDayApplication
 import returns.mingleday.app.data.local.TokenProvider
 import returns.mingleday.app.data.remote.network.onError

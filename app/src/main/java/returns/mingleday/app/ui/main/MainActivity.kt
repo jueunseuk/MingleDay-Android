@@ -1,15 +1,20 @@
-package returns.mingleday.app
+package returns.mingleday.app.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import returns.mingleday.R
-import returns.mingleday.app.ui.mingle.MingleFragment
-import returns.mingleday.app.ui.mymenu.MymenuFragment
-import returns.mingleday.app.ui.schedule.ScheduleFragment
-import returns.mingleday.app.ui.search.SearchFragment
+import returns.mingleday.app.data.remote.intercepter.SessionManager
+import returns.mingleday.app.ui.auth.LoginActivity
+import returns.mingleday.app.ui.main.mingle.MingleListFragment
+import returns.mingleday.app.ui.main.mymenu.MymenuFragment
+import returns.mingleday.app.ui.main.schedule.ScheduleFragment
+import returns.mingleday.app.ui.main.search.SearchFragment
 import returns.mingleday.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -21,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.topBar)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -34,6 +40,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupBottomNavigation()
+        setupSession()
+    }
+
+    fun setToolbarTitle(resId: Int) {
+        supportActionBar?.setTitle(resId)
+    }
+
+    private fun setupSession() {
+        lifecycleScope.launch {
+            SessionManager.logoutEvent.collect {
+                val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
+        }
     }
 
     private fun setupBottomNavigation() {
@@ -44,7 +65,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.mingle -> {
-                    replaceFragment(MingleFragment())
+                    replaceFragment(MingleListFragment())
                     true
                 }
                 R.id.search -> {

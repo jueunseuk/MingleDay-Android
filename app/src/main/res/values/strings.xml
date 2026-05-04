@@ -51,13 +51,22 @@
     <string name="reset_password_move_button">Reset My Password</string>
     <string name="reset_password_button">Reset My Password</string>
 
+    <!--  스케줄  -->
+    <string name="my_schedule_title">My Schedules</string>
+
+    <!--  밍글  -->
+    <string name="mingle_list_title">Mingle List</string>
+
+    <!--  검색  -->
+    <string name="search_title">Search</string>
+
     <!--  마이 메뉴  -->
     <string name="my_info_label">My Info</string>
     <string name="language_label">Language</string>
     <string name="setting_label">Setting</string>
     <string name="account_label">My Account</string>
     <string name="register_date_label">Registered At</string>
-    <string name="belong_mingle_number_label">Number of mingle belonging to</string>
+    <string name="belong_mingle_number_label">Number of mingle</string>
     <string name="logout_button">Logout</string>
     <string name="withdraw_button">Withdraw</string>
     <string name="profile_image_description">profile image</string>

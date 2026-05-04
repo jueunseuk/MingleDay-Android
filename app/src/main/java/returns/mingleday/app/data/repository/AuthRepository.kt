@@ -70,4 +70,10 @@ class AuthRepository {
             authApi.logout()
         }
     }
+
+    suspend fun withdraw(): ApiResult<String> {
+        return safeApiCall {
+            authApi.withdraw()
+        }
+    }
 }

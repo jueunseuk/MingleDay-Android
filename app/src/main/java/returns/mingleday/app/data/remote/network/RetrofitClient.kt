@@ -1,11 +1,13 @@
 package returns.mingleday.app.data.remote.network
 
+import android.content.Context
 import returns.mingleday.app.data.remote.intercepter.AuthInterceptor
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import returns.mingleday.app.MingleDayApplication
 
 // API 생성
 object RetrofitClient {
@@ -14,13 +16,16 @@ object RetrofitClient {
 
     private lateinit var retrofit: Retrofit
 
-    fun init() {
+    fun init(context: Context) {
+        val app = context.applicationContext as MingleDayApplication
+        val tokenDataStore = app.tokenDataStore
+
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
 
         val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor())
+            .addInterceptor(AuthInterceptor(tokenDataStore))
             .addInterceptor(loggingInterceptor)
             .build()
 

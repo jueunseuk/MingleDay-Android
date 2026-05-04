@@ -2,6 +2,7 @@ package returns.mingleday.app.data.remote.api
 
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import returns.mingleday.app.data.remote.model.auth.EmailCodeRequest
@@ -40,4 +41,7 @@ interface AuthApi {
 
     @POST("auth/logout")
     suspend fun logout(): Response<SuccessResponse<String>>
+
+    @DELETE("auth/withdraw")
+    suspend fun withdraw(): Response<SuccessResponse<String>>
 }
