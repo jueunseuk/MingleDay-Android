@@ -47,6 +47,10 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setTitle(resId)
     }
 
+    fun setToolbarTitle(title: String) {
+        supportActionBar?.title = title
+    }
+
     private fun setupSession() {
         lifecycleScope.launch {
             SessionManager.logoutEvent.collect {

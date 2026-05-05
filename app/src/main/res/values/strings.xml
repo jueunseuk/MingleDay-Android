@@ -56,6 +56,36 @@
 
     <!--  밍글  -->
     <string name="mingle_list_title">Mingle List</string>
+    <string name="mingle_list_cnt">소속 밍글  개</string>
+    <string name="add_mingle_button">Add new mingle</string>
+    <string name="add_mingle_title">Add Mingle</string>
+    <string name="mingle_name_title">Mingle Name Title</string>
+    <string name="mingle_type_label">어떤 밍글이 필요하세요?</string>
+    <string name="mingle_type_family">family</string>
+    <string name="mingle_type_friend">friend</string>
+    <string name="mingle_type_lover">lover</string>
+    <string name="mingle_type_school">school</string>
+    <string name="mingle_type_company">company</string>
+    <string name="mingle_type_club">club</string>
+    <string name="mingle_type_study">study</string>
+    <string name="mingle_type_custom">custom</string>
+    <string name="mingle_name_label">Mingle Name</string>
+    <string name="mingle_name_hint">1~30자 사이로 밍글의 이름을 입력해주세요</string>
+    <string name="mingle_description_label">Mingle Description</string>
+    <string name="mingle_description_hint">어떤 밍글인지 알 수 있도록 설명을 작성해주세요</string>
+    <string name="mingle_setting_label">Mingle Setting</string>
+    <string name="mingle_setting_option1">멤버별로 다른 권한을 부여</string>
+    <string name="mingle_setting_option2">실명으로만 참여 가능</string>
+    <string name="mingle_info_label">Mingle Info.</string>
+    <string name="mingle_member_and_permission">Members and Permissions</string>
+    <string name="mingle_create_date_label">Start at</string>
+    <string name="mingle_member_label">Member</string>
+    <string name="mingle_owner_label">Owner</string>
+    <string name="permission_invite">Mingle Invitation</string>
+    <string name="permission_expulsion">Mingle Expulsion</string>
+    <string name="permission_create">Schedule Creation</string>
+    <string name="permission_modify">Schedule Modification</string>
+    <string name="permission_delete">Schedule Deletion</string>
 
     <!--  검색  -->
     <string name="search_title">Search</string>
@@ -85,4 +115,7 @@
     <string name="already_exist_email">이미 존재하는 메일입니다. 로그인 또는 다른 이메일을 이용해주세요.</string>
     <string name="invalid_input">유효하지 않은 값이 입력됐습니다.</string>
 
+    <!--  기타  -->
+    <string name="image_alt">image</string>
+    <string name="date_format">20XX.XX.XX</string>
 </resources>
