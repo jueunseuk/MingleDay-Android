@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/content"
+        android:text="@string/nickname_description"
+        android:layout_marginBottom="70dp"/>
+
+    <LinearLayout
+        android:id="@+id/input_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="start">
+            <TextView
+                android:id="@+id/input_nickname_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/nickname_label"
+                android:textSize="14sp"
+                android:textColor="@color/text_input_label_selector"
+                android:fontFamily="@font/semibold"/>
+            <EditText
+                android:id="@+id/input_nickname_value"
+                android:inputType="text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/disable"
+                android:hint="@string/nickname_hint"
+                style="@style/InputBottom"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/signup_button"
+        android:enabled="false"
+        style="@style/MainButton"
+        android:text="@string/signup_button"
+        android:layout_marginTop="20dp"
+        />
+</LinearLayout>

@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/schedule"
+        android:title="@string/menu_schedule"
+        android:icon="@drawable/ic_menu_schedule"/>
+    <item
+        android:id="@+id/mingle"
+        android:title="@string/menu_mingle"
+        android:icon="@drawable/ic_menu_mingle"/>
+    <item
+        android:id="@+id/search"
+        android:title="@string/menu_search"
+        android:icon="@drawable/ic_menu_search"/>
+    <item
+        android:id="@+id/menu"
+        android:title="@string/menu_mymenu"
+        android:icon="@drawable/ic_menu_mymenu"/>
+</menu>

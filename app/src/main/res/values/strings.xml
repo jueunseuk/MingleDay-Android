@@ -1,3 +1,121 @@
 <resources>
+    <!--  전역  -->
     <string name="app_name">MingleDay</string>
+    <string name="schedule_nav">My Schedule</string>
+    <string name="mingle_nav">Mingle Management</string>
+    <string name="search_nav">Search</string>
+    <string name="menu_nav">Menu</string>
+    <string name="requesting">Requesting..</string>
+    <string name="saving">Saving..</string>
+    <string name="menu_schedule">Schedule</string>
+    <string name="menu_mingle">Mingle</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_mymenu">My Menu</string>
+    <string name="menu_add_schedule">Add Schedule</string>
+    <string name="menu_notification">Notification</string>
+    <string name="top_bar_title">My Schedule</string>
+
+    <!--  로그인 및 회원가입  -->
+    <string name="slogan">MingleDay, where we align our day together</string>
+    <string name="login_button">Login</string>
+    <string name="signup_button">Sign Up</string>
+    <string name="email_label">Email</string>
+    <string name="email_hint">Input your email</string>
+    <string name="password_label">Password</string>
+    <string name="signup_guide">Is this your first come?</string>
+    <string name="signup_move_button">Go to Sign Up</string>
+    <string name="verification_description">The authentication code is valid for 10 minutes.</string>
+    <string name="verification_for_reset_description">Email verification is required to change your password.</string>
+    <string name="verification_code_label">Verification Code</string>
+    <string name="verification_code_hint">Input 6 digits Number</string>
+    <string name="send_button">Send Verification Code</string>
+    <string name="verification_code_check_description">If you have not received the authentication code, please press Resend the code.</string>
+    <string name="verify_code_button">Verify Code</string>
+    <string name="resend_button">Send Verification Code Again</string>
+    <string name="name_label">Name</string>
+    <string name="name_description">Please tell me your name to use the service</string>
+    <string name="password_description">Please enter the password to use when logging in</string>
+    <string name="name_hint">Input 2 to 5 digits</string>
+    <string name="password_hint1">• Input 8 to 20 digits</string>
+    <string name="password_hint2">• Include English, Numbers, and Special Characters</string>
+    <string name="password_hint3">• Special characters only allow ! @ # $ % ^ &amp; * ( ) _ - + = [ ] { } . ?</string>
+    <string name="password_check_label">Password Check</string>
+    <string name="password_check_hint1">• Incorrect password</string>
+    <string name="nickname_label">Nickname</string>
+    <string name="nickname_description">Please set a nickname for anonymous use</string>
+    <string name="nickname_hint">Input 2 to 10 digits</string>
+    <string name="start_mingleday_button">Get Started with Mingleday</string>
+    <string name="view_tutorial_button">View the Mingleday Tutorial</string>
+    <string name="next_button">Next</string>
+    <string name="reset_password_guide">Forget your password?</string>
+    <string name="reset_password_move_button">Reset My Password</string>
+    <string name="reset_password_button">Reset My Password</string>
+
+    <!--  스케줄  -->
+    <string name="my_schedule_title">My Schedules</string>
+
+    <!--  밍글  -->
+    <string name="mingle_list_title">Mingle List</string>
+    <string name="mingle_list_cnt">소속 밍글  개</string>
+    <string name="add_mingle_button">Add new mingle</string>
+    <string name="add_mingle_title">Add Mingle</string>
+    <string name="mingle_name_title">Mingle Name Title</string>
+    <string name="mingle_type_label">어떤 밍글이 필요하세요?</string>
+    <string name="mingle_type_family">family</string>
+    <string name="mingle_type_friend">friend</string>
+    <string name="mingle_type_lover">lover</string>
+    <string name="mingle_type_school">school</string>
+    <string name="mingle_type_company">company</string>
+    <string name="mingle_type_club">club</string>
+    <string name="mingle_type_study">study</string>
+    <string name="mingle_type_custom">custom</string>
+    <string name="mingle_name_label">Mingle Name</string>
+    <string name="mingle_name_hint">1~30자 사이로 밍글의 이름을 입력해주세요</string>
+    <string name="mingle_description_label">Mingle Description</string>
+    <string name="mingle_description_hint">어떤 밍글인지 알 수 있도록 설명을 작성해주세요</string>
+    <string name="mingle_setting_label">Mingle Setting</string>
+    <string name="mingle_setting_option1">멤버별로 다른 권한을 부여</string>
+    <string name="mingle_setting_option2">실명으로만 참여 가능</string>
+    <string name="mingle_info_label">Mingle Info.</string>
+    <string name="mingle_member_and_permission">Members and Permissions</string>
+    <string name="mingle_create_date_label">Start at</string>
+    <string name="mingle_member_label">Member</string>
+    <string name="mingle_owner_label">Owner</string>
+    <string name="permission_invite">Mingle Invitation</string>
+    <string name="permission_expulsion">Mingle Expulsion</string>
+    <string name="permission_create">Schedule Creation</string>
+    <string name="permission_modify">Schedule Modification</string>
+    <string name="permission_delete">Schedule Deletion</string>
+
+    <!--  검색  -->
+    <string name="search_title">Search</string>
+
+    <!--  마이 메뉴  -->
+    <string name="my_info_label">My Info</string>
+    <string name="language_label">Language</string>
+    <string name="setting_label">Setting</string>
+    <string name="account_label">My Account</string>
+    <string name="register_date_label">Registered At</string>
+    <string name="belong_mingle_number_label">Number of mingle</string>
+    <string name="logout_button">Logout</string>
+    <string name="withdraw_button">Withdraw</string>
+    <string name="profile_image_description">profile image</string>
+    <string name="email_text">email</string>
+    <string name="realname_text">real name</string>
+    <string name="nickname_text">Nickname</string>
+    <string name="register_date_text">register date</string>
+    <string name="belong_mingle_number_text">belong mingle number</string>
+
+    <!--  토스트 메세지  -->
+    <string name="internal_server_error">서버 내부에 문제가 발생했습니다. 잠시 후 이용해주세요.</string>
+    <string name="auth_mismatch">이메일 또는 비밀번호가 일치하지 않습니다.</string>
+    <string name="email_mismatch">이메일이 일치하지 않습니다.</string>
+    <string name="password_mismatch">비밀번호가 일치하지 않습니다.</string>
+    <string name="verification_mismatch">인증 코드가 일치하지 않습니다.</string>
+    <string name="already_exist_email">이미 존재하는 메일입니다. 로그인 또는 다른 이메일을 이용해주세요.</string>
+    <string name="invalid_input">유효하지 않은 값이 입력됐습니다.</string>
+
+    <!--  기타  -->
+    <string name="image_alt">image</string>
+    <string name="date_format">20XX.XX.XX</string>
 </resources>

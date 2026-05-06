@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@color/bg"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:paddingTop="20dp">
+
+        <TextView
+            android:id="@+id/mingle_list_cnt_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/mingle_list_cnt"
+            android:textColor="@color/disable"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mingle_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"/>
+
+        <LinearLayout
+            android:id="@+id/add_mingle_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/round_bg"
+            >
+            
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:contentDescription="@string/image_alt"
+                android:src="@drawable/ic_mingle_add"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/add_mingle_button"
+                android:gravity="center_vertical"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textColor="@color/label"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
