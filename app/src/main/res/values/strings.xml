@@ -86,6 +86,8 @@
     <string name="permission_create">Schedule Creation</string>
     <string name="permission_modify">Schedule Modification</string>
     <string name="permission_delete">Schedule Deletion</string>
+    <string name="mingle_leave_button">Leave Mingle</string>
+    <string name="mingle_expel_button">Expel</string>
 
     <!--  검색  -->
     <string name="search_title">Search</string>

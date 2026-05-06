@@ -210,5 +210,13 @@
                     android:nestedScrollingEnabled="false" />
             </LinearLayout>
         </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/leave_button"
+            android:enabled="true"
+            style="@style/MainButton"
+            android:text="@string/mingle_leave_button"
+            android:layout_margin="30dp"
+            />
     </LinearLayout>
 </ScrollView>

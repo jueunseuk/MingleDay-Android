@@ -1,5 +1,6 @@
 package returns.mingleday.app.ui.main.mingle
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -46,8 +47,49 @@ class MingleFragment : Fragment() {
 
         setupRecyclerView(mingleId)
         setupMingleInviteButton(mingleId)
+        setupLeaveButton(mingleId)
         setupFetchMingle(mingleId)
         setupToggles(mingleId)
+    }
+
+    private fun setupLeaveButton(mingleId: Int) {
+        binding.leaveButton.setOnClickListener {
+            AlertDialog.Builder(requireContext())
+                .setTitle("밍글 나가기")
+                .setMessage("정말 이 밍글에서 나가시겠습니까?")
+                .setPositiveButton("확인") { _, _ ->
+
+                    viewLifecycleOwner.lifecycleScope.launch {
+
+                        mingleRepository.leaveMingle(mingleId)
+                            .onSuccess {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "밍글에서 나갔습니다.",
+                                    Toast.LENGTH_LONG
+                                ).show()
+
+                                requireActivity().supportFragmentManager.popBackStack()
+                            }
+                            .onError {
+                                Toast.makeText(
+                                    requireContext(),
+                                    it,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                            .onException {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "오류가 발생했습니다.",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                    }
+                }
+                .setNegativeButton("취소", null)
+                .show()
+        }
     }
 
     private fun setToggleImage(imageView: ImageView, isOn: Boolean) {
