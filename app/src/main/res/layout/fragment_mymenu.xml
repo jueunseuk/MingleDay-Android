@@ -53,7 +53,8 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="10dp"
                 >
                 <TextView
                     android:id="@+id/realname_value"
@@ -81,7 +82,10 @@
                             android:text="@string/nickname_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="12sp"/>
+                            android:textSize="12sp"
+                            android:textColor="@color/title"
+                            android:fontFamily="@font/semibold"
+                            />
 
                         <TextView
                             android:id="@+id/nickname_value"
@@ -104,7 +108,10 @@
                             android:text="@string/register_date_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="12sp"/>
+                            android:textSize="12sp"
+                            android:textColor="@color/title"
+                            android:fontFamily="@font/semibold"
+                            />
 
                         <TextView
                             android:id="@+id/register_date_value"
@@ -127,7 +134,10 @@
                             android:text="@string/belong_mingle_number_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="12sp"/>
+                            android:textSize="12sp"
+                            android:textColor="@color/title"
+                            android:fontFamily="@font/semibold"
+                            />
 
                         <TextView
                             android:id="@+id/belong_mingle_number_value"

@@ -1,6 +1,6 @@
 <resources>
     <!--  전역  -->
-    <string name="app_name">밍글데이</string>
+    <string name="app_name">MingleDay</string>
     <string name="schedule_nav">내 일정</string>
     <string name="mingle_nav">밍글 관리</string>
     <string name="search_nav">검색</string>

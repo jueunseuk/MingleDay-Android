@@ -5,12 +5,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.launch
 import returns.mingleday.R
+import returns.mingleday.app.data.remote.model.mingle.MinglePermissionRequest
 import returns.mingleday.app.data.remote.model.mingle.MingleType
 import returns.mingleday.app.data.remote.network.onError
 import returns.mingleday.app.data.remote.network.onException
@@ -18,6 +20,8 @@ import returns.mingleday.app.data.remote.network.onSuccess
 import returns.mingleday.app.data.repository.MingleRepository
 import returns.mingleday.app.ui.main.MainActivity
 import returns.mingleday.databinding.FragmentMingleBinding
+import returns.mingleday.util.DateFormatter.formatCustom
+import java.time.LocalDateTime
 
 class MingleFragment : Fragment() {
 
@@ -25,6 +29,9 @@ class MingleFragment : Fragment() {
     private val binding get() = _binding!!
     private val mingleRepository = MingleRepository()
     private lateinit var mingleMemberAdapter: MingleMemberAdapter
+
+    private var isRealnameOn: Boolean = false
+    private var isPermissionOn: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMingleBinding.inflate(inflater, container, false)
@@ -36,9 +43,76 @@ class MingleFragment : Fragment() {
         val mingleId = arguments?.getInt("mingle_id") ?: return
 
         (requireActivity() as MainActivity).setToolbarTitle(R.string.mingle_name_title)
-        setupRecyclerView()
-        setupFetchMingle(mingleId)
+
+        setupRecyclerView(mingleId)
         setupMingleInviteButton(mingleId)
+        setupFetchMingle(mingleId)
+        setupToggles(mingleId)
+    }
+
+    private fun setToggleImage(imageView: ImageView, isOn: Boolean) {
+        imageView.setImageResource(
+            if (isOn) R.drawable.ic_toggle_on else R.drawable.ic_toggle_off
+        )
+    }
+
+    private fun setupToggles(mingleId: Int) {
+        setToggleImage(binding.toggleRealnameValue, false)
+        setToggleImage(binding.togglePermissionValue, false)
+
+        binding.toggleRealnameValue.setOnClickListener {
+            val previousState = isRealnameOn
+
+            isRealnameOn = !isRealnameOn
+            setToggleImage(binding.toggleRealnameValue, isRealnameOn)
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                mingleRepository.updateSetting(mingleId, "realname", isRealnameOn)
+                    .onSuccess {
+                        Log.d("MingleFragment", "변경 성공")
+                        Toast.makeText(requireContext(), "밍글의 권한 사용 여부를 성공적으로 변경했습니다.", Toast.LENGTH_LONG).show()
+                    }
+                    .onError {
+                        Log.d("MingleFragment", "변경 실패 - $it")
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                        isRealnameOn = previousState
+                        setToggleImage(binding.toggleRealnameValue, isRealnameOn)
+                    }
+                    .onException {
+                        Log.d("MingleFragment", "변경 중 예외 발생 - $it")
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                        isRealnameOn = previousState
+                        setToggleImage(binding.toggleRealnameValue, isRealnameOn)
+                    }
+            }
+        }
+
+        binding.togglePermissionValue.setOnClickListener {
+            val previousState = isPermissionOn
+
+            isPermissionOn = !isPermissionOn
+            setToggleImage(binding.togglePermissionValue, isPermissionOn)
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                mingleRepository.updateSetting(mingleId, "permission", isPermissionOn)
+                    .onSuccess {
+                        Log.d("MingleFragment", "변경 성공")
+                        Toast.makeText(requireContext(), "밍글의 실명 사용 여부를 성공적으로 변경했습니다.", Toast.LENGTH_LONG).show()
+                    }
+                    .onError {
+                        Log.d("MingleFragment", "변경 실패 - $it")
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                        isPermissionOn = previousState
+                        setToggleImage(binding.togglePermissionValue, isPermissionOn)
+                    }
+                    .onException {
+                        Log.d("MingleFragment", "변경 중 예외 발생 - $it")
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                        isPermissionOn = previousState
+                        setToggleImage(binding.togglePermissionValue, isPermissionOn)
+                    }
+            }
+        }
     }
 
     private fun setupMingleInviteButton(mingleId: Int) {
@@ -68,7 +142,16 @@ class MingleFragment : Fragment() {
                 .onSuccess { response ->
                     Log.d("MingleFragment", "밍글 정보 요청 성공")
                     setupGetTypeImage(response.mingleType)
+                    mingleMemberAdapter.submitList(response.mingleMembers)
+
                     (requireActivity() as MainActivity).setToolbarTitle(response.mingleName)
+
+                    val dt = LocalDateTime.parse(response.createdAt)
+                    binding.registerDateValue.text = dt.formatCustom(1)
+                    binding.mingleMemberCntValue.text = (response.mingleMembers.size+1).toString()
+                    binding.ownerNameValue.text = response.ownerName
+                    setToggleImage(binding.toggleRealnameValue, response.useRealname)
+                    setToggleImage(binding.togglePermissionValue, response.usePermission)
                 }
                 .onError {
                     Log.d("MingleFragment", "밍글 요청 실패 - $it")
@@ -81,12 +164,43 @@ class MingleFragment : Fragment() {
         }
     }
 
-    private fun setupRecyclerView() {
-        mingleMemberAdapter = MingleMemberAdapter { memberId, permissionType, isAllowed ->
-            Log.d("MingleFragment", "$memberId / $permissionType / $isAllowed")
+    private fun setupRecyclerView(mingleId: Int) {
+        mingleMemberAdapter = MingleMemberAdapter(
+            viewLifecycleOwner
+        ) { memberId, permissionType, isAllowed ->
+
+            var success = false
+
+            mingleRepository.updateMemberPermission(
+                mingleId = mingleId,
+                mingleMemberId = memberId,
+                minglePermissionRequest = MinglePermissionRequest(
+                    permission = permissionType,
+                    value = isAllowed
+                )
+            )
+                .onSuccess {
+                    Log.d("MingleFragment", "권한 변경 성공")
+                    Toast.makeText(requireContext(), "해당 밍글 멤버의 권한을 성공적으로 변경했습니다.", Toast.LENGTH_LONG).show()
+                    success = true
+                }
+                .onError {
+                    Log.d("MingleFragment", "권한 변경 실패 - $it")
+                    Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                    success = false
+                }
+                .onException {
+                    Log.d("MingleFragment", "권한 변경 중 예외 발생 - $it")
+                    Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                    success = false
+                }
+
+            success
         }
 
-        binding.mingleRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.mingleRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext())
+
         binding.mingleRecyclerView.adapter = mingleMemberAdapter
     }
 

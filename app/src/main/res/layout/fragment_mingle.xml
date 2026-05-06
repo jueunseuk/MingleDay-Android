@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/round_bg"
-                android:padding="12dp">
+                android:padding="18dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -54,12 +54,14 @@
                     android:textSize="16sp"
                     />
                 <TextView
+                    android:id="@+id/register_date_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/date_format"
                     android:fontFamily="@font/medium"
                     android:textColor="@color/content"
                     android:textSize="14sp"
+                    android:layout_marginTop="5dp"
                     />
             </LinearLayout>
 
@@ -68,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/round_bg"
-                android:padding="12dp"
+                android:padding="18dp"
                 android:layout_marginTop="5dp">
                 <TextView
                     android:layout_width="wrap_content"
@@ -79,12 +81,14 @@
                     android:textSize="16sp"
                     />
                 <TextView
+                    android:id="@+id/mingle_member_cnt_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
                     android:fontFamily="@font/medium"
                     android:textColor="@color/content"
                     android:textSize="14sp"
+                    android:layout_marginTop="5dp"
                     />
             </LinearLayout>
 
@@ -93,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/round_bg"
-                android:padding="12dp"
+                android:padding="18dp"
                 android:layout_marginTop="5dp">
                 <TextView
                     android:layout_width="wrap_content"
@@ -104,12 +108,14 @@
                     android:textSize="16sp"
                     />
                 <TextView
+                    android:id="@+id/owner_name_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/name_label"
                     android:fontFamily="@font/medium"
                     android:textColor="@color/content"
                     android:textSize="14sp"
+                    android:layout_marginTop="5dp"
                     />
             </LinearLayout>
         </LinearLayout>
@@ -131,7 +137,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/round_bg"
-                android:padding="12dp"
+                android:padding="18dp"
                 android:layout_marginTop="5dp">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -143,11 +149,11 @@
                         android:layout_weight="1"
                         android:text="@string/mingle_setting_option1"
                         android:fontFamily="@font/medium"
-                        android:textColor="@color/content"
+                        android:textColor="@color/title"
                         android:textSize="14sp"
                         />
                     <ImageView
-                        android:id="@+id/toggle_realname_value"
+                        android:id="@+id/toggle_permission_value"
                         android:layout_width="30dp"
                         android:layout_height="match_parent"
                         android:contentDescription="@string/image_alt"
@@ -164,11 +170,11 @@
                         android:layout_weight="1"
                         android:text="@string/mingle_setting_option2"
                         android:fontFamily="@font/medium"
-                        android:textColor="@color/content"
+                        android:textColor="@color/title"
                         android:textSize="14sp"
                         />
                     <ImageView
-                        android:id="@+id/toggle_permission_value"
+                        android:id="@+id/toggle_realname_value"
                         android:layout_width="30dp"
                         android:layout_height="match_parent"
                         android:contentDescription="@string/image_alt"

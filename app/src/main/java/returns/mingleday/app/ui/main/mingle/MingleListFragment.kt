@@ -73,7 +73,9 @@ class MingleListFragment : Fragment() {
             mingleRepository.getMyMingles()
                 .onSuccess { response ->
                     Log.d("MingleListFragment", "밍글 목록 요청 성공")
-                    binding.mingleListCntValue.text = "소속된 밍글 ${response.size}개"
+                    if(response.isEmpty()) {
+                        binding.mingleListCntValue.text = "아래의 버튼을 눌러 새로운 밍글을 만들어보세요!"
+                    } else binding.mingleListCntValue.text = "소속된 밍글 ${response.size}개"
                     mingleAdapter.submitList(response)
                 }
                 .onError {

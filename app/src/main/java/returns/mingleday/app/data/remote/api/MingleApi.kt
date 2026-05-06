@@ -3,12 +3,15 @@ package returns.mingleday.app.data.remote.api
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 import returns.mingleday.app.data.remote.model.common.SuccessResponse
 import returns.mingleday.app.data.remote.model.mingle.CreateMingleRequest
 import returns.mingleday.app.data.remote.model.mingle.CreateMingleResponse
 import returns.mingleday.app.data.remote.model.mingle.InviteMingleRequest
+import returns.mingleday.app.data.remote.model.mingle.MinglePermissionRequest
 import returns.mingleday.app.data.remote.model.mingle.MingleResponse
 import returns.mingleday.app.data.remote.model.mingle.MinglesResponse
 
@@ -29,5 +32,19 @@ interface MingleApi {
     @POST("mingles/invitation")
     suspend fun inviteMingle(
         @Body inviteMingleRequest: InviteMingleRequest
+    ): Response<SuccessResponse<String>>
+
+    @PATCH("mingles/{mingleId}/setting")
+    suspend fun updateSetting(
+        @Path("mingleId") mingleId: Int,
+        @Query("option") option: String,
+        @Query("value") value: Boolean
+    ): Response<SuccessResponse<String>>
+
+    @PATCH("mingles/{mingleId}/members/{mingleMemberId}")
+    suspend fun updateMemberPermission(
+        @Path("mingleId") mingleId: Int,
+        @Path("mingleMemberId") mingleMemberId: Long,
+        @Body minglePermissionRequest: MinglePermissionRequest
     ): Response<SuccessResponse<String>>
 }

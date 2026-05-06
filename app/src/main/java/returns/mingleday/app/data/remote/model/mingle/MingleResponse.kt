@@ -6,5 +6,8 @@ data class MingleResponse(
     val profileUrl: String,
     val mingleType: MingleType,
     val createdAt: String,
+    val ownerName: String,
+    val useRealname: Boolean,
+    val usePermission: Boolean,
     val mingleMembers: List<MingleMemberWithPermissionResponse>
 )

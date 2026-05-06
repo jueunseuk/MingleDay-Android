@@ -53,7 +53,7 @@ class MymenuFragment : Fragment() {
     private fun setupWithdraw() {
         binding.withdrawButton.setOnClickListener {
             binding.withdrawButton.isEnabled = false
-            binding.withdrawButton.text = R.string.requesting.toString()
+            binding.withdrawButton.setText(R.string.requesting)
 
             viewLifecycleOwner.lifecycleScope.launch {
                 authRepository.withdraw()
