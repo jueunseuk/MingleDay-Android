@@ -68,4 +68,12 @@ class MingleRepository {
             mingleApi.updateMemberPermission(mingleId, mingleMemberId, minglePermissionRequest)
         }
     }
+
+    suspend fun leaveMingle(
+        mingleId: Int
+    ): ApiResult<String> {
+        return safeApiCall {
+            mingleApi.leaveMingle(mingleId)
+        }
+    }
 }

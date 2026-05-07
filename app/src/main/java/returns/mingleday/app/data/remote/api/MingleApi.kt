@@ -2,6 +2,7 @@ package returns.mingleday.app.data.remote.api
 
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -46,5 +47,10 @@ interface MingleApi {
         @Path("mingleId") mingleId: Int,
         @Path("mingleMemberId") mingleMemberId: Long,
         @Body minglePermissionRequest: MinglePermissionRequest
+    ): Response<SuccessResponse<String>>
+
+    @DELETE("mingles/{mingleId}/members/leave")
+    suspend fun leaveMingle(
+        @Path("mingleId") mingleId: Int
     ): Response<SuccessResponse<String>>
 }
