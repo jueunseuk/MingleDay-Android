@@ -5,9 +5,11 @@ import returns.mingleday.app.data.remote.model.common.SuccessResponse
 import returns.mingleday.app.data.remote.model.mingle.CreateMingleRequest
 import returns.mingleday.app.data.remote.model.mingle.CreateMingleResponse
 import returns.mingleday.app.data.remote.model.mingle.InviteMingleRequest
+import returns.mingleday.app.data.remote.model.mingle.MingleLogResponse
 import returns.mingleday.app.data.remote.model.mingle.MinglePermissionRequest
 import returns.mingleday.app.data.remote.model.mingle.MingleResponse
 import returns.mingleday.app.data.remote.model.mingle.MinglesResponse
+import returns.mingleday.app.data.remote.model.mingle.MyMingleLogResponse
 import returns.mingleday.app.data.remote.network.ApiResult
 import returns.mingleday.app.data.remote.network.RetrofitClient
 import returns.mingleday.app.data.remote.network.safeApiCall
@@ -74,6 +76,21 @@ class MingleRepository {
     ): ApiResult<String> {
         return safeApiCall {
             mingleApi.leaveMingle(mingleId)
+        }
+    }
+
+    suspend fun getMyLogs(
+    ): ApiResult<List<MyMingleLogResponse>> {
+        return safeRawApiCall {
+            mingleApi.getMyLogs()
+        }
+    }
+
+    suspend fun getMingleLogs(
+        mingleId: Int
+    ): ApiResult<List<MingleLogResponse>> {
+        return safeRawApiCall {
+            mingleApi.getMingleLogs(mingleId)
         }
     }
 }

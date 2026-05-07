@@ -12,9 +12,11 @@ import returns.mingleday.app.data.remote.model.common.SuccessResponse
 import returns.mingleday.app.data.remote.model.mingle.CreateMingleRequest
 import returns.mingleday.app.data.remote.model.mingle.CreateMingleResponse
 import returns.mingleday.app.data.remote.model.mingle.InviteMingleRequest
+import returns.mingleday.app.data.remote.model.mingle.MingleLogResponse
 import returns.mingleday.app.data.remote.model.mingle.MinglePermissionRequest
 import returns.mingleday.app.data.remote.model.mingle.MingleResponse
 import returns.mingleday.app.data.remote.model.mingle.MinglesResponse
+import returns.mingleday.app.data.remote.model.mingle.MyMingleLogResponse
 
 interface MingleApi {
     @GET("mingles")
@@ -53,4 +55,12 @@ interface MingleApi {
     suspend fun leaveMingle(
         @Path("mingleId") mingleId: Int
     ): Response<SuccessResponse<String>>
+
+    @GET("mingles/logs/me")
+    suspend fun getMyLogs(): Response<List<MyMingleLogResponse>>
+
+    @GET("mingles/{mingleId}/logs")
+    suspend fun getMingleLogs(
+        @Path("mingleId") mingleId: Int
+    ): Response<List<MingleLogResponse>>
 }
