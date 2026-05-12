@@ -18,6 +18,7 @@ import returns.mingleday.app.data.remote.model.mingle.MingleType
 import returns.mingleday.app.data.remote.network.onError
 import returns.mingleday.app.data.remote.network.onException
 import returns.mingleday.app.data.remote.network.onSuccess
+import returns.mingleday.app.data.repository.CategoryRepository
 import returns.mingleday.app.data.repository.MingleRepository
 import returns.mingleday.app.ui.main.MainActivity
 import returns.mingleday.databinding.FragmentMingleBinding
@@ -29,7 +30,9 @@ class MingleFragment : Fragment() {
     private var _binding: FragmentMingleBinding? = null
     private val binding get() = _binding!!
     private val mingleRepository = MingleRepository()
+    private val categoryRepository = CategoryRepository()
     private lateinit var mingleMemberAdapter: MingleMemberAdapter
+    private lateinit var mingleCategoryAdapter: MingleCategoryAdapter
 
     private var isRealnameOn: Boolean = false
     private var isPermissionOn: Boolean = false
@@ -207,6 +210,12 @@ class MingleFragment : Fragment() {
     }
 
     private fun setupRecyclerView(mingleId: Int) {
+        mingleCategoryAdapter = MingleCategoryAdapter(
+            mingleId
+        ) {
+            categoryRepository.getMingleCategory()
+        }
+
         mingleMemberAdapter = MingleMemberAdapter(
             viewLifecycleOwner
         ) { memberId, permissionType, isAllowed ->

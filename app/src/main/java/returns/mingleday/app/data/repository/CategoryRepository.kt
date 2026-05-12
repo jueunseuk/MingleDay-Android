@@ -12,7 +12,7 @@ class CategoryRepository {
 
     private val categoryApi: CategoryApi = RetrofitClient.createApi(CategoryApi::class.java)
 
-    suspend fun getMyPageInfo(
+    suspend fun getMingleCategory(
         mingleId: Int
     ): ApiResult<List<CategoryResponse>> {
         return safeRawApiCall {

@@ -74,6 +74,7 @@
     <string name="mingle_description_label">밍글 설명</string>
     <string name="mingle_description_hint">어떤 밍글인지 알 수 있도록 설명을 작성해주세요</string>
     <string name="mingle_setting_label">밍글 설정</string>
+    <string name="mingle_category_setting_label">밍글 카테고리 설정</string>
     <string name="mingle_setting_option1">멤버별로 다른 권한을 부여</string>
     <string name="mingle_setting_option2">실명으로만 참여 가능</string>
     <string name="mingle_info_label">밍글 정보</string>

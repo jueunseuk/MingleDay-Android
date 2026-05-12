@@ -1,0 +1,14 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mingle_button"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:padding="10dp"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:background="@color/white">
+
+
+
+</LinearLayout>
