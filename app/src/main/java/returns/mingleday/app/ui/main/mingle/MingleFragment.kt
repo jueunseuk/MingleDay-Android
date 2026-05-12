@@ -51,6 +51,7 @@ class MingleFragment : Fragment() {
         setupRecyclerView(mingleId)
         setupMingleInviteButton(mingleId)
         setupLeaveButton(mingleId)
+        setupFetchCategories(mingleId)
         setupFetchMingle(mingleId)
         setupToggles(mingleId)
     }
@@ -210,12 +211,23 @@ class MingleFragment : Fragment() {
     }
 
     private fun setupRecyclerView(mingleId: Int) {
-        mingleCategoryAdapter = MingleCategoryAdapter(
-            mingleId
-        ) {
-            categoryRepository.getMingleCategory()
+        // mingle category recycler view
+        mingleCategoryAdapter = MingleCategoryAdapter(mingleId)
+        binding.mingleCategoryRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext())
+        binding.mingleCategoryRecyclerView.adapter =
+            mingleCategoryAdapter
+
+        viewLifecycleOwner.lifecycleScope.launch {
+
+            categoryRepository.getMingleCategory(mingleId)
+                .onSuccess { response ->
+
+                    mingleCategoryAdapter.submitList(response)
+                }
         }
 
+        // mingle member recycler view
         mingleMemberAdapter = MingleMemberAdapter(
             viewLifecycleOwner
         ) { memberId, permissionType, isAllowed ->
@@ -249,10 +261,9 @@ class MingleFragment : Fragment() {
             success
         }
 
-        binding.mingleRecyclerView.layoutManager =
+        binding.mingleMemberRecyclerView.layoutManager =
             LinearLayoutManager(requireContext())
-
-        binding.mingleRecyclerView.adapter = mingleMemberAdapter
+        binding.mingleMemberRecyclerView.adapter = mingleMemberAdapter
     }
 
     private fun setupGetTypeImage(mingleType: MingleType) {
@@ -268,4 +279,21 @@ class MingleFragment : Fragment() {
             else -> binding.mingleImageValue.setImageResource(R.drawable.bg_custom_default)
         }
     }
+
+    private fun setupFetchCategories(mingleId: Int) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            categoryRepository.getMingleCategory(mingleId)
+                .onSuccess { response ->
+                    mingleCategoryAdapter.submitList(response)
+                }
+                .onError {
+                    Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                }
+                .onException {
+                    Toast.makeText(requireContext(), "카테고리 조회 중 오류가 발생했습니다.", Toast.LENGTH_LONG).show()
+                }
+        }
+    }
+
+
 }

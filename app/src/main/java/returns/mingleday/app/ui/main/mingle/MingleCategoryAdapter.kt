@@ -1,120 +1,70 @@
 package returns.mingleday.app.ui.main.mingle
 
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.launch
-import returns.mingleday.R
-import returns.mingleday.app.data.remote.model.mingle.MingleMemberWithPermissionResponse
-import returns.mingleday.app.data.remote.model.mingle.MinglePermissionResponse
-import returns.mingleday.app.data.remote.model.mingle.PermissionType
-import returns.mingleday.databinding.ItemMemberPermissionBinding
+import returns.mingleday.app.data.remote.model.category.CategoryResponse
 import returns.mingleday.databinding.ItemMingleCategoryBinding
-import returns.mingleday.util.DateFormatter.formatCustom
-import java.time.LocalDateTime
+import returns.mingleday.util.ColorUtil
+import returns.mingleday.util.ColorUtil.getColorInt
 
 class MingleCategoryAdapter(
     private val mingleId: Int
-) : RecyclerView.Adapter<MingleCategoryAdapter.MemberViewHolder>() {
+) : RecyclerView.Adapter<MingleCategoryAdapter.CategoryViewHolder>() {
 
-    private val items = mutableListOf<MingleMemberWithPermissionResponse>()
+    private val items = mutableListOf<CategoryResponse>()
 
-    fun submitList(newItems: List<MingleMemberWithPermissionResponse>) {
+    fun submitList(newItems: List<CategoryResponse>) {
         items.clear()
         items.addAll(newItems)
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): CategoryViewHolder {
+
         val binding = ItemMingleCategoryBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
-        return MemberViewHolder(binding)
+
+        return CategoryViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: MemberViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         holder.bind(items[position])
     }
 
     override fun getItemCount(): Int = items.size
 
-    inner class MemberViewHolder(
-        private val binding: ItemMemberPermissionBinding
+    class CategoryViewHolder(
+        private val binding: ItemMingleCategoryBinding
     ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: CategoryResponse) {
+            binding.categoryNameValue.text = item.name
+            binding.categoryDescriptionValue.text = item.description
 
-        fun bind(item: MingleMemberWithPermissionResponse) {
-            binding.memberNameValue.text = item.name
-            binding.registerDateValue.text = LocalDateTime.parse(item.createdAt).formatCustom(2)
-
-            val permissionMap = item.permissions.associateBy { it.permissionType }
-            bindToggle(
-                binding.toggleInvite,
-                item.memberId,
-                PermissionType.INVITE,
-                permissionMap
+            setRoundedBackground(
+                binding.categoryNameValue,
+                item.backgroundColor
             )
-            bindToggle(
-                binding.toggleExpulsion,
-                item.memberId,
-                PermissionType.EXPULSION,
-                permissionMap
-            )
-            bindToggle(
-                binding.toggleCreate,
-                item.memberId,
-                PermissionType.CREATE,
-                permissionMap
-            )
-            bindToggle(
-                binding.toggleModify,
-                item.memberId,
-                PermissionType.MODIFY,
-                permissionMap
-            )
-            bindToggle(
-                binding.toggleDelete,
-                item.memberId,
-                PermissionType.DELETE,
-                permissionMap
-            )
+            binding.categoryNameValue.setTextColor(getColorInt(item.textColor))
+            binding.categoryDescriptionValue.text = item.description
         }
 
-        private fun bindToggle(
-            imageView: ImageView,
-            memberId: Long,
-            permissionType: PermissionType,
-            permissionMap: Map<PermissionType, MinglePermissionResponse>
-        ) {
-            var isOn = permissionMap[permissionType]?.value == true
-
-            imageView.setImageResource(
-                if (isOn) R.drawable.ic_toggle_on else R.drawable.ic_toggle_off
-            )
-
-            imageView.setOnClickListener {
-                val previousState = isOn
-                val newState = !isOn
-
-                isOn = newState
-                imageView.setImageResource(
-                    if (newState) R.drawable.ic_toggle_on else R.drawable.ic_toggle_off
-                )
-
-                lifecycleOwner.lifecycleScope.launch {
-                    val success = onPermissionChanged(memberId, permissionType, newState)
-                    if (!success) {
-                        isOn = previousState
-                        imageView.setImageResource(
-                            if (previousState) R.drawable.ic_toggle_on else R.drawable.ic_toggle_off
-                        )
-                    }
-                }
+        private fun setRoundedBackground(view: View, colorCode: String) {
+            val drawable = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = 12f * view.resources.displayMetrics.density
+                setColor(getColorInt(colorCode))
             }
-        }
 
+            view.background = drawable
+        }
     }
 }

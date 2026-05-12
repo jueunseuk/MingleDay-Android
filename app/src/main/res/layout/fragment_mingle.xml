@@ -204,7 +204,11 @@
             android:padding="18dp"
             android:layout_marginTop="5dp">
 
-
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/mingle_category_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
         </LinearLayout>
     </LinearLayout>
 
@@ -229,7 +233,7 @@
                 android:layout_marginTop="5dp">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/mingle_recycler_view"
+                    android:id="@+id/mingle_member_recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false" />
