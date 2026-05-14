@@ -19,6 +19,7 @@ interface CategoryApi {
 
     @POST("mingles/{mingleId}/categories")
     suspend fun createMingleCategory(
+        @Path("mingleId") mingleId: Int,
         @Body upsertCategoryRequest: UpsertCategoryRequest
     ): Response<SuccessResponse<String>>
 

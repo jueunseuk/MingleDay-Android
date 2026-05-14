@@ -11,7 +11,9 @@ import returns.mingleday.util.ColorUtil
 import returns.mingleday.util.ColorUtil.getColorInt
 
 class MingleCategoryAdapter(
-    private val mingleId: Int
+    private val mingleId: Int,
+    private val onEditClick: (CategoryResponse) -> Unit,
+    private val onDeleteClick: (CategoryResponse) -> Unit
 ) : RecyclerView.Adapter<MingleCategoryAdapter.CategoryViewHolder>() {
 
     private val items = mutableListOf<CategoryResponse>()
@@ -42,7 +44,7 @@ class MingleCategoryAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    class CategoryViewHolder(
+    inner class CategoryViewHolder(
         private val binding: ItemMingleCategoryBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: CategoryResponse) {
@@ -55,6 +57,14 @@ class MingleCategoryAdapter(
             )
             binding.categoryNameValue.setTextColor(getColorInt(item.textColor))
             binding.categoryDescriptionValue.text = item.description
+
+            binding.categoryEditButton.setOnClickListener {
+                onEditClick(item)
+            }
+
+            binding.categoryDeleteButton.setOnClickListener {
+                onDeleteClick(item)
+            }
         }
 
         private fun setRoundedBackground(view: View, colorCode: String) {

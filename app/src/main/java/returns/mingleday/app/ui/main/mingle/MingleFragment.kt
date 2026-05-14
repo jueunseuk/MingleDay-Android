@@ -2,6 +2,8 @@ package returns.mingleday.app.ui.main.mingle
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +15,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.launch
 import returns.mingleday.R
+import returns.mingleday.app.data.remote.model.category.CategoryResponse
+import returns.mingleday.app.data.remote.model.category.UpsertCategoryRequest
 import returns.mingleday.app.data.remote.model.mingle.MinglePermissionRequest
 import returns.mingleday.app.data.remote.model.mingle.MingleType
 import returns.mingleday.app.data.remote.network.onError
@@ -22,6 +26,7 @@ import returns.mingleday.app.data.repository.CategoryRepository
 import returns.mingleday.app.data.repository.MingleRepository
 import returns.mingleday.app.ui.main.MainActivity
 import returns.mingleday.databinding.FragmentMingleBinding
+import returns.mingleday.util.ColorUtil
 import returns.mingleday.util.DateFormatter.formatCustom
 import java.time.LocalDateTime
 
@@ -54,6 +59,78 @@ class MingleFragment : Fragment() {
         setupFetchCategories(mingleId)
         setupFetchMingle(mingleId)
         setupToggles(mingleId)
+        setupCategoryManageButton(mingleId)
+        setupValidation()
+    }
+
+    private fun setupCategoryManageButton(mingleId: Int) {
+        binding.addCategoryButton.setOnClickListener {
+            binding.inputNameValue.requestFocus()
+            binding.addCategoryButton.visibility = View.GONE
+            binding.addCategoryLayout.visibility = View.VISIBLE
+        }
+
+        binding.cancelCategoryButton.setOnClickListener {
+            binding.addCategoryButton.visibility = View.VISIBLE
+            binding.addCategoryLayout.visibility = View.GONE
+            binding.inputNameValue.setText("")
+            binding.inputDescriptionValue.setText("")
+            binding.inputBackgroundColorValue.setText("")
+        }
+
+        binding.sendCategoryButton.setOnClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                categoryRepository.createMingleCategory(
+                    mingleId,
+                    UpsertCategoryRequest(
+                        null,
+                        mingleId,
+                        binding.inputNameValue.text.toString(),
+                        binding.inputDescriptionValue.text.toString(),
+                        binding.inputBackgroundColorValue.text.toString(),
+                        binding.inputTextColorValue.text.toString()
+                ))
+                    .onSuccess {
+                        binding.addCategoryButton.visibility = View.VISIBLE
+                        binding.addCategoryLayout.visibility = View.GONE
+                        binding.inputNameValue.setText("")
+                        binding.inputDescriptionValue.setText("")
+                        binding.inputBackgroundColorValue.setText("")
+                        Toast.makeText(requireContext(), "카테고리를 성공적으로 추가했습니다.", Toast.LENGTH_LONG).show()
+                        Log.d("MingleFragment", "카테고리 생성 성공")
+                        setupFetchCategories(mingleId)
+                    }
+                    .onError {
+                        binding.inputNameValue.requestFocus()
+                        Log.d("MingleFragment", "카테고리 생성 실패 - $it")
+                    }
+                    .onException {
+                        binding.inputNameValue.requestFocus()
+                        Log.d("MingleFragment", "카테고리 생성 도중 예외 발생 - $it")
+                    }
+            }
+        }
+    }
+
+    private fun setupValidation() {
+        val watcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val isNameLengthValid = binding.inputNameValue.length() > 0
+                val isTextColorValid = binding.inputTextColorValue.length() == 6
+                val isBGColorValid = binding.inputTextColorValue.length() == 6
+                val isTextHex = ColorUtil.isHexColor(binding.inputTextColorValue.text.toString())
+                val isBGHex = ColorUtil.isHexColor(binding.inputBackgroundColorValue.text.toString())
+                binding.addCategoryButton.isEnabled = isNameLengthValid && isTextColorValid && isBGColorValid && isTextHex && isBGHex
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        }
+
+        binding.inputNameValue.addTextChangedListener(watcher)
+        binding.inputBackgroundColorValue.addTextChangedListener(watcher)
+        binding.inputTextColorValue.addTextChangedListener(watcher)
     }
 
     private fun setupLeaveButton(mingleId: Int) {
@@ -212,11 +289,13 @@ class MingleFragment : Fragment() {
 
     private fun setupRecyclerView(mingleId: Int) {
         // mingle category recycler view
-        mingleCategoryAdapter = MingleCategoryAdapter(mingleId)
-        binding.mingleCategoryRecyclerView.layoutManager =
-            LinearLayoutManager(requireContext())
-        binding.mingleCategoryRecyclerView.adapter =
-            mingleCategoryAdapter
+        mingleCategoryAdapter = MingleCategoryAdapter(
+            mingleId,
+            onEditClick = ::handleEditCategory,
+            onDeleteClick = ::handleDeleteCategory
+        )
+        binding.mingleCategoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.mingleCategoryRecyclerView.adapter = mingleCategoryAdapter
 
         viewLifecycleOwner.lifecycleScope.launch {
 
@@ -266,6 +345,14 @@ class MingleFragment : Fragment() {
         binding.mingleMemberRecyclerView.adapter = mingleMemberAdapter
     }
 
+    private fun handleEditCategory(item: CategoryResponse) {
+        Log.d("MingleFragment", "수정하기 클릭 - ${item.categoryId}")
+    }
+
+    private fun handleDeleteCategory(item: CategoryResponse) {
+        Log.d("MingleFragment", "삭제하기 클릭 - ${item.categoryId}")
+    }
+
     private fun setupGetTypeImage(mingleType: MingleType) {
         when(mingleType) {
             MingleType.FAMILY -> binding.mingleImageValue.setImageResource(R.drawable.bg_family_default)
@@ -294,6 +381,4 @@ class MingleFragment : Fragment() {
                 }
         }
     }
-
-
 }
