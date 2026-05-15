@@ -1,6 +1,7 @@
 package returns.mingleday.app.ui.main.mingle
 
 import android.app.AlertDialog
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -119,8 +120,8 @@ class MingleFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val isNameLengthValid = binding.inputNameValue.length() > 0
                 val isTextColorValid = binding.inputTextColorValue.length() == 6
-                val isBGColorValid = binding.inputTextColorValue.length() == 6
                 val isTextHex = ColorUtil.isHexColor(binding.inputTextColorValue.text.toString())
+                val isBGColorValid = binding.inputBackgroundColorValue.length() == 6
                 val isBGHex = ColorUtil.isHexColor(binding.inputBackgroundColorValue.text.toString())
                 binding.addCategoryButton.isEnabled = isNameLengthValid && isTextColorValid && isBGColorValid && isTextHex && isBGHex
             }
@@ -193,7 +194,7 @@ class MingleFragment : Fragment() {
                 mingleRepository.updateSetting(mingleId, "realname", isRealnameOn)
                     .onSuccess {
                         Log.d("MingleFragment", "변경 성공")
-                        Toast.makeText(requireContext(), "밍글의 권한 사용 여부를 성공적으로 변경했습니다.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "밍글의 실명 사용 여부를 성공적으로 변경했습니다.", Toast.LENGTH_LONG).show()
                     }
                     .onError {
                         Log.d("MingleFragment", "변경 실패 - $it")
@@ -220,7 +221,7 @@ class MingleFragment : Fragment() {
                 mingleRepository.updateSetting(mingleId, "permission", isPermissionOn)
                     .onSuccess {
                         Log.d("MingleFragment", "변경 성공")
-                        Toast.makeText(requireContext(), "밍글의 실명 사용 여부를 성공적으로 변경했습니다.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "밍글의 권한 사용 여부를 성공적으로 변경했습니다.", Toast.LENGTH_LONG).show()
                     }
                     .onError {
                         Log.d("MingleFragment", "변경 실패 - $it")
@@ -291,18 +292,23 @@ class MingleFragment : Fragment() {
         // mingle category recycler view
         mingleCategoryAdapter = MingleCategoryAdapter(
             mingleId,
-            onEditClick = ::handleEditCategory,
-            onDeleteClick = ::handleDeleteCategory
+            onEditClick = {category -> handleEditCategory(mingleId, category)},
+            onDeleteClick = {category -> handleDeleteCategory(mingleId, category)}
         )
         binding.mingleCategoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.mingleCategoryRecyclerView.adapter = mingleCategoryAdapter
 
         viewLifecycleOwner.lifecycleScope.launch {
-
             categoryRepository.getMingleCategory(mingleId)
                 .onSuccess { response ->
-
+                    Log.d("MingleFragment", "카테고리 목록 불러오기 완료")
                     mingleCategoryAdapter.submitList(response)
+                }
+                .onError {
+                    Log.d("MingleFragment", "카테고리 목록 불러오기 실패")
+                }
+                .onException {
+                    Log.d("MingleFragment", "카테고리 목록 불러오는 중 예외 발생")
                 }
         }
 
@@ -345,12 +351,52 @@ class MingleFragment : Fragment() {
         binding.mingleMemberRecyclerView.adapter = mingleMemberAdapter
     }
 
-    private fun handleEditCategory(item: CategoryResponse) {
-        Log.d("MingleFragment", "수정하기 클릭 - ${item.categoryId}")
+    private fun handleEditCategory(mingleId: Int, item: CategoryResponse) {
+        CategoryEditDialogFragment(item) {name, description, textColor, bgColor ->
+            viewLifecycleOwner.lifecycleScope.launch {
+                categoryRepository.modifyMingleCategory(
+                    mingleId,
+                    item.categoryId,
+                    UpsertCategoryRequest(
+                        item.categoryId,
+                        mingleId,
+                        name,
+                        description,
+                        bgColor,
+                        textColor
+                    )
+                )
+                    .onSuccess {
+                        setupFetchCategories(mingleId)
+                        Toast.makeText(requireContext(), "$name 수정 완료", Toast.LENGTH_LONG).show()
+                    }
+                    .onError {
+                        Log.d("MingleFragment", "카테고리 수정 중 에러 발생")
+                    }
+                    .onException {
+                        Log.d("MingleFragment", "카테고리 수정 중 예외 발생")
+                    }
+            }
+        }.show(parentFragmentManager, "CategoryEditDialogFragment")
     }
 
-    private fun handleDeleteCategory(item: CategoryResponse) {
-        Log.d("MingleFragment", "삭제하기 클릭 - ${item.categoryId}")
+    private fun handleDeleteCategory(mingleId: Int, item: CategoryResponse) {
+        CategoryDeleteDialogFragment(item.name) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                categoryRepository.deleteMingleCategory(mingleId, item.categoryId)
+                    .onSuccess {
+                        setupFetchCategories(mingleId)
+                        Log.d("MingleFragment", "카테고리 삭제 성공")
+                        Toast.makeText(requireContext(), "해당 카테고리를 성공적으로 삭제했습니다.", Toast.LENGTH_LONG).show()
+                    }
+                    .onError {
+                        Log.d("MingleFragment", "카테고리 삭제 실패 - $it")
+                    }
+                    .onException {
+                        Log.d("MingleFragment", "카테고리 삭제 중 예외 발생 - $it")
+                    }
+            }
+        }.show(parentFragmentManager, "CategoryDeleteDialogFragment")
     }
 
     private fun setupGetTypeImage(mingleType: MingleType) {

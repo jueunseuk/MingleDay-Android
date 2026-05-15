@@ -1,6 +1,7 @@
 package returns.mingleday.app.ui.main.mingle
 
 import android.graphics.drawable.GradientDrawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
