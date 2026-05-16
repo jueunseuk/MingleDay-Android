@@ -1,7 +1,6 @@
 package returns.mingleday.app.ui.main.mingle
 
 import android.app.AlertDialog
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -134,6 +133,64 @@ class MingleFragment : Fragment() {
         binding.inputTextColorValue.addTextChangedListener(watcher)
     }
 
+    private fun setupToggles(mingleId: Int) {
+        binding.toggleRealnameValue.setOnClickListener {
+            val previousState = isRealnameOn
+
+            isRealnameOn = !isRealnameOn
+            setToggleImage(binding.toggleRealnameValue, isRealnameOn)
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                mingleRepository.updateSetting(mingleId, "realname", isRealnameOn)
+                    .onSuccess {
+                        Log.d("MingleFragment", "변경 성공")
+                        Toast.makeText(requireContext(), "밍글의 실명 사용 여부를 성공적으로 변경했습니다.", Toast.LENGTH_LONG).show()
+                        setToggleImage(binding.toggleRealnameValue, isRealnameOn)
+                    }
+                    .onError {
+                        Log.d("MingleFragment", "변경 실패 - $it")
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                        isRealnameOn = previousState
+                        setToggleImage(binding.toggleRealnameValue, isRealnameOn)
+                    }
+                    .onException {
+                        Log.d("MingleFragment", "변경 중 예외 발생 - $it")
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                        isRealnameOn = previousState
+                        setToggleImage(binding.toggleRealnameValue, isRealnameOn)
+                    }
+            }
+        }
+
+        binding.togglePermissionValue.setOnClickListener {
+            val previousState = isPermissionOn
+
+            isPermissionOn = !isPermissionOn
+            setToggleImage(binding.togglePermissionValue, isPermissionOn)
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                mingleRepository.updateSetting(mingleId, "permission", isPermissionOn)
+                    .onSuccess {
+                        Log.d("MingleFragment", "변경 성공")
+                        Toast.makeText(requireContext(), "밍글의 권한 사용 여부를 성공적으로 변경했습니다.", Toast.LENGTH_LONG).show()
+                        setToggleImage(binding.togglePermissionValue, isPermissionOn)
+                    }
+                    .onError {
+                        Log.d("MingleFragment", "변경 실패 - $it")
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                        isPermissionOn = previousState
+                        setToggleImage(binding.togglePermissionValue, isPermissionOn)
+                    }
+                    .onException {
+                        Log.d("MingleFragment", "변경 중 예외 발생 - $it")
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                        isPermissionOn = previousState
+                        setToggleImage(binding.togglePermissionValue, isPermissionOn)
+                    }
+            }
+        }
+    }
+
     private fun setupLeaveButton(mingleId: Int) {
         binding.leaveButton.setOnClickListener {
             AlertDialog.Builder(requireContext())
@@ -180,65 +237,6 @@ class MingleFragment : Fragment() {
         )
     }
 
-    private fun setupToggles(mingleId: Int) {
-        setToggleImage(binding.toggleRealnameValue, false)
-        setToggleImage(binding.togglePermissionValue, false)
-
-        binding.toggleRealnameValue.setOnClickListener {
-            val previousState = isRealnameOn
-
-            isRealnameOn = !isRealnameOn
-            setToggleImage(binding.toggleRealnameValue, isRealnameOn)
-
-            viewLifecycleOwner.lifecycleScope.launch {
-                mingleRepository.updateSetting(mingleId, "realname", isRealnameOn)
-                    .onSuccess {
-                        Log.d("MingleFragment", "변경 성공")
-                        Toast.makeText(requireContext(), "밍글의 실명 사용 여부를 성공적으로 변경했습니다.", Toast.LENGTH_LONG).show()
-                    }
-                    .onError {
-                        Log.d("MingleFragment", "변경 실패 - $it")
-                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
-                        isRealnameOn = previousState
-                        setToggleImage(binding.toggleRealnameValue, isRealnameOn)
-                    }
-                    .onException {
-                        Log.d("MingleFragment", "변경 중 예외 발생 - $it")
-                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
-                        isRealnameOn = previousState
-                        setToggleImage(binding.toggleRealnameValue, isRealnameOn)
-                    }
-            }
-        }
-
-        binding.togglePermissionValue.setOnClickListener {
-            val previousState = isPermissionOn
-
-            isPermissionOn = !isPermissionOn
-            setToggleImage(binding.togglePermissionValue, isPermissionOn)
-
-            viewLifecycleOwner.lifecycleScope.launch {
-                mingleRepository.updateSetting(mingleId, "permission", isPermissionOn)
-                    .onSuccess {
-                        Log.d("MingleFragment", "변경 성공")
-                        Toast.makeText(requireContext(), "밍글의 권한 사용 여부를 성공적으로 변경했습니다.", Toast.LENGTH_LONG).show()
-                    }
-                    .onError {
-                        Log.d("MingleFragment", "변경 실패 - $it")
-                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
-                        isPermissionOn = previousState
-                        setToggleImage(binding.togglePermissionValue, isPermissionOn)
-                    }
-                    .onException {
-                        Log.d("MingleFragment", "변경 중 예외 발생 - $it")
-                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
-                        isPermissionOn = previousState
-                        setToggleImage(binding.togglePermissionValue, isPermissionOn)
-                    }
-            }
-        }
-    }
-
     private fun setupMingleInviteButton(mingleId: Int) {
         binding.inviteButton.setOnClickListener {
             EmailDialogFragment { email ->
@@ -274,6 +272,8 @@ class MingleFragment : Fragment() {
                     binding.registerDateValue.text = dt.formatCustom(1)
                     binding.mingleMemberCntValue.text = (response.mingleMembers.size+1).toString()
                     binding.ownerNameValue.text = response.ownerName
+                    isRealnameOn = response.useRealname
+                    isPermissionOn = response.usePermission
                     setToggleImage(binding.toggleRealnameValue, response.useRealname)
                     setToggleImage(binding.togglePermissionValue, response.usePermission)
                 }

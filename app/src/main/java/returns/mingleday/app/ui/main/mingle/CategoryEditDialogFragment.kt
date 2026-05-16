@@ -24,7 +24,6 @@ class CategoryEditDialogFragment(
     private var _binding: FragmentCategoryEditDialogBinding? = null
     private val binding get() = _binding!!
     private var validation = false
-
     private lateinit var positiveButton: Button
 
     override fun onStart() {

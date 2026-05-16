@@ -9,7 +9,7 @@
         android:id="@+id/email_input_value"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/email_hint"
+        android:hint="초대할 이메일 입력"
         android:textColorHint="@color/disable"
         android:inputType="textEmailAddress" />
 
