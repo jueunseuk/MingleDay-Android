@@ -21,10 +21,11 @@ class CategoryRepository {
     }
 
     suspend fun createMingleCategory(
+        mingleId: Int,
         upsertCategoryRequest: UpsertCategoryRequest
     ): ApiResult<String> {
         return safeApiCall {
-            categoryApi.createMingleCategory(upsertCategoryRequest)
+            categoryApi.createMingleCategory(mingleId, upsertCategoryRequest)
         }
     }
 

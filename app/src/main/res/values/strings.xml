@@ -89,6 +89,18 @@
     <string name="permission_delete">Schedule Deletion</string>
     <string name="mingle_leave_button">Leave Mingle</string>
     <string name="mingle_expel_button">Expel</string>
+    <string name="category_add_button">Add Category</string>
+    <string name="send_category_button">Create</string>
+    <string name="cancel_category_button">Cancel</string>
+    <string name="category_name_label">name</string>
+    <string name="category_name_hint">이름은 최소 1자 이상 적어주세요</string>
+    <string name="category_description_label">description</string>
+    <string name="category_description_hint">설명은 자유롭게 작성해주세요</string>
+    <string name="category_text_color_label">text color</string>
+    <string name="category_text_color_hint">FFFFFF</string>
+    <string name="category_bg_color_label">bg color</string>
+    <string name="category_bg_color_hint">000000</string>
+    <string name="category_delete_alert">을(를) 삭제하시겠습니까?</string>
 
     <!--  검색  -->
     <string name="search_title">Search</string>

@@ -1,18 +1,22 @@
 package returns.mingleday.app.ui.main.mingle
 
 import android.graphics.drawable.GradientDrawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import returns.mingleday.app.data.remote.model.category.CategoryResponse
 import returns.mingleday.databinding.ItemMingleCategoryBinding
+import returns.mingleday.util.ColorUtil
 import returns.mingleday.util.ColorUtil.getColorInt
 
 class MingleCategoryAdapter(
     private val mingleId: Int,
-    private val onItemClick: (CategoryResponse) -> Unit
+    private val onEditClick: (CategoryResponse) -> Unit,
+    private val onDeleteClick: (CategoryResponse) -> Unit
 ) : RecyclerView.Adapter<MingleCategoryAdapter.CategoryViewHolder>() {
+
     private val items = mutableListOf<CategoryResponse>()
 
     fun submitList(newItems: List<CategoryResponse>) {
@@ -54,6 +58,14 @@ class MingleCategoryAdapter(
             )
             binding.categoryNameValue.setTextColor(getColorInt(item.textColor))
             binding.categoryDescriptionValue.text = item.description
+
+            binding.categoryEditButton.setOnClickListener {
+                onEditClick(item)
+            }
+
+            binding.categoryDeleteButton.setOnClickListener {
+                onDeleteClick(item)
+            }
         }
 
         private fun setRoundedBackground(view: View, colorCode: String) {

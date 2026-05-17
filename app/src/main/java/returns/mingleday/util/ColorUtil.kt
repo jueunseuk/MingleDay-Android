@@ -30,4 +30,8 @@ object ColorUtil {
             .attachBrightnessSlideBar(true)
             .show()
     }
+
+    fun isHexColor(value: String): Boolean {
+        return Regex("^[0-9A-Fa-f]{6}$").matches(value)
+    }
 }
