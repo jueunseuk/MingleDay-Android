@@ -134,9 +134,6 @@ class MingleFragment : Fragment() {
     }
 
     private fun setupToggles(mingleId: Int) {
-        setToggleImage(binding.toggleRealnameValue, false)
-        setToggleImage(binding.togglePermissionValue, false)
-
         binding.toggleRealnameValue.setOnClickListener {
             val previousState = isRealnameOn
 
