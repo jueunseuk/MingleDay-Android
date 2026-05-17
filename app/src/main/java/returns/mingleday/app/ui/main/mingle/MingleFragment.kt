@@ -51,7 +51,6 @@ class MingleFragment : Fragment() {
         setupRecyclerView(mingleId)
         setupMingleInviteButton(mingleId)
         setupLeaveButton(mingleId)
-        setupFetchCategories(mingleId)
         setupFetchMingle(mingleId)
         setupToggles(mingleId)
     }
@@ -212,18 +211,22 @@ class MingleFragment : Fragment() {
 
     private fun setupRecyclerView(mingleId: Int) {
         // mingle category recycler view
-        mingleCategoryAdapter = MingleCategoryAdapter(mingleId)
-        binding.mingleCategoryRecyclerView.layoutManager =
-            LinearLayoutManager(requireContext())
-        binding.mingleCategoryRecyclerView.adapter =
-            mingleCategoryAdapter
+        mingleCategoryAdapter = MingleCategoryAdapter(mingleId, onItemClick = {}) // 구현 예정
+        // 배치 방식 결정
+        binding.mingleCategoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        // 어댑터 설정
+        binding.mingleCategoryRecyclerView.adapter = mingleCategoryAdapter
 
         viewLifecycleOwner.lifecycleScope.launch {
-
             categoryRepository.getMingleCategory(mingleId)
                 .onSuccess { response ->
-
                     mingleCategoryAdapter.submitList(response)
+                }
+                .onError {
+                    Log.d("MingleFragment", "카테고리 목록 요청 실패 - $it")
+                }
+                .onException {
+                    Log.d("MingleFragment", "카테고리 목록 요청 도중 예외 발생 - $it")
                 }
         }
 
@@ -279,21 +282,4 @@ class MingleFragment : Fragment() {
             else -> binding.mingleImageValue.setImageResource(R.drawable.bg_custom_default)
         }
     }
-
-    private fun setupFetchCategories(mingleId: Int) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            categoryRepository.getMingleCategory(mingleId)
-                .onSuccess { response ->
-                    mingleCategoryAdapter.submitList(response)
-                }
-                .onError {
-                    Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
-                }
-                .onException {
-                    Toast.makeText(requireContext(), "카테고리 조회 중 오류가 발생했습니다.", Toast.LENGTH_LONG).show()
-                }
-        }
-    }
-
-
 }

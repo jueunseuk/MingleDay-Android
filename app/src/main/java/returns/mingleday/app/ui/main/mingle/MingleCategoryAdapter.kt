@@ -7,13 +7,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import returns.mingleday.app.data.remote.model.category.CategoryResponse
 import returns.mingleday.databinding.ItemMingleCategoryBinding
-import returns.mingleday.util.ColorUtil
 import returns.mingleday.util.ColorUtil.getColorInt
 
 class MingleCategoryAdapter(
-    private val mingleId: Int
+    private val mingleId: Int,
+    private val onItemClick: (CategoryResponse) -> Unit
 ) : RecyclerView.Adapter<MingleCategoryAdapter.CategoryViewHolder>() {
-
     private val items = mutableListOf<CategoryResponse>()
 
     fun submitList(newItems: List<CategoryResponse>) {
@@ -42,7 +41,7 @@ class MingleCategoryAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    class CategoryViewHolder(
+    inner class CategoryViewHolder(
         private val binding: ItemMingleCategoryBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: CategoryResponse) {
