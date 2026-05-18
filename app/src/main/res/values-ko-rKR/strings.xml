@@ -104,6 +104,8 @@
 
     <!--  검색  -->
     <string name="search_title">검색</string>
+    <string name="search_hint">일정 검색</string>
+    <string name="search_result_empty">검색 결과가 존재하지 않습니다</string>
 
     <!--  마이 메뉴  -->
     <string name="my_info_label">내 정보</string>
