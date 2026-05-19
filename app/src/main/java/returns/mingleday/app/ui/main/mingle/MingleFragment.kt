@@ -26,8 +26,8 @@ import returns.mingleday.app.data.repository.CategoryRepository
 import returns.mingleday.app.data.repository.MingleRepository
 import returns.mingleday.app.ui.main.MainActivity
 import returns.mingleday.databinding.FragmentMingleBinding
-import returns.mingleday.util.ColorUtil
-import returns.mingleday.util.DateFormatter.formatCustom
+import returns.mingleday.app.util.ColorUtil
+import returns.mingleday.app.util.DateFormatter.formatCustom
 import java.time.LocalDateTime
 
 class MingleFragment : Fragment() {

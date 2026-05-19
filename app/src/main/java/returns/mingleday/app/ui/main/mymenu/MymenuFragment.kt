@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -21,7 +22,8 @@ import returns.mingleday.app.data.repository.UserRepository
 import returns.mingleday.app.ui.auth.LoginActivity
 import returns.mingleday.app.ui.main.MainActivity
 import returns.mingleday.databinding.FragmentMymenuBinding
-import returns.mingleday.util.DateFormatter.formatCustom
+import returns.mingleday.app.util.DateFormatter.formatCustom
+import returns.mingleday.app.util.FileUtil
 import java.time.LocalDateTime
 
 class MymenuFragment : Fragment() {
@@ -30,10 +32,6 @@ class MymenuFragment : Fragment() {
     private val binding get() = _binding!!
     private val authRepository = AuthRepository()
     private val userRepository = UserRepository()
-
-    private val settingsDataStore by lazy {
-        (requireActivity().application as MingleDayApplication).settingsDataStore
-    }
 
     override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMymenuBinding.inflate(inflater, container, false)
@@ -44,11 +42,44 @@ class MymenuFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         (requireActivity() as MainActivity).setToolbarTitle(R.string.my_info_label)
-        setupLanguage()
         setupFetchUserInfo()
         setupLogout()
         setupWithdraw()
+        setupUpdateProfileImage()
     }
+
+    private fun setupUpdateProfileImage() {
+        binding.profileImage.setOnClickListener {
+            galleryLauncher.launch("image/*")
+        }
+    }
+
+    private val galleryLauncher = registerForActivityResult(
+            ActivityResultContracts.GetContent()
+        ) { uri ->
+            uri ?: return@registerForActivityResult
+            val file = FileUtil.uriToFile(
+                requireContext(),
+                uri,
+                "profile.jpg"
+            )
+            viewLifecycleOwner.lifecycleScope.launch {
+                userRepository.updateMyProfileImage(file)
+                    .onSuccess { imageUrl ->
+                        Log.d("MymenuFragment", "프로필 이미지 변경 성공")
+                        Toast.makeText(requireContext(), "프로필 이미지 변경에 성공했습니다.", Toast.LENGTH_LONG).show()
+                        // 변경된 이미지 다시 렌더링하는 api 필요 -> Glide?
+                    }
+                    .onError {
+                        Log.d("MymenuFragment", "프로필 이미지 변경 실패: $it")
+                        Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
+                    }
+                    .onException {
+                        Log.e("MymenuFragment", "프로필 이미지 변경 도중 예외 발생:, $it")
+                        Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
+                    }
+            }
+        }
 
     private fun setupWithdraw() {
         binding.withdrawButton.setOnClickListener {
@@ -139,34 +170,6 @@ class MymenuFragment : Fragment() {
                     Log.e("MymenuFragment", "마이페이지 정보 요청 도중 예외 발생:, $it")
                     Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
                 }
-        }
-    }
-
-    private fun setupLanguage() {
-        binding.koreanButton.setOnClickListener {
-            binding.koreanButton.isSelected = true
-            binding.englishButton.isSelected = false
-        }
-
-        binding.englishButton.setOnClickListener {
-            binding.koreanButton.isSelected = false
-            binding.englishButton.isSelected = true
-        }
-
-        binding.languageToggleLabel.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (!isChecked) return@addOnButtonCheckedListener
-
-            val language = when (checkedId) {
-                R.id.korean_button -> "ko"
-                R.id.english_button -> "en"
-                else -> return@addOnButtonCheckedListener
-            }
-
-            val app = requireActivity().application as MingleDayApplication
-
-            viewLifecycleOwner.lifecycleScope.launch {
-                app.settingsDataStore.saveLanguage(language)
-            }
         }
     }
 }

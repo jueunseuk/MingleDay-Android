@@ -9,7 +9,7 @@ import android.widget.Button
 import androidx.fragment.app.DialogFragment
 import returns.mingleday.app.data.remote.model.category.CategoryResponse
 import returns.mingleday.databinding.FragmentCategoryEditDialogBinding
-import returns.mingleday.util.ColorUtil
+import returns.mingleday.app.util.ColorUtil
 
 class CategoryEditDialogFragment(
     private val category: CategoryResponse,

@@ -1,4 +1,4 @@
-package returns.mingleday.util
+package returns.mingleday.app.util
 
 import java.time.LocalDate
 import java.time.LocalDateTime
