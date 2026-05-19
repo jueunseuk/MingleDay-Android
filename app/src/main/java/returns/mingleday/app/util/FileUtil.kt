@@ -14,8 +14,7 @@ object FileUtil {
         val input =
             context.contentResolver.openInputStream(uri)
 
-        val file =
-            File(context.cacheDir, fileName)
+        val file = File(context.cacheDir, fileName)
 
         input?.use { inputStream ->
             file.outputStream().use { output ->
