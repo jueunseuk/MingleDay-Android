@@ -1,11 +1,14 @@
 package returns.mingleday.app.data.remote.api
 
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 import returns.mingleday.app.data.remote.model.common.SuccessResponse
@@ -63,4 +66,11 @@ interface MingleApi {
     suspend fun getMingleLogs(
         @Path("mingleId") mingleId: Int
     ): Response<List<MingleLogResponse>>
+
+    @Multipart
+    @PATCH("mingles/{mingleId}/profile")
+    suspend fun updateMingleImage(
+        @Path("mingleId") mingleId: Int,
+        @Part mingleImage: MultipartBody.Part
+    ): Response<SuccessResponse<String>>
 }

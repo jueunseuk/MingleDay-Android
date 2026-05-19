@@ -1,4 +1,4 @@
-package returns.mingleday.util
+package returns.mingleday.app.util
 
 import android.content.Context
 import android.content.res.Configuration

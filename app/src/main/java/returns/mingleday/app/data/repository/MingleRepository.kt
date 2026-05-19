@@ -1,5 +1,8 @@
 package returns.mingleday.app.data.repository
 
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import returns.mingleday.app.data.remote.api.MingleApi
 import returns.mingleday.app.data.remote.model.common.SuccessResponse
 import returns.mingleday.app.data.remote.model.mingle.CreateMingleRequest
@@ -14,6 +17,7 @@ import returns.mingleday.app.data.remote.network.ApiResult
 import returns.mingleday.app.data.remote.network.RetrofitClient
 import returns.mingleday.app.data.remote.network.safeApiCall
 import returns.mingleday.app.data.remote.network.safeRawApiCall
+import java.io.File
 
 class MingleRepository {
 
@@ -91,6 +95,22 @@ class MingleRepository {
     ): ApiResult<List<MingleLogResponse>> {
         return safeRawApiCall {
             mingleApi.getMingleLogs(mingleId)
+        }
+    }
+
+    suspend fun updateMingleImage(
+        mingleId: Int,
+        bannerImageUrl: File
+    ): ApiResult<String> {
+        return safeApiCall {
+            mingleApi.updateMingleImage(
+                mingleId,
+                MultipartBody.Part.createFormData(
+                    "mingleImage",
+                    bannerImageUrl.name,
+                    bannerImageUrl.asRequestBody("image/*".toMediaType())
+                )
+            );
         }
     }
 }

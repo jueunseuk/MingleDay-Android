@@ -104,6 +104,8 @@
 
     <!--  검색  -->
     <string name="search_title">Search</string>
+    <string name="search_hint">Search Schedule</string>
+    <string name="search_result_empty">Search results do not exist</string>
 
     <!--  마이 메뉴  -->
     <string name="my_info_label">My Info</string>

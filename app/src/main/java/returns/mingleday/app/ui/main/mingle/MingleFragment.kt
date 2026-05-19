@@ -10,9 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import kotlinx.coroutines.launch
 import returns.mingleday.R
 import returns.mingleday.app.data.remote.model.category.CategoryResponse
@@ -26,8 +28,9 @@ import returns.mingleday.app.data.repository.CategoryRepository
 import returns.mingleday.app.data.repository.MingleRepository
 import returns.mingleday.app.ui.main.MainActivity
 import returns.mingleday.databinding.FragmentMingleBinding
-import returns.mingleday.util.ColorUtil
-import returns.mingleday.util.DateFormatter.formatCustom
+import returns.mingleday.app.util.ColorUtil
+import returns.mingleday.app.util.DateFormatter.formatCustom
+import returns.mingleday.app.util.FileUtil
 import java.time.LocalDateTime
 
 class MingleFragment : Fragment() {
@@ -41,6 +44,7 @@ class MingleFragment : Fragment() {
 
     private var isRealnameOn: Boolean = false
     private var isPermissionOn: Boolean = false
+    private var currentMingleId: Int = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMingleBinding.inflate(inflater, container, false)
@@ -61,6 +65,7 @@ class MingleFragment : Fragment() {
         setupToggles(mingleId)
         setupCategoryManageButton(mingleId)
         setupValidation()
+        setupUpdateMingleImage()
     }
 
     private fun setupCategoryManageButton(mingleId: Int) {
@@ -263,12 +268,12 @@ class MingleFragment : Fragment() {
             mingleRepository.getMingle(mingleId)
                 .onSuccess { response ->
                     Log.d("MingleFragment", "밍글 정보 요청 성공")
-                    setupGetTypeImage(response.mingleType)
                     mingleMemberAdapter.submitList(response.mingleMembers)
 
                     (requireActivity() as MainActivity).setToolbarTitle(response.mingleName)
 
                     val dt = LocalDateTime.parse(response.createdAt)
+                    currentMingleId = response.mingleId
                     binding.registerDateValue.text = dt.formatCustom(1)
                     binding.mingleMemberCntValue.text = (response.mingleMembers.size+1).toString()
                     binding.ownerNameValue.text = response.ownerName
@@ -276,6 +281,27 @@ class MingleFragment : Fragment() {
                     isPermissionOn = response.usePermission
                     setToggleImage(binding.toggleRealnameValue, response.useRealname)
                     setToggleImage(binding.togglePermissionValue, response.usePermission)
+
+                    if(response.profileUrl.isBlank()) {
+                        when(response.mingleType) {
+                            MingleType.FAMILY -> binding.mingleImageValue.setImageResource(R.drawable.bg_family_default)
+                            MingleType.FRIEND -> binding.mingleImageValue.setImageResource(R.drawable.bg_friend_default)
+                            MingleType.LOVER -> binding.mingleImageValue.setImageResource(R.drawable.bg_lover_default)
+                            MingleType.SCHOOL -> binding.mingleImageValue.setImageResource(R.drawable.bg_school_default)
+                            MingleType.COMPANY -> binding.mingleImageValue.setImageResource(R.drawable.bg_compamy_default)
+                            MingleType.CLUB -> binding.mingleImageValue.setImageResource(R.drawable.bg_club_default)
+                            MingleType.STUDY -> binding.mingleImageValue.setImageResource(R.drawable.bg_study_default)
+                            MingleType.CUSTOM -> binding.mingleImageValue.setImageResource(R.drawable.bg_custom_default)
+                            else -> binding.mingleImageValue.setImageResource(R.drawable.bg_custom_default)
+                        }
+                    } else {
+                        Glide.with(binding.root)
+                            .load(response.profileUrl)
+                            .placeholder(R.drawable.default_profile)
+                            .fallback(R.drawable.default_profile)
+                            .error(R.drawable.default_profile)
+                            .into(binding.mingleImageValue)
+                    }
                 }
                 .onError {
                     Log.d("MingleFragment", "밍글 요청 실패 - $it")
@@ -399,20 +425,6 @@ class MingleFragment : Fragment() {
         }.show(parentFragmentManager, "CategoryDeleteDialogFragment")
     }
 
-    private fun setupGetTypeImage(mingleType: MingleType) {
-        when(mingleType) {
-            MingleType.FAMILY -> binding.mingleImageValue.setImageResource(R.drawable.bg_family_default)
-            MingleType.FRIEND -> binding.mingleImageValue.setImageResource(R.drawable.bg_friend_default)
-            MingleType.LOVER -> binding.mingleImageValue.setImageResource(R.drawable.bg_lover_default)
-            MingleType.SCHOOL -> binding.mingleImageValue.setImageResource(R.drawable.bg_school_default)
-            MingleType.COMPANY -> binding.mingleImageValue.setImageResource(R.drawable.bg_compamy_default)
-            MingleType.CLUB -> binding.mingleImageValue.setImageResource(R.drawable.bg_club_default)
-            MingleType.STUDY -> binding.mingleImageValue.setImageResource(R.drawable.bg_study_default)
-            MingleType.CUSTOM -> binding.mingleImageValue.setImageResource(R.drawable.bg_custom_default)
-            else -> binding.mingleImageValue.setImageResource(R.drawable.bg_custom_default)
-        }
-    }
-
     private fun setupFetchCategories(mingleId: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
             categoryRepository.getMingleCategory(mingleId)
@@ -424,6 +436,43 @@ class MingleFragment : Fragment() {
                 }
                 .onException {
                     Toast.makeText(requireContext(), "카테고리 조회 중 오류가 발생했습니다.", Toast.LENGTH_LONG).show()
+                }
+        }
+    }
+
+    private fun setupUpdateMingleImage() {
+        binding.mingleImageValue.setOnClickListener {
+            galleryLauncher.launch("image/*")
+        }
+    }
+
+    private val galleryLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent(),
+    ) { uri ->
+        uri ?: return@registerForActivityResult
+        val file = FileUtil.uriToFile(
+            requireContext(),
+            uri,
+            "banner.jpg"
+        )
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            mingleRepository.updateMingleImage(currentMingleId, file)
+                .onSuccess { imageUrl ->
+                    Log.d("MymenuFragment", "배너 이미지 변경 성공 - $imageUrl")
+                    Toast.makeText(requireContext(), "배너 이미지 변경에 성공했습니다.", Toast.LENGTH_LONG).show()
+
+                    Glide.with(binding.root)
+                        .load(imageUrl)
+                        .into(binding.mingleImageValue)
+                }
+                .onError {
+                    Log.d("MymenuFragment", "배너 이미지 변경 실패: $it")
+                    Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
+                }
+                .onException {
+                    Log.e("MymenuFragment", "배너 이미지 변경 도중 예외 발생:, $it")
+                    Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
                 }
         }
     }

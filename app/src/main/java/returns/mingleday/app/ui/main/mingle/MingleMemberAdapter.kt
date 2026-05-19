@@ -12,7 +12,7 @@ import returns.mingleday.app.data.remote.model.mingle.MingleMemberWithPermission
 import returns.mingleday.app.data.remote.model.mingle.MinglePermissionResponse
 import returns.mingleday.app.data.remote.model.mingle.PermissionType
 import returns.mingleday.databinding.ItemMemberPermissionBinding
-import returns.mingleday.util.DateFormatter.formatCustom
+import returns.mingleday.app.util.DateFormatter.formatCustom
 import java.time.LocalDateTime
 
 class MingleMemberAdapter(
