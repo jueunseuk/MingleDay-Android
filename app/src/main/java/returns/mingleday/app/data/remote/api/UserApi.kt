@@ -3,6 +3,7 @@ package returns.mingleday.app.data.remote.api
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.Part
 import returns.mingleday.app.data.remote.model.common.SuccessResponse
@@ -12,6 +13,7 @@ interface UserApi {
     @GET("users/me")
     suspend fun getMyPageInfo(): Response<MyPageUserResponse>
 
+    @Multipart
     @PATCH("users/profile/image")
     suspend fun updateMyProfileImage(
         @Part profileImage: MultipartBody.Part

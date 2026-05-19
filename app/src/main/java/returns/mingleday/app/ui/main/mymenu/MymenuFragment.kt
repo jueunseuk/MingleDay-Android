@@ -76,7 +76,7 @@ class MymenuFragment : Fragment() {
                     }
                     .onException {
                         Log.e("MymenuFragment", "프로필 이미지 변경 도중 예외 발생:, $it")
-                        Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
                     }
             }
         }

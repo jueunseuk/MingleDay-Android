@@ -32,7 +32,6 @@ class SearchFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        TODO("Not yet implemented")
     }
 
     private fun setupSearchRequest() {
@@ -52,6 +51,4 @@ class SearchFragment : Fragment() {
 
         binding.inputSearchKeyword.addTextChangedListener(watcher)
     }
-
-
 }
