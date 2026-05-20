@@ -48,6 +48,7 @@ class EmailDialogFragment(
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 validation = android.util.Patterns.EMAIL_ADDRESS.matcher(binding.emailInputValue.text.toString()).matches()
+                positiveButton.isEnabled = validation
             }
 
             override fun afterTextChanged(s: Editable?) {}
