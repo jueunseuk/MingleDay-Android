@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -26,7 +27,10 @@ class MingleAddFragment : Fragment() {
     private var _binding: FragmentMingleAddBinding? = null
     private val binding get() = _binding!!
     private val mingleRepository = MingleRepository()
+
     private var selectedType: MingleType = MingleType.FAMILY
+    private var isRealnameOn: Boolean = false
+    private var isPermissionOn: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMingleAddBinding.inflate(inflater, container, false)
@@ -41,6 +45,25 @@ class MingleAddFragment : Fragment() {
         setupValidation()
         setupMingleTypeSelection()
         setupBackButton()
+        setupToggles()
+    }
+
+    private fun setupToggles() {
+        binding.toggleRealnameValue.setOnClickListener {
+            isRealnameOn = !isRealnameOn
+            setToggleImage(binding.toggleRealnameValue, isRealnameOn)
+        }
+
+        binding.togglePermissionValue.setOnClickListener {
+            isPermissionOn = !isPermissionOn
+            setToggleImage(binding.togglePermissionValue, isPermissionOn)
+        }
+    }
+
+    private fun setToggleImage(imageView: ImageView, isOn: Boolean) {
+        imageView.setImageResource(
+            if (isOn) R.drawable.ic_toggle_on else R.drawable.ic_toggle_off
+        )
     }
 
     private fun setupBackButton() {
@@ -103,15 +126,25 @@ class MingleAddFragment : Fragment() {
                 mingleRepository.createMingle(CreateMingleRequest(
                     binding.inputMingleNameValue.text.toString(),
                     binding.inputMingleDescriptionValue.text.toString(),
-                    false, // 토글 처리 로직 필요
-                    false,
+                    isPermissionOn,
+                    isRealnameOn,
                     selectedType
                 ))
                     .onSuccess { response ->
                         Log.d("MingleAddFragment", "밍글 생성 요청 성공")
                         Toast.makeText(requireContext(), "밍글이 생성되었습니다.", Toast.LENGTH_LONG).show()
                         // 완료 후 밍글 정보 화면으로 이동 - 우선은 백
-                        requireActivity().onBackPressedDispatcher.onBackPressed()
+
+                        val fragment = MingleFragment().apply {
+                            arguments = Bundle().apply {
+                                putInt("mingle_id", response.mingleId)
+                            }
+                        }
+
+                        requireActivity().supportFragmentManager.beginTransaction()
+                            .replace(R.id.main_frame, fragment)
+                            .addToBackStack(null)
+                            .commit()
                     }
                     .onError {
                         Log.d("MingleAddFragment", "밍글 생성 요청 실패 - $it")

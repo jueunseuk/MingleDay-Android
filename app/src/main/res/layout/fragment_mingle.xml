@@ -44,7 +44,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/round_bg"
-                android:padding="18dp">
+                android:padding="18dp"
+                android:layout_marginTop="5dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -219,6 +220,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:textSize="12sp"
+                android:fontFamily="@font/bold"
                 android:text="@string/category_add_button"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
