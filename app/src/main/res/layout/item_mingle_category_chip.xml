@@ -10,8 +10,9 @@
     android:clickable="true"
     android:focusable="true">
         <TextView
-            android:text="밍글 이름"
-            android:textSize="11sp"
+            android:id="@+id/mingle_category_name_value"
+            android:text="카테고리 이름"
+            android:textSize="13sp"
             android:fontFamily="@font/semibold"
             android:textColor="@color/black"
             android:layout_width="wrap_content"

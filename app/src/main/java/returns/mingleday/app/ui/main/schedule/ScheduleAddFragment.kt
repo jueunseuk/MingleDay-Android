@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +24,7 @@ import returns.mingleday.app.data.remote.network.onSuccess
 import returns.mingleday.app.data.repository.CategoryRepository
 import returns.mingleday.app.data.repository.MingleRepository
 import returns.mingleday.app.data.repository.ScheduleRepository
+import returns.mingleday.app.ui.common.SpaceItemDecoration
 import returns.mingleday.app.ui.main.MainActivity
 import returns.mingleday.databinding.FragmentScheduleAddBinding
 import java.time.LocalDateTime
@@ -38,9 +40,7 @@ class ScheduleAddFragment : Fragment() {
     private lateinit var mingleMemberAdapter : MingleMemberAdapter
     private lateinit var mingleCategoryAdapter : MingleCategoryAdapter
 
-    private val scheduleMembers: List<ScheduleMemberRequest> = mutableListOf(
-        ScheduleMemberRequest(1, "")
-    )
+    private val scheduleMembers = mutableListOf<ScheduleMemberRequest>()
     private var createScheduleRequest = CreateScheduleRequest(
         -1,
         -1,
@@ -48,10 +48,10 @@ class ScheduleAddFragment : Fragment() {
         "",
         "",
         -1,
-        true,
-        true,
-        true,
-        true,
+        false,
+        false,
+        false,
+        false,
         LocalDateTime.now(),
         LocalDateTime.now(),
         scheduleMembers,
@@ -69,50 +69,86 @@ class ScheduleAddFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        createScheduleRequest.mingleId = arguments?.getInt("mingleId") ?: -1
+        Log.d("ScheduleAddFragment", "전달 받은 mingleId = ${createScheduleRequest.mingleId}")
+
         (requireActivity() as MainActivity).setToolbarTitle(R.string.add_mingle_title)
         setupRecyclerView()
         setupFetchMyMingleList()
-        setupFetchCategoryList()
-        setupFetchMingleMemberList()
+        if(createScheduleRequest.mingleId != -1) {
+            setupFetchCategoryList()
+            setupFetchMingleMemberList()
+        }
         setupValidation()
         setupBackButton()
         setupToggles()
         setupAddScheduleButton()
     }
 
-    private fun setupAddScheduleButton() {
-        binding.addScheduleButton.setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                scheduleRepository.createSchedule(createScheduleRequest.mingleId, createScheduleRequest)
-                    .onSuccess { response ->
-                        Log.d("ScheduleAddFragment", "스케줄 생성 성공")
-                    }
-                    .onError {
-                        Log.d("ScheduleAddFragment", R.string.internal_server_error.toString())
-                    }
-                    .onException {
-                        Log.d("ScheduleAddFragment", "스케줄 생성 중 예외 발생 - $it")
-                    }
-            }
-        }
-    }
-
     private fun setupRecyclerView() {
         // my mingle adapter
         myMingleAdapter = MyMingleAdapter { mingle ->
             createScheduleRequest.mingleId = mingle.mingleId
+            createScheduleRequest.categoryId = -1
+            scheduleMembers.clear()
+            createScheduleRequest.mingleMembers = scheduleMembers
+
+            myMingleAdapter.setSelectedMingleId(mingle.mingleId)
             setupFetchCategoryList()
             setupFetchMingleMemberList()
+            Toast.makeText(requireContext(), "${mingle.mingleName}을(를) 선택했습니다.", Toast.LENGTH_SHORT).show()
         }
-        binding.mingleRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        myMingleAdapter.setSelectedMingleId(createScheduleRequest.mingleId)
+        binding.mingleRecyclerView.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        binding.mingleRecyclerView.addItemDecoration(
+            SpaceItemDecoration(16)
+        )
         binding.mingleRecyclerView.adapter = myMingleAdapter
 
         // mingle member adapter
-        binding.mingleMemberRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        mingleMemberAdapter = MingleMemberAdapter { member ->
+            val existing = scheduleMembers.find { it.mingleMemberId == member.memberId }
+
+            if (existing != null) {
+                scheduleMembers.remove(existing)
+                Toast.makeText(requireContext(), "${member.name} 선택 해제", Toast.LENGTH_SHORT).show()
+            } else {
+                scheduleMembers.add(
+                    ScheduleMemberRequest(
+                        member.memberId,
+                        ""
+                    )
+                )
+                Toast.makeText(requireContext(), "${member.name} 선택", Toast.LENGTH_SHORT).show()
+            }
+        }
+        binding.mingleMemberRecyclerView.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        binding.mingleMemberRecyclerView.addItemDecoration(
+            SpaceItemDecoration(16)
+        )
         binding.mingleMemberRecyclerView.adapter = mingleMemberAdapter
 
         // mingle category adapter
-        binding.mingleCategoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        mingleCategoryAdapter = MingleCategoryAdapter{ category ->
+            createScheduleRequest.categoryId = category.categoryId
+            Log.d("ScheduleAddFragment", "카테고리 ${category.name} 선택")
+        }
+        binding.mingleCategoryRecyclerView.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        binding.mingleCategoryRecyclerView.addItemDecoration(
+            SpaceItemDecoration(16)
+        )
         binding.mingleCategoryRecyclerView.adapter = mingleCategoryAdapter
     }
 
@@ -137,6 +173,8 @@ class ScheduleAddFragment : Fragment() {
             categoryRepository.getMingleCategory(createScheduleRequest.mingleId)
                 .onSuccess { response ->
                     Log.d("ScheduleAddFragment", "선택한 밍글의 카테고리 불러오기 성공")
+                    binding.mingleCategoryRecyclerView.visibility = View.VISIBLE
+                    binding.mingleCategoryAlternativeText.visibility = View.GONE
                     mingleCategoryAdapter.submitList(response)
                 }
                 .onError {
@@ -153,10 +191,12 @@ class ScheduleAddFragment : Fragment() {
             mingleRepository.getMingleMembers(createScheduleRequest.mingleId)
                 .onSuccess { response ->
                     Log.d("ScheduleAddFragment", "선택한 밍글의 멤버 불러오기 성공")
+                    binding.mingleMemberRecyclerView.visibility = View.VISIBLE
+                    binding.mingleMemberAlternativeText.visibility = View.GONE
                     mingleMemberAdapter.submitList(response)
                 }
                 .onError {
-                    Log.d("ScheduleAddFragment", R.string.internal_server_error.toString())
+                    Log.d("ScheduleAddFragment", "선택한 밍글의 멤버를 불러오는 중 오류 발생 - $it")
                 }
                 .onException {
                     Log.d("ScheduleAddFragment", "선택한 밍글의 멤버를 불러오는 중 예외 발생 - $it")
@@ -165,6 +205,9 @@ class ScheduleAddFragment : Fragment() {
     }
 
     private fun setupToggles() {
+        // repeat
+        binding.repeatFalseButton.isSelected = true
+        binding.repeatTrueButton.isSelected = false
         binding.repeatFalseButton.setOnClickListener {
             createScheduleRequest.isRepeated = true
             binding.repeatFalseButton.isSelected = true
@@ -176,6 +219,7 @@ class ScheduleAddFragment : Fragment() {
             binding.repeatTrueButton.isSelected = true
         }
 
+        // repeat value
         binding.repeatDailyButton.setOnClickListener {
             selectRepeatType(RepeatType.DAILY, it)
         }
@@ -188,7 +232,6 @@ class ScheduleAddFragment : Fragment() {
         binding.repeatCustomButton.setOnClickListener {
             selectRepeatType(RepeatType.INTERVAL, it)
         }
-
         binding.repeatCountButton.setOnClickListener {
             createScheduleRequest.endType = EndType.COUNT
             binding.repeatCountButton.isSelected = true
@@ -199,12 +242,12 @@ class ScheduleAddFragment : Fragment() {
             binding.repeatCountButton.isSelected = false
             binding.repeatEndButton.isSelected = true
         }
-
         binding.toggleAllDayValue.setOnClickListener {
             createScheduleRequest.isAllDay = !createScheduleRequest.isAllDay
             setToggleImage(binding.toggleAllDayValue, createScheduleRequest.isAllDay)
         }
 
+        // setting
         binding.togglePrivateValue.setOnClickListener {
             createScheduleRequest.isPrivate = !createScheduleRequest.isPrivate
             setToggleImage(binding.togglePrivateValue, createScheduleRequest.isPrivate)
@@ -259,5 +302,22 @@ class ScheduleAddFragment : Fragment() {
         }
 
         binding.inputScheduleNameValue.addTextChangedListener(watcher)
+    }
+
+    private fun setupAddScheduleButton() {
+        binding.addScheduleButton.setOnClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                scheduleRepository.createSchedule(createScheduleRequest.mingleId, createScheduleRequest)
+                    .onSuccess { response ->
+                        Log.d("ScheduleAddFragment", "스케줄 생성 성공")
+                    }
+                    .onError {
+                        Log.d("ScheduleAddFragment", R.string.internal_server_error.toString())
+                    }
+                    .onException {
+                        Log.d("ScheduleAddFragment", "스케줄 생성 중 예외 발생 - $it")
+                    }
+            }
+        }
     }
 }

@@ -7,6 +7,7 @@ import returns.mingleday.app.data.remote.model.mingle.MingleMembersResponse
 import returns.mingleday.databinding.ItemMingleMemberBinding
 
 class MingleMemberAdapter(
+    private val onClick: (MingleMembersResponse) -> Unit
 ) : RecyclerView.Adapter<MingleMemberAdapter.MemberViewHolder>() {
 
     private val items = mutableListOf<MingleMembersResponse>()
@@ -37,7 +38,9 @@ class MingleMemberAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: MingleMembersResponse) {
-
+            binding.root.setOnClickListener {
+                onClick(item)
+            }
         }
     }
 }

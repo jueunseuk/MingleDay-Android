@@ -25,8 +25,12 @@ class ScheduleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (requireActivity() as MainActivity).setToolbarTitle(R.string.my_schedule_title)
+        val mainActivity = requireActivity() as MainActivity
+        mainActivity.setToolbarTitle(R.string.my_schedule_title)
+
         mingleId = arguments?.getInt("mingleId") ?: -1
+
+        mainActivity.mingleId = mingleId
 
         if (mingleId == -1) {
             fetchMySchedules()
@@ -43,5 +47,10 @@ class ScheduleFragment : Fragment() {
     private fun fetchSchedules(mingleId: Int) {
         // impl
         Log.d("ScheduleFragment", "$mingleId 밍글의 스케줄 불러오기 실행")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

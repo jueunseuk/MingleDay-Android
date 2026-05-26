@@ -130,6 +130,7 @@
     <string name="add_schedule_lock_visibility">다른 사람은 이 일정을 볼 수 없음</string>
     <string name="add_schedule_lock_edit">다른 사람은 이 일정을 수정할 수 없음</string>
     <string name="add_schedule_submit">일정 추가하기</string>
+    <string name="choose_mingle_first">밍글을 먼저 선택해주세요</string>
 
     <!--  검색  -->
     <string name="search_title">검색</string>

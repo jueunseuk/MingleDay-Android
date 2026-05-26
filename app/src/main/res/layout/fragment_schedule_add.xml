@@ -65,7 +65,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:nestedScrollingEnabled="false"/>
+                android:nestedScrollingEnabled="false"
+                android:layout_marginTop="5dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -117,7 +118,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:nestedScrollingEnabled="false"/>
+                android:nestedScrollingEnabled="false"
+                android:visibility="gone"
+                android:layout_marginTop="5dp"
+                />
+            <TextView
+                android:id="@+id/mingle_category_alternative_text"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:text="@string/choose_mingle_first"
+                android:textSize="13sp"
+                android:textColor="@color/disable"
+                android:fontFamily="@font/medium"
+                android:visibility="visible"
+                android:layout_marginTop="5dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -349,7 +363,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:nestedScrollingEnabled="false"/>
+                android:nestedScrollingEnabled="false"
+                android:visibility="gone"
+                android:layout_marginTop="5dp"
+                />
+            <TextView
+                android:id="@+id/mingle_member_alternative_text"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:text="@string/choose_mingle_first"
+                android:textSize="13sp"
+                android:textColor="@color/disable"
+                android:fontFamily="@font/medium"
+                android:visibility="visible"
+                android:layout_marginTop="5dp"/>
         </LinearLayout>
 
         <LinearLayout

@@ -10,6 +10,13 @@ object ColorUtil {
         return "#$code".toColorInt()
     }
 
+    fun getColorHex(code: Int): String {
+        return String.format(
+            "%06X",
+            0xFFFFFF and code
+        )
+    }
+
     fun showColorPicker(
         context: Context,
         onColorSelected: (String) -> Unit

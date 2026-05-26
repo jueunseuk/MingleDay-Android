@@ -129,6 +129,7 @@
     <string name="add_schedule_lock">Lock Schedule</string>
     <string name="add_schedule_lock_visibility">Others cannot view this schedule</string>
     <string name="add_schedule_lock_edit">Others cannot edit this schedule</string>
+    <string name="choose_mingle_first">밍글을 먼저 선택해주세요</string>
 
     <string name="add_schedule_submit">Add Schedule</string>
 

@@ -21,6 +21,7 @@ import returns.mingleday.app.data.repository.MingleRepository
 import returns.mingleday.app.ui.auth.LoginActivity
 import returns.mingleday.app.ui.main.mingle.MingleListFragment
 import returns.mingleday.app.ui.main.mymenu.MymenuFragment
+import returns.mingleday.app.ui.main.schedule.ScheduleAddFragment
 import returns.mingleday.app.ui.main.schedule.ScheduleFragment
 import returns.mingleday.app.ui.main.search.SearchFragment
 import returns.mingleday.app.ui.main.side.MingleDrawerAdapter
@@ -31,6 +32,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val mingleRepository = MingleRepository()
     private lateinit var mingleDrawerAdapter: MingleDrawerAdapter
+
+    var mingleId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,13 +65,30 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+
             R.id.action_calendar -> {
+                val fragment = ScheduleAddFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt("mingleId", mingleId)
+                    }
+                }
+
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.main_frame, fragment)
+                    .addToBackStack(null)
+                    .commit()
+
                 true
             }
+
             R.id.action_alarm -> {
+                // 알림 버튼 클릭
+                // 코드 추가
                 true
             }
-            else -> super.onOptionsItemSelected(item)
+
+            else ->
+                super.onOptionsItemSelected(item)
         }
     }
 
@@ -82,7 +102,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             replaceFragment(fragment)
-            binding.bottomBar.selectedItemId = R.id.schedule
         }
 
         binding.drawerMingleRecyclerView.layoutManager =
