@@ -3,16 +3,25 @@ package returns.mingleday.app.ui.main.schedule
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.launch
 import returns.mingleday.R
 import returns.mingleday.app.data.remote.model.schedule.CreateScheduleRequest
 import returns.mingleday.app.data.remote.model.schedule.EndType
 import returns.mingleday.app.data.remote.model.schedule.RepeatType
 import returns.mingleday.app.data.remote.model.schedule.ScheduleMemberRequest
+import returns.mingleday.app.data.remote.network.onError
+import returns.mingleday.app.data.remote.network.onException
+import returns.mingleday.app.data.remote.network.onSuccess
+import returns.mingleday.app.data.repository.CategoryRepository
+import returns.mingleday.app.data.repository.MingleRepository
 import returns.mingleday.app.data.repository.ScheduleRepository
 import returns.mingleday.app.ui.main.MainActivity
 import returns.mingleday.databinding.FragmentScheduleAddBinding
@@ -22,7 +31,12 @@ class ScheduleAddFragment : Fragment() {
 
     private var _binding: FragmentScheduleAddBinding? = null
     private val binding get() = _binding!!
+    private val mingleRepository = MingleRepository()
+    private val categoryRepository = CategoryRepository()
     private val scheduleRepository = ScheduleRepository()
+    private lateinit var myMingleAdapter : MyMingleAdapter
+    private lateinit var mingleMemberAdapter : MingleMemberAdapter
+    private lateinit var mingleCategoryAdapter : MingleCategoryAdapter
 
     private val scheduleMembers: List<ScheduleMemberRequest> = mutableListOf(
         ScheduleMemberRequest(1, "")
@@ -56,24 +70,98 @@ class ScheduleAddFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         (requireActivity() as MainActivity).setToolbarTitle(R.string.add_mingle_title)
-        setupFetchMingleList()
+        setupRecyclerView()
+        setupFetchMyMingleList()
         setupFetchCategoryList()
         setupFetchMingleMemberList()
         setupValidation()
         setupBackButton()
         setupToggles()
+        setupAddScheduleButton()
     }
 
-    private fun setupFetchMingleList() {
-        TODO("Not yet implemented")
+    private fun setupAddScheduleButton() {
+        binding.addScheduleButton.setOnClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                scheduleRepository.createSchedule(createScheduleRequest.mingleId, createScheduleRequest)
+                    .onSuccess { response ->
+                        Log.d("ScheduleAddFragment", "스케줄 생성 성공")
+                    }
+                    .onError {
+                        Log.d("ScheduleAddFragment", R.string.internal_server_error.toString())
+                    }
+                    .onException {
+                        Log.d("ScheduleAddFragment", "스케줄 생성 중 예외 발생 - $it")
+                    }
+            }
+        }
+    }
+
+    private fun setupRecyclerView() {
+        // my mingle adapter
+        myMingleAdapter = MyMingleAdapter { mingle ->
+            createScheduleRequest.mingleId = mingle.mingleId
+            setupFetchCategoryList()
+            setupFetchMingleMemberList()
+        }
+        binding.mingleRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.mingleRecyclerView.adapter = myMingleAdapter
+
+        // mingle member adapter
+        binding.mingleMemberRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.mingleMemberRecyclerView.adapter = mingleMemberAdapter
+
+        // mingle category adapter
+        binding.mingleCategoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.mingleCategoryRecyclerView.adapter = mingleCategoryAdapter
+    }
+
+    private fun setupFetchMyMingleList() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            mingleRepository.getMyMinglesSimple()
+                .onSuccess { response ->
+                    Log.d("ScheduleAddFragment", "내가 참여중인 밍글 가져오기 성공")
+                    myMingleAdapter.submitList(response)
+                }
+                .onError {
+                    Log.d("ScheduleAddFragment", R.string.internal_server_error.toString())
+                }
+                .onException {
+                    Log.d("ScheduleAddFragment", "단순 내 밍글 목록을 가져오는 중 예외 발생 - $it")
+                }
+        }
     }
 
     private fun setupFetchCategoryList() {
-        TODO("Not yet implemented")
+        viewLifecycleOwner.lifecycleScope.launch {
+            categoryRepository.getMingleCategory(createScheduleRequest.mingleId)
+                .onSuccess { response ->
+                    Log.d("ScheduleAddFragment", "선택한 밍글의 카테고리 불러오기 성공")
+                    mingleCategoryAdapter.submitList(response)
+                }
+                .onError {
+                    Log.d("ScheduleAddFragment", R.string.internal_server_error.toString())
+                }
+                .onException {
+                    Log.d("ScheduleAddFragment", "선택한 밍글의 카테고리를 불러오는 중 예외 발생 - $it")
+                }
+        }
     }
 
     private fun setupFetchMingleMemberList() {
-        TODO("Not yet implemented")
+        viewLifecycleOwner.lifecycleScope.launch {
+            mingleRepository.getMingleMembers(createScheduleRequest.mingleId)
+                .onSuccess { response ->
+                    Log.d("ScheduleAddFragment", "선택한 밍글의 멤버 불러오기 성공")
+                    mingleMemberAdapter.submitList(response)
+                }
+                .onError {
+                    Log.d("ScheduleAddFragment", R.string.internal_server_error.toString())
+                }
+                .onException {
+                    Log.d("ScheduleAddFragment", "선택한 밍글의 멤버를 불러오는 중 예외 발생 - $it")
+                }
+        }
     }
 
     private fun setupToggles() {

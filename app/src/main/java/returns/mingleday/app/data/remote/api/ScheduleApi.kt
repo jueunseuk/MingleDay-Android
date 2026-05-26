@@ -1,5 +1,6 @@
 package returns.mingleday.app.data.remote.api
 
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -17,25 +18,23 @@ import returns.mingleday.app.data.remote.model.schedule.ScheduleStatus
 import returns.mingleday.app.data.remote.model.schedule.SearchScheduleInstanceResponse
 import returns.mingleday.app.data.remote.model.schedule.UpdateScheduleInstanceRequest
 import returns.mingleday.app.data.remote.model.schedule.UpdateScheduleRequest
-import returns.mingleday.app.data.remote.network.ApiResult
 
 interface ScheduleApi {
     @GET("search")
-    suspend fun searchSchedule(
-    ): ApiResult<List<SearchScheduleInstanceResponse>>
+    suspend fun searchSchedule(): Response<List<SearchScheduleInstanceResponse>>
 
     @POST("mingles/{mingleId}/schedules")
     suspend fun createSchedule(
         @Path("mingleId") mingleId: Int,
         @Body request: CreateScheduleRequest
-    ): ApiResult<DetailScheduleResponse>
+    ): Response<DetailScheduleResponse>
 
     @PATCH("mingles/{mingleId}/schedules/{scheduleId}")
     suspend fun updateSchedule(
         @Path("mingleId") mingleId: Int,
         @Path("scheduleId") scheduleId: Long,
         @Body request: UpdateScheduleRequest
-    ): ApiResult<DetailScheduleResponse>
+    ): Response<DetailScheduleResponse>
 
     @PATCH("mingles/{mingleId}/schedules/{scheduleId}/instances/{scheduleInstanceId}")
     suspend fun updateScheduleInstance(
@@ -43,7 +42,7 @@ interface ScheduleApi {
         @Path("scheduleId") scheduleId: Long,
         @Path("scheduleInstanceId") scheduleInstanceId: Long,
         @Body request: UpdateScheduleInstanceRequest
-    ): ApiResult<DetailScheduleResponse>
+    ): Response<DetailScheduleResponse>
 
     @PATCH("mingles/{mingleId}/schedules/{scheduleId}/instances/{scheduleInstanceId}/status")
     suspend fun updateScheduleInstanceStatus(
@@ -51,27 +50,27 @@ interface ScheduleApi {
         @Path("scheduleId") scheduleId: Long,
         @Path("scheduleInstanceId") scheduleInstanceId: Long,
         @Body status: ScheduleStatus
-    ): ApiResult<SuccessResponse<String>>
+    ): Response<SuccessResponse<String>>
 
     @DELETE("mingles/{mingleId}/schedules/{scheduleId}")
     suspend fun deleteSchedule(
         @Path("mingleId") mingleId: Int,
         @Path("scheduleId") scheduleId: Long
-    ): ApiResult<SuccessResponse<String>>
+    ): Response<SuccessResponse<String>>
 
     @PATCH("mingles/{mingleId}/schedules/{scheduleId}/members")
     suspend fun updateScheduleMember(
         @Path("mingleId") mingleId: Int,
         @Path("scheduleId") scheduleId: Long,
         @Body request: List<ScheduleMemberRequest>
-    ): ApiResult<SuccessResponse<String>>
+    ): Response<SuccessResponse<String>>
 
     @GET("mingles/{mingleId}/schedules/monthly")
     suspend fun getMonthlySchedules(
         @Path("mingleId") mingleId: Int,
         @Query("year") year: Int,
         @Query("month") month: Int
-    ): ApiResult<List<MonthlyScheduleResponse>>
+    ): Response<List<MonthlyScheduleResponse>>
 
     @GET("mingles/{mingleId}/schedules/daily")
     suspend fun getDailySchedules(
@@ -79,11 +78,11 @@ interface ScheduleApi {
         @Query("year") year: Int,
         @Query("month") month: Int,
         @Query("day") day: Int
-    ): ApiResult<List<DailyScheduleResponse>>
+    ): Response<List<DailyScheduleResponse>>
 
     @GET("mingles/{mingleId}/schedules/instances/{scheduleInstanceId}")
     suspend fun getScheduleDetail(
         @Path("mingleId") mingleId: Int,
         @Path("scheduleInstanceId") scheduleInstanceId: Long
-    ): ApiResult<DetailScheduleResponse>
+    ): Response<DetailScheduleResponse>
 }

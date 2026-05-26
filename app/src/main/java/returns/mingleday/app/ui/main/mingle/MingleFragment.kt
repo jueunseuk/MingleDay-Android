@@ -39,7 +39,7 @@ class MingleFragment : Fragment() {
     private val binding get() = _binding!!
     private val mingleRepository = MingleRepository()
     private val categoryRepository = CategoryRepository()
-    private lateinit var mingleMemberAdapter: MingleMemberAdapter
+    private lateinit var mingleMemberPermissionAdapter: MingleMemberPermissionAdapter
     private lateinit var mingleCategoryAdapter: MingleCategoryAdapter
 
     private var isRealnameOn: Boolean = false
@@ -268,7 +268,7 @@ class MingleFragment : Fragment() {
             mingleRepository.getMingle(mingleId)
                 .onSuccess { response ->
                     Log.d("MingleFragment", "밍글 정보 요청 성공")
-                    mingleMemberAdapter.submitList(response.mingleMembers)
+                    mingleMemberPermissionAdapter.submitList(response.mingleMembers)
 
                     (requireActivity() as MainActivity).setToolbarTitle(response.mingleName)
 
@@ -339,7 +339,7 @@ class MingleFragment : Fragment() {
         }
 
         // mingle member recycler view
-        mingleMemberAdapter = MingleMemberAdapter(
+        mingleMemberPermissionAdapter = MingleMemberPermissionAdapter(
             viewLifecycleOwner
         ) { memberId, permissionType, isAllowed ->
 
@@ -372,9 +372,8 @@ class MingleFragment : Fragment() {
             success
         }
 
-        binding.mingleMemberRecyclerView.layoutManager =
-            LinearLayoutManager(requireContext())
-        binding.mingleMemberRecyclerView.adapter = mingleMemberAdapter
+        binding.mingleMemberRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.mingleMemberRecyclerView.adapter = mingleMemberPermissionAdapter
     }
 
     private fun handleEditCategory(mingleId: Int, item: CategoryResponse) {

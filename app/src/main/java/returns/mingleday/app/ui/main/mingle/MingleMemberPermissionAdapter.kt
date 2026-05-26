@@ -15,14 +15,14 @@ import returns.mingleday.databinding.ItemMemberPermissionBinding
 import returns.mingleday.app.util.DateFormatter.formatCustom
 import java.time.LocalDateTime
 
-class MingleMemberAdapter(
+class MingleMemberPermissionAdapter(
     private val lifecycleOwner: LifecycleOwner,
     private val onPermissionChanged: suspend (
         memberId: Long,
         permissionType: PermissionType,
         isAllowed: Boolean
     ) -> Boolean
-) : RecyclerView.Adapter<MingleMemberAdapter.MemberViewHolder>() {
+) : RecyclerView.Adapter<MingleMemberPermissionAdapter.MemberViewHolder>() {
 
     private val items = mutableListOf<MingleMemberWithPermissionResponse>()
 
