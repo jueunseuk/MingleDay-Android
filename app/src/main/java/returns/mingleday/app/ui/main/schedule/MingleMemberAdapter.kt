@@ -38,6 +38,8 @@ class MingleMemberAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: MingleMembersResponse) {
+            binding.memberName.text = item.name
+            // 이미지 넣기
             binding.root.setOnClickListener {
                 onClick(item)
             }

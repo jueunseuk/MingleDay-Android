@@ -35,7 +35,7 @@ interface MingleApi {
         @Path("mingle_id") mingleId: Int
     ): Response<MingleResponse>
 
-    @GET("mingle/{mingleId}/members")
+    @GET("mingles/{mingleId}/members")
     suspend fun getMingleMembers(
         @Path("mingleId") mingleId: Int
     ): Response<List<MingleMembersResponse>>
