@@ -11,6 +11,7 @@ class MingleMemberAdapter(
 ) : RecyclerView.Adapter<MingleMemberAdapter.MemberViewHolder>() {
 
     private val items = mutableListOf<MingleMembersResponse>()
+    private val selectedMemberIds = mutableSetOf<Long>()
 
     fun submitList(newItems: List<MingleMembersResponse>) {
         items.clear()
@@ -39,8 +40,17 @@ class MingleMemberAdapter(
 
         fun bind(item: MingleMembersResponse) {
             binding.memberName.text = item.name
-            // 이미지 넣기
+
+            val isSelected = selectedMemberIds.contains(item.memberId)
+            binding.root.isSelected = isSelected
             binding.root.setOnClickListener {
+                if (isSelected) {
+                    selectedMemberIds.remove(item.memberId)
+                } else {
+                    selectedMemberIds.add(item.memberId)
+                }
+
+                notifyItemChanged(bindingAdapterPosition)
                 onClick(item)
             }
         }

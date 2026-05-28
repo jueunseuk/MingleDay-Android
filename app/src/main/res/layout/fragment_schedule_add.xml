@@ -176,6 +176,7 @@
                     app:layout_constraintEnd_toEndOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
             <LinearLayout
+                android:id="@+id/repeat_component"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -302,7 +303,8 @@
                 android:layout_height="wrap_content"
                 >
                 <EditText
-                    android:inputType="text"
+                    android:id="@+id/start_value"
+                    android:inputType="date"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
@@ -328,12 +330,13 @@
                     android:layout_gravity="center"
                     />
                 <EditText
-                    android:inputType="text"
+                    android:id="@+id/end_value"
+                    android:inputType="date"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:textColorHint="@color/disable"
-                    android:hint="종료(비워둘 경우 시작과 동일)"
+                    android:hint="종료(비워두면 시작과 동일)"
                     android:background="@drawable/input_full"
                     android:textSize="12sp"
                     android:paddingStart="16dp"

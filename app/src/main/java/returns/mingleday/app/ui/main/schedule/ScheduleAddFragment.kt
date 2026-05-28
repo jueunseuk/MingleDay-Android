@@ -2,6 +2,7 @@ package returns.mingleday.app.ui.main.schedule
 
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
@@ -26,7 +27,9 @@ import returns.mingleday.app.data.repository.MingleRepository
 import returns.mingleday.app.data.repository.ScheduleRepository
 import returns.mingleday.app.ui.common.SpaceItemDecoration
 import returns.mingleday.app.ui.main.MainActivity
+import returns.mingleday.app.ui.main.search.SearchFragment
 import returns.mingleday.databinding.FragmentScheduleAddBinding
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 class ScheduleAddFragment : Fragment() {
@@ -83,6 +86,7 @@ class ScheduleAddFragment : Fragment() {
         setupBackButton()
         setupToggles()
         setupAddScheduleButton()
+
     }
 
     private fun setupRecyclerView() {
@@ -115,15 +119,15 @@ class ScheduleAddFragment : Fragment() {
 
             if (existing != null) {
                 scheduleMembers.remove(existing)
-                Toast.makeText(requireContext(), "${member.name} 선택 해제", Toast.LENGTH_SHORT).show()
+                Log.d("ScheduleAddFragment", "밍글 멤버 ${member.name} 선택")
             } else {
                 scheduleMembers.add(
                     ScheduleMemberRequest(
                         member.memberId,
-                        ""
+                        "해당 멤버가 알아야할 내용을 입력해주세요."
                     )
                 )
-                Toast.makeText(requireContext(), "${member.name} 선택", Toast.LENGTH_SHORT).show()
+                Log.d("ScheduleAddFragment", "밍글 멤버 ${member.name} 선택 해제")
             }
         }
         binding.mingleMemberRecyclerView.layoutManager = LinearLayoutManager(
@@ -208,18 +212,23 @@ class ScheduleAddFragment : Fragment() {
         // repeat
         binding.repeatFalseButton.isSelected = true
         binding.repeatTrueButton.isSelected = false
+        binding.repeatComponent.visibility = View.GONE
         binding.repeatFalseButton.setOnClickListener {
             createScheduleRequest.isRepeated = true
             binding.repeatFalseButton.isSelected = true
             binding.repeatTrueButton.isSelected = false
+            binding.repeatComponent.visibility = View.GONE
         }
         binding.repeatTrueButton.setOnClickListener {
             createScheduleRequest.isRepeated = false
             binding.repeatFalseButton.isSelected = false
             binding.repeatTrueButton.isSelected = true
+            binding.repeatComponent.visibility = View.VISIBLE
         }
 
         // repeat value
+        binding.repeatDailyButton.isSelected = true
+        binding.repeatCountButton.isSelected = true
         binding.repeatDailyButton.setOnClickListener {
             selectRepeatType(RepeatType.DAILY, it)
         }
@@ -237,14 +246,24 @@ class ScheduleAddFragment : Fragment() {
             binding.repeatCountButton.isSelected = true
             binding.repeatEndButton.isSelected = false
         }
-        binding.repeatCountButton.setOnClickListener {
+        binding.repeatEndButton.setOnClickListener {
             createScheduleRequest.endType = EndType.DATE
             binding.repeatCountButton.isSelected = false
             binding.repeatEndButton.isSelected = true
         }
+
+        // is all day
         binding.toggleAllDayValue.setOnClickListener {
             createScheduleRequest.isAllDay = !createScheduleRequest.isAllDay
             setToggleImage(binding.toggleAllDayValue, createScheduleRequest.isAllDay)
+
+            if(createScheduleRequest.isAllDay) {
+                binding.startValue.inputType = InputType.TYPE_DATETIME_VARIATION_DATE
+            } else {
+                binding.startValue.inputType = InputType.TYPE_DATETIME_VARIATION_TIME
+            }
+
+            validateStartEnd()
         }
 
         // setting
@@ -291,11 +310,7 @@ class ScheduleAddFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val name = binding.inputScheduleNameValue.length() in 1..15
-                val start = true // 조건식 추가
-                val end = true // 조건식 추가
-
-                binding.addScheduleButton.isEnabled = name && start && end
+                validateStartEnd()
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -304,12 +319,45 @@ class ScheduleAddFragment : Fragment() {
         binding.inputScheduleNameValue.addTextChangedListener(watcher)
     }
 
+    private fun validateStartEnd() {
+        val name = binding.inputScheduleNameValue.length() in 1..30
+        val start = if (createScheduleRequest.isAllDay) { isValidDate(binding.startValue.text.toString()) }
+                    else { isValidDateTime(binding.startValue.text.toString())}
+        val end = if (createScheduleRequest.isAllDay) {isValidDate(binding.endValue.text.toString()) }
+                  else { isValidDateTime(binding.endValue.text.toString()) }
+
+        binding.addScheduleButton.isEnabled = name && start && end
+    }
+
+    private fun isValidDate(value: String): Boolean {
+        return try {
+            LocalDate.parse(value)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun isValidDateTime(value: String): Boolean {
+        return try {
+            LocalDateTime.parse(value)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     private fun setupAddScheduleButton() {
         binding.addScheduleButton.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 scheduleRepository.createSchedule(createScheduleRequest.mingleId, createScheduleRequest)
                     .onSuccess { response ->
+                        Toast.makeText(requireContext(), "일정을 추가했습니다.", Toast.LENGTH_SHORT).show()
                         Log.d("ScheduleAddFragment", "스케줄 생성 성공")
+                        requireActivity().supportFragmentManager.beginTransaction()
+                            .replace(R.id.main_frame, SearchFragment()) // Schedule Fragment로 바꿔야 함
+                            .addToBackStack(null)
+                            .commit()
                     }
                     .onError {
                         Log.d("ScheduleAddFragment", R.string.internal_server_error.toString())
