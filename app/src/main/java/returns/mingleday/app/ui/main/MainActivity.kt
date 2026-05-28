@@ -22,7 +22,7 @@ import returns.mingleday.app.ui.auth.LoginActivity
 import returns.mingleday.app.ui.main.mingle.MingleListFragment
 import returns.mingleday.app.ui.main.mymenu.MymenuFragment
 import returns.mingleday.app.ui.main.schedule.ScheduleAddFragment
-import returns.mingleday.app.ui.main.schedule.ScheduleFragment
+import returns.mingleday.app.ui.main.schedule.MonthlyScheduleFragment
 import returns.mingleday.app.ui.main.search.SearchFragment
 import returns.mingleday.app.ui.main.side.MingleDrawerAdapter
 import returns.mingleday.databinding.ActivityMainBinding
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (savedInstanceState == null) {
-            replaceFragment(ScheduleFragment())
+            replaceFragment(MonthlyScheduleFragment())
             binding.bottomBar.selectedItemId = R.id.schedule
         }
 
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupDrawer() {
         mingleDrawerAdapter = MingleDrawerAdapter { mingle ->
             binding.drawerLayout.close()
-            val fragment = ScheduleFragment().apply {
+            val fragment = MonthlyScheduleFragment().apply {
                 arguments = Bundle().apply {
                     putInt("mingleId", mingle.mingleId)
                 }
@@ -160,7 +160,7 @@ class MainActivity : AppCompatActivity() {
         binding.bottomBar.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.schedule -> {
-                    replaceFragment(ScheduleFragment())
+                    replaceFragment(MonthlyScheduleFragment())
                     true
                 }
                 R.id.mingle -> {

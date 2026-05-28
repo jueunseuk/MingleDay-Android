@@ -102,7 +102,17 @@
     <string name="category_bg_color_hint">000000</string>
     <string name="category_delete_alert">을(를) 삭제하시겠습니까?</string>
 
-    <!--  일정  -->
+    <!-- 일정 -->
+    <string name="schedule_date_format">%1$d년 %2$d월</string>
+    <string name="sunday">일</string>
+    <string name="monday">월</string>
+    <string name="tuesday">화</string>
+    <string name="wednesday">수</string>
+    <string name="thursday">목</string>
+    <string name="friday">금</string>
+    <string name="saturday">토</string>
+
+    <!--  일정 생성  -->
     <string name="add_schedule_title">일정 만들기</string>
     <string name="add_schedule_mingle_select">밍글 선택</string>
     <string name="add_schedule_category_select">카테고리 선택</string>

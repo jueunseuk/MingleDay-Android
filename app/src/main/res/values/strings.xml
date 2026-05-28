@@ -103,6 +103,16 @@
     <string name="category_delete_alert">을(를) 삭제하시겠습니까?</string>
 
     <!-- 일정 -->
+    <string name="schedule_date_format">%1$d년 %2$d월</string>
+    <string name="sunday">Sun</string>
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thu</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+
+    <!-- 일정 생성 -->
     <string name="add_schedule_title">Create Schedule</string>
     <string name="add_schedule_mingle_select">Select Mingle</string>
     <string name="add_schedule_name">Title</string>

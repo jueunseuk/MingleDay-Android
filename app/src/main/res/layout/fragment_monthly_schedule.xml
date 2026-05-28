@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="@color/bg"
+    android:paddingTop="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/minus_year_button"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:src="@drawable/ic_double_left_arrow_black"/>
+
+        <ImageView
+            android:id="@+id/minus_month_button"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:src="@drawable/ic_left_arrow_black"
+            android:layout_marginStart="20dp"/>
+
+        <TextView
+            android:id="@+id/date_format"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/schedule_date_format"
+            android:textSize="18sp"
+            android:textColor="@color/title"
+            android:fontFamily="@font/bold"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            />
+
+        <ImageView
+            android:id="@+id/plus_month_button"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:src="@drawable/ic_right_arrow_black"
+            android:layout_marginEnd="20dp"/>
+
+        <ImageView
+            android:id="@+id/plus_year_button"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:src="@drawable/ic_double_right_arrow_black"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/sunday"
+            android:fontFamily="@font/semibold"
+            android:textColor="@color/red" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/monday"
+            android:fontFamily="@font/medium"
+            android:textColor="@color/content" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/tuesday"
+            android:fontFamily="@font/medium"
+            android:textColor="@color/content" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/wednesday"
+            android:fontFamily="@font/medium"
+            android:textColor="@color/content" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/thursday"
+            android:fontFamily="@font/medium"
+            android:textColor="@color/content" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/friday"
+            android:fontFamily="@font/medium"
+            android:textColor="@color/content" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/monday"
+            android:fontFamily="@font/semibold"
+            android:textColor="@color/blue"/>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/calendar_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:overScrollMode="never" />
+</LinearLayout>
