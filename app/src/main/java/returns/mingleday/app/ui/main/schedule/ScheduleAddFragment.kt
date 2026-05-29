@@ -1,8 +1,9 @@
 package returns.mingleday.app.ui.main.schedule
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputType
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
@@ -27,23 +28,35 @@ import returns.mingleday.app.data.repository.MingleRepository
 import returns.mingleday.app.data.repository.ScheduleRepository
 import returns.mingleday.app.ui.common.SpaceItemDecoration
 import returns.mingleday.app.ui.main.MainActivity
-import returns.mingleday.app.ui.main.search.SearchFragment
 import returns.mingleday.databinding.FragmentScheduleAddBinding
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 class ScheduleAddFragment : Fragment() {
 
     private var _binding: FragmentScheduleAddBinding? = null
     private val binding get() = _binding!!
+
     private val mingleRepository = MingleRepository()
     private val categoryRepository = CategoryRepository()
     private val scheduleRepository = ScheduleRepository()
-    private lateinit var myMingleAdapter : MyMingleAdapter
-    private lateinit var mingleMemberAdapter : MingleMemberAdapter
-    private lateinit var mingleCategoryAdapter : MingleCategoryAdapter
+
+    private lateinit var myMingleAdapter: MyMingleAdapter
+    private lateinit var mingleMemberAdapter: MingleMemberAdapter
+    private lateinit var mingleCategoryAdapter: MingleCategoryAdapter
 
     private val scheduleMembers = mutableListOf<ScheduleMemberRequest>()
+
+    private var startDate: LocalDate = LocalDate.now()
+    private var endDate: LocalDate = LocalDate.now()
+    private var startTime: LocalTime? = null
+    private var endTime: LocalTime? = null
+
+    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
     private var createScheduleRequest = CreateScheduleRequest(
         -1,
         -1,
@@ -54,9 +67,9 @@ class ScheduleAddFragment : Fragment() {
         false,
         false,
         false,
-        false,
-        LocalDateTime.now(),
-        LocalDateTime.now(),
+        true,
+        LocalDate.now().atStartOfDay().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+        LocalDate.now().atStartOfDay().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
         scheduleMembers,
         RepeatType.DAILY,
         "",
@@ -64,7 +77,11 @@ class ScheduleAddFragment : Fragment() {
         ""
     )
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentScheduleAddBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -76,21 +93,153 @@ class ScheduleAddFragment : Fragment() {
         Log.d("ScheduleAddFragment", "전달 받은 mingleId = ${createScheduleRequest.mingleId}")
 
         (requireActivity() as MainActivity).setToolbarTitle(R.string.add_mingle_title)
+
         setupRecyclerView()
         setupFetchMyMingleList()
-        if(createScheduleRequest.mingleId != -1) {
+
+        if (createScheduleRequest.mingleId != -1) {
             setupFetchCategoryList()
             setupFetchMingleMemberList()
         }
+
+        setupDateTimeInput()
         setupValidation()
         setupBackButton()
         setupToggles()
         setupAddScheduleButton()
+    }
 
+    private fun setupDateTimeInput() {
+        updateDateText()
+        updateTimeText()
+        applyDateTimeToRequest()
+
+        binding.startDateValue.setOnClickListener {
+            showDatePicker(startDate) { selectedDate ->
+                startDate = selectedDate
+
+                if (endDate.isBefore(startDate)) {
+                    endDate = startDate
+                }
+
+                updateDateText()
+                applyDateTimeToRequest()
+                validateInput()
+            }
+        }
+
+        binding.endDateValue.setOnClickListener {
+            showDatePicker(endDate) { selectedDate ->
+                endDate = selectedDate
+
+                if (endDate.isBefore(startDate)) {
+                    startDate = endDate
+                }
+
+                updateDateText()
+                applyDateTimeToRequest()
+                validateInput()
+            }
+        }
+
+        binding.startTimeValue.setOnClickListener {
+            showTimePicker(startTime ?: LocalTime.now().withSecond(0).withNano(0)) { selectedTime ->
+                startTime = selectedTime.withSecond(0).withNano(0)
+
+                if (endTime == null) {
+                    endTime = startTime
+                }
+
+                updateTimeText()
+                applyDateTimeToRequest()
+                validateInput()
+            }
+        }
+
+        binding.endTimeValue.setOnClickListener {
+            showTimePicker(endTime ?: startTime ?: LocalTime.now().withSecond(0).withNano(0)) { selectedTime ->
+                endTime = selectedTime.withSecond(0).withNano(0)
+
+                updateTimeText()
+                applyDateTimeToRequest()
+                validateInput()
+            }
+        }
+    }
+
+    private fun updateDateText() {
+        binding.startDateValue.text = startDate.format(dateFormatter)
+        binding.endDateValue.text = endDate.format(dateFormatter)
+    }
+
+    private fun updateTimeText() {
+        binding.startTimeValue.text = startTime?.format(timeFormatter) ?: "시작 시간"
+        binding.endTimeValue.text = endTime?.format(timeFormatter) ?: "종료 시간"
+    }
+
+    private fun showDatePicker(
+        initialDate: LocalDate,
+        onDateSelected: (LocalDate) -> Unit
+    ) {
+        DatePickerDialog(
+            requireContext(),
+            { _, selectedYear, selectedMonth, selectedDay ->
+                onDateSelected(
+                    LocalDate.of(
+                        selectedYear,
+                        selectedMonth + 1,
+                        selectedDay
+                    )
+                )
+            },
+            initialDate.year,
+            initialDate.monthValue - 1,
+            initialDate.dayOfMonth
+        ).show()
+    }
+
+    private fun showTimePicker(
+        initialTime: LocalTime,
+        onTimeSelected: (LocalTime) -> Unit
+    ) {
+        TimePickerDialog(
+            requireContext(),
+            { _, hour, minute ->
+                onTimeSelected(LocalTime.of(hour, minute))
+            },
+            initialTime.hour,
+            initialTime.minute,
+            true
+        ).show()
+    }
+
+    private fun applyDateTimeToRequest() {
+        val startDateTime: LocalDateTime
+        val endDateTime: LocalDateTime
+
+        if (createScheduleRequest.isAllDay) {
+            startDateTime = startDate.atStartOfDay()
+            endDateTime = endDate.atStartOfDay()
+        } else {
+            startDateTime = LocalDateTime.of(
+                startDate,
+                startTime ?: LocalTime.of(0, 0)
+            )
+
+            endDateTime = LocalDateTime.of(
+                endDate,
+                endTime ?: startTime ?: LocalTime.of(0, 0)
+            )
+        }
+
+        createScheduleRequest.startAt =
+            startDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+
+        createScheduleRequest.endAt =
+            endDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
     }
 
     private fun setupRecyclerView() {
-        // my mingle adapter
         myMingleAdapter = MyMingleAdapter { mingle ->
             createScheduleRequest.mingleId = mingle.mingleId
             createScheduleRequest.categoryId = -1
@@ -100,26 +249,30 @@ class ScheduleAddFragment : Fragment() {
             myMingleAdapter.setSelectedMingleId(mingle.mingleId)
             setupFetchCategoryList()
             setupFetchMingleMemberList()
-            Toast.makeText(requireContext(), "${mingle.mingleName}을(를) 선택했습니다.", Toast.LENGTH_SHORT).show()
+
+            Toast.makeText(
+                requireContext(),
+                "${mingle.mingleName}을(를) 선택했습니다.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
+
         myMingleAdapter.setSelectedMingleId(createScheduleRequest.mingleId)
+
         binding.mingleRecyclerView.layoutManager = LinearLayoutManager(
             requireContext(),
             LinearLayoutManager.HORIZONTAL,
             false
         )
-        binding.mingleRecyclerView.addItemDecoration(
-            SpaceItemDecoration(16)
-        )
+        binding.mingleRecyclerView.addItemDecoration(SpaceItemDecoration(16))
         binding.mingleRecyclerView.adapter = myMingleAdapter
 
-        // mingle member adapter
         mingleMemberAdapter = MingleMemberAdapter { member ->
             val existing = scheduleMembers.find { it.mingleMemberId == member.memberId }
 
             if (existing != null) {
                 scheduleMembers.remove(existing)
-                Log.d("ScheduleAddFragment", "밍글 멤버 ${member.name} 선택")
+                Log.d("ScheduleAddFragment", "밍글 멤버 ${member.name} 선택 해제")
             } else {
                 scheduleMembers.add(
                     ScheduleMemberRequest(
@@ -127,33 +280,172 @@ class ScheduleAddFragment : Fragment() {
                         "해당 멤버가 알아야할 내용을 입력해주세요."
                     )
                 )
-                Log.d("ScheduleAddFragment", "밍글 멤버 ${member.name} 선택 해제")
+                Log.d("ScheduleAddFragment", "밍글 멤버 ${member.name} 선택")
             }
         }
+
         binding.mingleMemberRecyclerView.layoutManager = LinearLayoutManager(
             requireContext(),
             LinearLayoutManager.HORIZONTAL,
             false
         )
-        binding.mingleMemberRecyclerView.addItemDecoration(
-            SpaceItemDecoration(16)
-        )
+        binding.mingleMemberRecyclerView.addItemDecoration(SpaceItemDecoration(16))
         binding.mingleMemberRecyclerView.adapter = mingleMemberAdapter
 
-        // mingle category adapter
-        mingleCategoryAdapter = MingleCategoryAdapter{ category ->
+        mingleCategoryAdapter = MingleCategoryAdapter { category ->
             createScheduleRequest.categoryId = category.categoryId
             Log.d("ScheduleAddFragment", "카테고리 ${category.name} 선택")
         }
+
         binding.mingleCategoryRecyclerView.layoutManager = LinearLayoutManager(
             requireContext(),
             LinearLayoutManager.HORIZONTAL,
             false
         )
-        binding.mingleCategoryRecyclerView.addItemDecoration(
-            SpaceItemDecoration(16)
-        )
+        binding.mingleCategoryRecyclerView.addItemDecoration(SpaceItemDecoration(16))
         binding.mingleCategoryRecyclerView.adapter = mingleCategoryAdapter
+    }
+
+    private fun setupToggles() {
+        binding.repeatFalseButton.isSelected = true
+        binding.repeatTrueButton.isSelected = false
+        binding.repeatComponent.visibility = View.GONE
+
+        binding.repeatFalseButton.setOnClickListener {
+            createScheduleRequest.isRepeated = false
+            binding.repeatFalseButton.isSelected = true
+            binding.repeatTrueButton.isSelected = false
+            binding.repeatComponent.visibility = View.GONE
+        }
+
+        binding.repeatTrueButton.setOnClickListener {
+            createScheduleRequest.isRepeated = true
+            binding.repeatFalseButton.isSelected = false
+            binding.repeatTrueButton.isSelected = true
+            binding.repeatComponent.visibility = View.VISIBLE
+        }
+
+        binding.repeatDailyButton.isSelected = true
+        binding.repeatCountButton.isSelected = true
+
+        binding.repeatDailyButton.setOnClickListener {
+            selectRepeatType(RepeatType.DAILY, it)
+        }
+
+        binding.repeatWeeklyButton.setOnClickListener {
+            selectRepeatType(RepeatType.WEEKLY, it)
+        }
+
+        binding.repeatMonthlyButton.setOnClickListener {
+            selectRepeatType(RepeatType.MONTHLY, it)
+        }
+
+        binding.repeatCustomButton.setOnClickListener {
+            selectRepeatType(RepeatType.INTERVAL, it)
+        }
+
+        binding.repeatCountButton.setOnClickListener {
+            createScheduleRequest.endType = EndType.COUNT
+            binding.repeatCountButton.isSelected = true
+            binding.repeatEndButton.isSelected = false
+        }
+
+        binding.repeatEndButton.setOnClickListener {
+            createScheduleRequest.endType = EndType.DATE
+            binding.repeatCountButton.isSelected = false
+            binding.repeatEndButton.isSelected = true
+        }
+
+        binding.timeContainer.visibility = View.GONE
+        setToggleImage(binding.toggleAllDayValue, createScheduleRequest.isAllDay)
+        binding.toggleAllDayValue.setOnClickListener {
+            createScheduleRequest.isAllDay = !createScheduleRequest.isAllDay
+            setToggleImage(binding.toggleAllDayValue, createScheduleRequest.isAllDay)
+
+            if (createScheduleRequest.isAllDay) {
+                binding.timeContainer.visibility = View.GONE
+                startTime = null
+                endTime = null
+            } else {
+                binding.timeContainer.visibility = View.VISIBLE
+                startTime = LocalTime.now().withSecond(0).withNano(0)
+                endTime = startTime
+            }
+
+            updateTimeText()
+            applyDateTimeToRequest()
+            validateInput()
+        }
+
+        binding.togglePrivateValue.setOnClickListener {
+            createScheduleRequest.isPrivate = !createScheduleRequest.isPrivate
+            setToggleImage(binding.togglePrivateValue, createScheduleRequest.isPrivate)
+        }
+
+        binding.toggleLockValue.setOnClickListener {
+            createScheduleRequest.isLocked = !createScheduleRequest.isLocked
+            setToggleImage(binding.toggleLockValue, createScheduleRequest.isLocked)
+        }
+    }
+
+    private fun selectRepeatType(
+        type: RepeatType,
+        selectedButton: View
+    ) {
+        createScheduleRequest.repeatType = type
+
+        listOf(
+            binding.repeatDailyButton,
+            binding.repeatWeeklyButton,
+            binding.repeatMonthlyButton,
+            binding.repeatCustomButton
+        ).forEach {
+            it.isSelected = it == selectedButton
+        }
+    }
+
+    private fun setToggleImage(imageView: ImageView, isOn: Boolean) {
+        imageView.setImageResource(
+            if (isOn) R.drawable.ic_toggle_on else R.drawable.ic_toggle_off
+        )
+    }
+
+    private fun setupValidation() {
+        val watcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                validateInput()
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        }
+
+        binding.inputScheduleNameValue.addTextChangedListener(watcher)
+        validateInput()
+    }
+
+    private fun validateInput() {
+        val isNameValid = binding.inputScheduleNameValue.length() in 1..30
+        val isMingleValid = createScheduleRequest.mingleId != -1
+        val isDateRangeValid = !endDate.isBefore(startDate)
+
+        val isTimeRangeValid = if (createScheduleRequest.isAllDay) {
+            true
+        } else {
+            val start = LocalDateTime.of(startDate, startTime ?: LocalTime.of(0, 0))
+            val end = LocalDateTime.of(endDate, endTime ?: startTime ?: LocalTime.of(0, 0))
+            !end.isBefore(start)
+        }
+
+        binding.addScheduleButton.isEnabled =
+            isNameValid && isMingleValid && isDateRangeValid && isTimeRangeValid
+    }
+
+    private fun setupBackButton() {
+        binding.backButton.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
     }
 
     private fun setupFetchMyMingleList() {
@@ -208,164 +500,51 @@ class ScheduleAddFragment : Fragment() {
         }
     }
 
-    private fun setupToggles() {
-        // repeat
-        binding.repeatFalseButton.isSelected = true
-        binding.repeatTrueButton.isSelected = false
-        binding.repeatComponent.visibility = View.GONE
-        binding.repeatFalseButton.setOnClickListener {
-            createScheduleRequest.isRepeated = true
-            binding.repeatFalseButton.isSelected = true
-            binding.repeatTrueButton.isSelected = false
-            binding.repeatComponent.visibility = View.GONE
-        }
-        binding.repeatTrueButton.setOnClickListener {
-            createScheduleRequest.isRepeated = false
-            binding.repeatFalseButton.isSelected = false
-            binding.repeatTrueButton.isSelected = true
-            binding.repeatComponent.visibility = View.VISIBLE
-        }
-
-        // repeat value
-        binding.repeatDailyButton.isSelected = true
-        binding.repeatCountButton.isSelected = true
-        binding.repeatDailyButton.setOnClickListener {
-            selectRepeatType(RepeatType.DAILY, it)
-        }
-        binding.repeatWeeklyButton.setOnClickListener {
-            selectRepeatType(RepeatType.WEEKLY, it)
-        }
-        binding.repeatMonthlyButton.setOnClickListener {
-            selectRepeatType(RepeatType.MONTHLY, it)
-        }
-        binding.repeatCustomButton.setOnClickListener {
-            selectRepeatType(RepeatType.INTERVAL, it)
-        }
-        binding.repeatCountButton.setOnClickListener {
-            createScheduleRequest.endType = EndType.COUNT
-            binding.repeatCountButton.isSelected = true
-            binding.repeatEndButton.isSelected = false
-        }
-        binding.repeatEndButton.setOnClickListener {
-            createScheduleRequest.endType = EndType.DATE
-            binding.repeatCountButton.isSelected = false
-            binding.repeatEndButton.isSelected = true
-        }
-
-        // is all day
-        binding.toggleAllDayValue.setOnClickListener {
-            createScheduleRequest.isAllDay = !createScheduleRequest.isAllDay
-            setToggleImage(binding.toggleAllDayValue, createScheduleRequest.isAllDay)
-
-            if(createScheduleRequest.isAllDay) {
-                binding.startValue.inputType = InputType.TYPE_DATETIME_VARIATION_DATE
-            } else {
-                binding.startValue.inputType = InputType.TYPE_DATETIME_VARIATION_TIME
-            }
-
-            validateStartEnd()
-        }
-
-        // setting
-        binding.togglePrivateValue.setOnClickListener {
-            createScheduleRequest.isPrivate = !createScheduleRequest.isPrivate
-            setToggleImage(binding.togglePrivateValue, createScheduleRequest.isPrivate)
-        }
-        binding.toggleLockValue.setOnClickListener {
-            createScheduleRequest.isLocked = !createScheduleRequest.isLocked
-            setToggleImage(binding.toggleLockValue, createScheduleRequest.isLocked)
-        }
-    }
-
-    private fun selectRepeatType(
-        type: RepeatType,
-        selectedButton: View
-    ) {
-        createScheduleRequest.repeatType = type
-
-        listOf(
-            binding.repeatDailyButton,
-            binding.repeatWeeklyButton,
-            binding.repeatMonthlyButton,
-            binding.repeatCustomButton
-        ).forEach {
-            it.isSelected = (it == selectedButton)
-        }
-    }
-
-    private fun setToggleImage(imageView: ImageView, isOn: Boolean) {
-        imageView.setImageResource(
-            if (isOn) R.drawable.ic_toggle_on else R.drawable.ic_toggle_off
-        )
-    }
-
-    private fun setupBackButton() {
-        binding.backButton.setOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
-        }
-    }
-
-    private fun setupValidation() {
-        val watcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                validateStartEnd()
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        }
-
-        binding.inputScheduleNameValue.addTextChangedListener(watcher)
-    }
-
-    private fun validateStartEnd() {
-        val name = binding.inputScheduleNameValue.length() in 1..30
-        val start = if (createScheduleRequest.isAllDay) { isValidDate(binding.startValue.text.toString()) }
-                    else { isValidDateTime(binding.startValue.text.toString())}
-        val end = if (createScheduleRequest.isAllDay) {isValidDate(binding.endValue.text.toString()) }
-                  else { isValidDateTime(binding.endValue.text.toString()) }
-
-        binding.addScheduleButton.isEnabled = name && start && end
-    }
-
-    private fun isValidDate(value: String): Boolean {
-        return try {
-            LocalDate.parse(value)
-            true
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    private fun isValidDateTime(value: String): Boolean {
-        return try {
-            LocalDateTime.parse(value)
-            true
-        } catch (e: Exception) {
-            false
-        }
-    }
-
     private fun setupAddScheduleButton() {
         binding.addScheduleButton.setOnClickListener {
+            createScheduleRequest.title = binding.inputScheduleNameValue.text.toString().trim()
+            createScheduleRequest.content = binding.inputScheduleContentValue.text.toString().trim()
+            createScheduleRequest.location = binding.inputScheduleLocationValue.text.toString().trim()
+            applyDateTimeToRequest()
+
             viewLifecycleOwner.lifecycleScope.launch {
-                scheduleRepository.createSchedule(createScheduleRequest.mingleId, createScheduleRequest)
+                scheduleRepository.createSchedule(
+                    createScheduleRequest.mingleId,
+                    createScheduleRequest
+                )
                     .onSuccess { response ->
                         Toast.makeText(requireContext(), "일정을 추가했습니다.", Toast.LENGTH_SHORT).show()
                         Log.d("ScheduleAddFragment", "스케줄 생성 성공")
+
+                        val fragment = ScheduleFragment().apply {
+                            arguments = Bundle().apply {
+                                putInt("mingle_id", createScheduleRequest.mingleId)
+                                putLong(
+                                    "schedule_instance_id",
+                                    response.scheduleInstance.scheduleInstanceId
+                                )
+                            }
+                        }
+
                         requireActivity().supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_frame, SearchFragment()) // Schedule Fragment로 바꿔야 함
+                            .replace(R.id.main_frame, fragment)
                             .addToBackStack(null)
                             .commit()
                     }
                     .onError {
+                        Toast.makeText(requireContext(), "일정을 추가하는 중 오류 발생 - $it.", Toast.LENGTH_SHORT).show()
                         Log.d("ScheduleAddFragment", R.string.internal_server_error.toString())
                     }
                     .onException {
+                        Toast.makeText(requireContext(), "일정을 추가하는 중 예외 발생 - $it", Toast.LENGTH_SHORT).show()
                         Log.d("ScheduleAddFragment", "스케줄 생성 중 예외 발생 - $it")
                     }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

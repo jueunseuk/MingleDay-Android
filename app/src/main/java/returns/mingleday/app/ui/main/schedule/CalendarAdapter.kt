@@ -21,6 +21,21 @@ class CalendarAdapter(
         notifyDataSetChanged()
     }
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalendarViewHolder {
+        val binding = ItemCalendarDayBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return CalendarViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: CalendarViewHolder, position: Int) {
+        holder.bind(items[position])
+    }
+
+    override fun getItemCount(): Int = items.size
+
     inner class CalendarViewHolder(
         private val binding: ItemCalendarDayBinding
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -44,7 +59,7 @@ class CalendarAdapter(
                 }
             )
 
-            item.schedules.take(3).forEach { scheduleTitle ->
+            item.schedules.take(5).forEach { scheduleTitle ->
                 val tagView = LayoutInflater.from(binding.root.context)
                     .inflate(
                         R.layout.item_schedule_tag,
@@ -61,19 +76,4 @@ class CalendarAdapter(
             }
         }
     }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalendarViewHolder {
-        val binding = ItemCalendarDayBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-        return CalendarViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: CalendarViewHolder, position: Int) {
-        holder.bind(items[position])
-    }
-
-    override fun getItemCount(): Int = items.size
 }

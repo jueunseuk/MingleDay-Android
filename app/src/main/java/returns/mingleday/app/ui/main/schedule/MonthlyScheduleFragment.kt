@@ -8,15 +8,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.launch
 import returns.mingleday.R
-import returns.mingleday.app.data.remote.model.schedule.AnniversaryItemWithType
-import returns.mingleday.app.data.remote.model.schedule.MonthlyScheduleResponse
 import returns.mingleday.app.data.remote.network.onError
 import returns.mingleday.app.data.remote.network.onException
 import returns.mingleday.app.data.remote.network.onSuccess
 import returns.mingleday.app.data.repository.AnniversaryRepository
+import returns.mingleday.app.data.repository.CategoryRepository
 import returns.mingleday.app.data.repository.ScheduleRepository
+import returns.mingleday.app.ui.common.SpaceItemDecoration
 import returns.mingleday.app.ui.main.MainActivity
 import returns.mingleday.databinding.FragmentMonthlyScheduleBinding
 import java.time.LocalDate
@@ -27,11 +28,13 @@ class MonthlyScheduleFragment : Fragment() {
     private val binding get() = _binding!!
     private val scheduleRepository = ScheduleRepository()
     private val anniversaryRepository = AnniversaryRepository()
+    private val categoryRepository = CategoryRepository()
     private lateinit var calendarAdapter: CalendarAdapter
+    private lateinit var scheduleCategoryAdapter: ScheduleCategoryAdapter
 
     private var year: Int = LocalDate.now().year
     private var month: Int = LocalDate.now().month.value
-
+    private var day: Int = LocalDate.now().dayOfMonth
     private var mingleId: Int = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -54,16 +57,47 @@ class MonthlyScheduleFragment : Fragment() {
         setupCalendarRecyclerView()
         if (mingleId == -1) {
             fetchMySchedules()
+            binding.categoryRecyclerView.visibility = View.VISIBLE
         } else {
             fetchSchedules(mingleId)
+            binding.categoryRecyclerView.visibility = View.GONE
         }
         fetchAnniversarySchedules()
+        fetchMingleCategory()
+    }
+
+    private fun fetchMingleCategory() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            categoryRepository.getMingleCategory(mingleId)
+                .onSuccess { response ->
+                    Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 카테고리 가져오기 성공")
+                    scheduleCategoryAdapter.submitList(response)
+                }
+                .onError {
+                    Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 카테고리 가져오는 중 에러 발생")
+                }
+                .onException {
+                    Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 카테고리 가져오는 중 예외 발생 - $it")
+                }
+        }
     }
 
     private fun setupCalendarRecyclerView() {
-        calendarAdapter = CalendarAdapter { day ->
+        calendarAdapter = CalendarAdapter { response ->
             // 날짜 클릭 시 일별 일정 조회 또는 상세 화면 이동 처리
-            Log.d("MonthlyScheduleFragment", "${year}년 ${month}월 ${day}일 클릭")
+            viewLifecycleOwner.lifecycleScope.launch {
+                scheduleRepository.getDailySchedules(mingleId, year, month, day)
+                    .onSuccess { response ->
+                        Log.d("MonthlyScheduleFragment", "${year}년 ${month}월 ${day}일의 일정 목록 가져오기 성공")
+                        Log.d("MonthlyScheduleFragment", "$response")
+                    }
+                    .onError {
+                        Log.d("MonthlyScheduleFragment", "${year}년 ${month}월 ${day}일의 일정 목록 가져오는 중 에러 발생")
+                    }
+                    .onException {
+                        Log.d("MonthlyScheduleFragment", "${year}년 ${month}월 ${day}일의 일정 목록 가져오는 중 예외 발생 - $it")
+                    }
+            }
         }
 
         binding.calendarRecyclerView.apply {
@@ -72,6 +106,17 @@ class MonthlyScheduleFragment : Fragment() {
             isNestedScrollingEnabled = false
             overScrollMode = View.OVER_SCROLL_NEVER
         }
+
+        scheduleCategoryAdapter = ScheduleCategoryAdapter()
+        binding.categoryRecyclerView.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        binding.categoryRecyclerView.addItemDecoration(
+            SpaceItemDecoration(16)
+        )
+        binding.categoryRecyclerView.adapter = scheduleCategoryAdapter
     }
 
     private fun setupChangeDateButton() {
@@ -100,6 +145,19 @@ class MonthlyScheduleFragment : Fragment() {
     private fun fetchMySchedules() {
         // impl
         Log.d("MonthlyScheduleFragment", "내가 속한 밍글들의 스케줄 불러오기 실행")
+        viewLifecycleOwner.lifecycleScope.launch {
+            scheduleRepository.getMonthlySchedules(mingleId, year, month)
+                .onSuccess { response ->
+                    Log.d("MonthlyScheduleFragment", "내가 속한 ${year}년도 ${month}월 일정 가져오기 성공")
+                    Log.d("MonthlyScheduleFragment", "$response")
+                }
+                .onError {
+                    Log.d("MonthlyScheduleFragment", "내가 속한 ${year}년도 ${month}월 일정 가져오는 중 에러 발생")
+                }
+                .onException {
+                    Log.d("MonthlyScheduleFragment", "내가 속한 ${year}년도 ${month}월 일정 가져오는 중 예외 발생 - $it")
+                }
+        }
     }
 
     private fun fetchSchedules(mingleId: Int) {
@@ -109,7 +167,7 @@ class MonthlyScheduleFragment : Fragment() {
             scheduleRepository.getMonthlySchedules(mingleId, year, month)
                 .onSuccess { response ->
                     Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 ${year}년도 ${month}월 일정 가져오기 성공")
-
+                    Log.d("MonthlyScheduleFragment", "$response")
                 }
                 .onError {
                     Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 ${year}년도 ${month}월 일정 가져오는 중 에러 발생")
@@ -127,7 +185,7 @@ class MonthlyScheduleFragment : Fragment() {
             anniversaryRepository.getAnniversary(year, month)
                 .onSuccess { response ->
                     Log.d("MonthlyScheduleFragment", "특일의 ${year}년도 ${month}월 일정 가져오기 성공")
-                    // impl
+                    // view impl
                 }
                 .onError {
                     Log.d("MonthlyScheduleFragment", "특일의 ${year}년도 ${month}월 일정 가져오는 중 에러 발생")

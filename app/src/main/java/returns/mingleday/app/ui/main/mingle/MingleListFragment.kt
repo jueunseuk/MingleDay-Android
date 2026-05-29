@@ -57,7 +57,6 @@ class MingleListFragment : Fragment() {
                     putInt("mingle_id", mingle.mingleId)
                 }
             }
-
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.main_frame, fragment)
                 .addToBackStack(null)

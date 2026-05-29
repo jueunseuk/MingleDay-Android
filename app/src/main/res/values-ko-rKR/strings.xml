@@ -130,7 +130,7 @@
     <string name="add_schedule_repeat_end_count">반복 횟수 설정</string>
     <string name="add_schedule_repeat_end_date">종료 날짜 설정</string>
     <string name="add_schedule_time">시작 및 종료 시각</string>
-    <string name="add_schedule_all_day">하루종일</string>
+    <string name="add_schedule_all_day">시간 설정</string>
     <string name="add_schedule_member">참여 멤버</string>
     <string name="add_schedule_content">내용</string>
     <string name="add_schedule_content_hint">자유롭게 일정에 대한 내용 설명</string>
