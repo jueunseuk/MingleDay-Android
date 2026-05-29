@@ -3,6 +3,8 @@ package returns.mingleday.app.ui.main.schedule
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import returns.mingleday.R
 import returns.mingleday.app.data.remote.model.mingle.MingleMembersResponse
 import returns.mingleday.databinding.ItemMingleMemberBinding
 
@@ -41,8 +43,16 @@ class MingleMemberAdapter(
         fun bind(item: MingleMembersResponse) {
             binding.memberName.text = item.name
 
+            Glide.with(binding.root)
+                .load(item.profileUrl)
+                .placeholder(R.drawable.default_profile)
+                .error(R.drawable.default_profile)
+                .circleCrop()
+                .into(binding.memberProfileImage)
+
             val isSelected = selectedMemberIds.contains(item.memberId)
             binding.root.isSelected = isSelected
+
             binding.root.setOnClickListener {
                 if (isSelected) {
                     selectedMemberIds.remove(item.memberId)

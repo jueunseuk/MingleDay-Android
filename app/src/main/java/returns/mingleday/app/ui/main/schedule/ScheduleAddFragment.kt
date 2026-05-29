@@ -122,7 +122,9 @@ class ScheduleAddFragment : Fragment() {
                     endDate = startDate
                 }
 
+                syncEndTimeIfNeeded()
                 updateDateText()
+                updateTimeText()
                 applyDateTimeToRequest()
                 validateInput()
             }
@@ -143,13 +145,16 @@ class ScheduleAddFragment : Fragment() {
         }
 
         binding.startTimeValue.setOnClickListener {
-            showTimePicker(startTime ?: LocalTime.now().withSecond(0).withNano(0)) { selectedTime ->
+            val defaultStartTime = LocalTime.now()
+                .plusHours(1)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0)
+
+            showTimePicker(startTime ?: defaultStartTime) { selectedTime ->
                 startTime = selectedTime.withSecond(0).withNano(0)
 
-                if (endTime == null) {
-                    endTime = startTime
-                }
-
+                syncEndTimeIfNeeded()
                 updateTimeText()
                 applyDateTimeToRequest()
                 validateInput()
@@ -157,13 +162,35 @@ class ScheduleAddFragment : Fragment() {
         }
 
         binding.endTimeValue.setOnClickListener {
-            showTimePicker(endTime ?: startTime ?: LocalTime.now().withSecond(0).withNano(0)) { selectedTime ->
+            val defaultStartTime = LocalTime.now()
+                .plusHours(1)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0)
+            val defaultEndTime = defaultStartTime.plusHours(1)
+
+            showTimePicker(
+                endTime ?: startTime?.plusHours(1) ?: defaultEndTime
+            ) { selectedTime ->
+
                 endTime = selectedTime.withSecond(0).withNano(0)
 
                 updateTimeText()
                 applyDateTimeToRequest()
                 validateInput()
             }
+        }
+    }
+
+    private fun syncEndTimeIfNeeded() {
+        if (createScheduleRequest.isAllDay) return
+        if (endDate.isAfter(startDate)) return
+
+        val start = startTime ?: return
+        val end = endTime
+
+        if (end == null || end.isBefore(start)) {
+            endTime = start
         }
     }
 
@@ -232,14 +259,13 @@ class ScheduleAddFragment : Fragment() {
             )
         }
 
-        createScheduleRequest.startAt =
-            startDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        createScheduleRequest.startAt = startDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
-        createScheduleRequest.endAt =
-            endDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        createScheduleRequest.endAt = endDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
     }
 
     private fun setupRecyclerView() {
+        // my mingle adpater
         myMingleAdapter = MyMingleAdapter { mingle ->
             createScheduleRequest.mingleId = mingle.mingleId
             createScheduleRequest.categoryId = -1
@@ -249,6 +275,7 @@ class ScheduleAddFragment : Fragment() {
             myMingleAdapter.setSelectedMingleId(mingle.mingleId)
             setupFetchCategoryList()
             setupFetchMingleMemberList()
+            validateInput()
 
             Toast.makeText(
                 requireContext(),
@@ -256,9 +283,7 @@ class ScheduleAddFragment : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
         }
-
         myMingleAdapter.setSelectedMingleId(createScheduleRequest.mingleId)
-
         binding.mingleRecyclerView.layoutManager = LinearLayoutManager(
             requireContext(),
             LinearLayoutManager.HORIZONTAL,
@@ -267,6 +292,7 @@ class ScheduleAddFragment : Fragment() {
         binding.mingleRecyclerView.addItemDecoration(SpaceItemDecoration(16))
         binding.mingleRecyclerView.adapter = myMingleAdapter
 
+        // mingle member adapter
         mingleMemberAdapter = MingleMemberAdapter { member ->
             val existing = scheduleMembers.find { it.mingleMemberId == member.memberId }
 
@@ -280,10 +306,10 @@ class ScheduleAddFragment : Fragment() {
                         "해당 멤버가 알아야할 내용을 입력해주세요."
                     )
                 )
+                validateInput()
                 Log.d("ScheduleAddFragment", "밍글 멤버 ${member.name} 선택")
             }
         }
-
         binding.mingleMemberRecyclerView.layoutManager = LinearLayoutManager(
             requireContext(),
             LinearLayoutManager.HORIZONTAL,
@@ -292,11 +318,12 @@ class ScheduleAddFragment : Fragment() {
         binding.mingleMemberRecyclerView.addItemDecoration(SpaceItemDecoration(16))
         binding.mingleMemberRecyclerView.adapter = mingleMemberAdapter
 
+        // mingle category adapter
         mingleCategoryAdapter = MingleCategoryAdapter { category ->
             createScheduleRequest.categoryId = category.categoryId
+            validateInput()
             Log.d("ScheduleAddFragment", "카테고리 ${category.name} 선택")
         }
-
         binding.mingleCategoryRecyclerView.layoutManager = LinearLayoutManager(
             requireContext(),
             LinearLayoutManager.HORIZONTAL,
@@ -307,6 +334,7 @@ class ScheduleAddFragment : Fragment() {
     }
 
     private fun setupToggles() {
+        // 반복 조건에 대한 기능 추가 필요
         binding.repeatFalseButton.isSelected = true
         binding.repeatTrueButton.isSelected = false
         binding.repeatComponent.visibility = View.GONE
@@ -367,9 +395,14 @@ class ScheduleAddFragment : Fragment() {
                 startTime = null
                 endTime = null
             } else {
+                val defaultStartTime = LocalTime.now()
+                    .plusHours(1)
+                    .withMinute(0)
+                    .withSecond(0)
+                    .withNano(0)
                 binding.timeContainer.visibility = View.VISIBLE
-                startTime = LocalTime.now().withSecond(0).withNano(0)
-                endTime = startTime
+                startTime = defaultStartTime
+                endTime = defaultStartTime.plusHours(1)
             }
 
             updateTimeText()
@@ -438,8 +471,12 @@ class ScheduleAddFragment : Fragment() {
             !end.isBefore(start)
         }
 
-        binding.addScheduleButton.isEnabled =
-            isNameValid && isMingleValid && isDateRangeValid && isTimeRangeValid
+        binding.addScheduleButton.isEnabled =   isNameValid &&
+                                                isMingleValid &&
+                                                isDateRangeValid &&
+                                                isTimeRangeValid &&
+                                                scheduleMembers.isNotEmpty() &&
+                                                createScheduleRequest.categoryId != -1L
     }
 
     private fun setupBackButton() {
