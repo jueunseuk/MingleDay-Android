@@ -16,19 +16,29 @@ import returns.mingleday.app.data.remote.model.mingle.CreateMingleRequest
 import returns.mingleday.app.data.remote.model.mingle.CreateMingleResponse
 import returns.mingleday.app.data.remote.model.mingle.InviteMingleRequest
 import returns.mingleday.app.data.remote.model.mingle.MingleLogResponse
+import returns.mingleday.app.data.remote.model.mingle.MingleMembersResponse
 import returns.mingleday.app.data.remote.model.mingle.MinglePermissionRequest
 import returns.mingleday.app.data.remote.model.mingle.MingleResponse
 import returns.mingleday.app.data.remote.model.mingle.MinglesResponse
 import returns.mingleday.app.data.remote.model.mingle.MyMingleLogResponse
+import returns.mingleday.app.data.remote.model.mingle.SimpleMingleResponse
 
 interface MingleApi {
     @GET("mingles")
     suspend fun getMyMingles(): Response<List<MinglesResponse>>
 
+    @GET("mingles/simple")
+    suspend fun getMyMinglesSimple(): Response<List<SimpleMingleResponse>>
+
     @GET("mingles/{mingle_id}")
     suspend fun getMingle(
         @Path("mingle_id") mingleId: Int
     ): Response<MingleResponse>
+
+    @GET("mingles/{mingleId}/members")
+    suspend fun getMingleMembers(
+        @Path("mingleId") mingleId: Int
+    ): Response<List<MingleMembersResponse>>
 
     @POST("mingles")
     suspend fun createMingle(

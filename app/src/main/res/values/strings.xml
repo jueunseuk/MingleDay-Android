@@ -102,6 +102,48 @@
     <string name="category_bg_color_hint">000000</string>
     <string name="category_delete_alert">을(를) 삭제하시겠습니까?</string>
 
+    <!-- 일정 -->
+    <string name="schedule_date_format">%1$d년 %2$d월</string>
+    <string name="schedule_day_format">%1$d일</string>
+    <string name="sunday">Sun</string>
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thu</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+
+    <!-- 일정 생성 -->
+    <string name="add_schedule_title">Create Schedule</string>
+    <string name="add_schedule_mingle_select">Select Mingle</string>
+    <string name="add_schedule_name">Title</string>
+    <string name="add_schedule_category_select">Select Category</string>
+    <string name="add_schedule_name_hint">Enter a title (1–15 characters)</string>
+    <string name="add_schedule_repeat">Repeat</string>
+    <string name="add_schedule_repeat_false">No Repeat</string>
+    <string name="add_schedule_repeat_true">Repeat Enabled</string>
+    <string name="add_schedule_repeat_method">Repeat Type</string>
+    <string name="add_schedule_repeat_method_daily">Repeat Daily</string>
+    <string name="add_schedule_repeat_weekly">Repeat Weekly</string>
+    <string name="add_schedule_repeat_monthly">Repeat Monthly</string>
+    <string name="add_schedule_repeat_custom">Custom Repeat</string>
+    <string name="add_schedule_repeat_end">Repeat End Condition</string>
+    <string name="add_schedule_repeat_end_count">Set Number of Repeats</string>
+    <string name="add_schedule_repeat_end_date">Set End Date</string>
+    <string name="add_schedule_time">Start &amp; End Time</string>
+    <string name="add_schedule_all_day">All Day</string>
+    <string name="add_schedule_member">Participants</string>
+    <string name="add_schedule_content">Description</string>
+    <string name="add_schedule_content_hint">Describe the schedule freely</string>
+    <string name="add_schedule_location">Location</string>
+    <string name="add_schedule_location_hint">Enter schedule location</string>
+    <string name="add_schedule_lock">Lock Schedule</string>
+    <string name="add_schedule_lock_visibility">Others cannot view this schedule</string>
+    <string name="add_schedule_lock_edit">Others cannot edit this schedule</string>
+    <string name="choose_mingle_first">밍글을 먼저 선택해주세요</string>
+
+    <string name="add_schedule_submit">Add Schedule</string>
+
     <!--  검색  -->
     <string name="search_title">Search</string>
     <string name="search_hint">Search Schedule</string>

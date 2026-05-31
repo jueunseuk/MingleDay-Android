@@ -39,7 +39,7 @@ class MingleFragment : Fragment() {
     private val binding get() = _binding!!
     private val mingleRepository = MingleRepository()
     private val categoryRepository = CategoryRepository()
-    private lateinit var mingleMemberAdapter: MingleMemberAdapter
+    private lateinit var mingleMemberPermissionAdapter: MingleMemberPermissionAdapter
     private lateinit var mingleCategoryAdapter: MingleCategoryAdapter
 
     private var isRealnameOn: Boolean = false
@@ -97,10 +97,13 @@ class MingleFragment : Fragment() {
                 ))
                     .onSuccess {
                         binding.addCategoryButton.visibility = View.VISIBLE
+                        binding.addCategoryButton.isEnabled = true
                         binding.addCategoryLayout.visibility = View.GONE
                         binding.inputNameValue.setText("")
                         binding.inputDescriptionValue.setText("")
+                        binding.inputTextColorValue.setText("FFFFFF")
                         binding.inputBackgroundColorValue.setText("")
+                        binding.sendCategoryButton.isEnabled = false
                         Toast.makeText(requireContext(), "카테고리를 성공적으로 추가했습니다.", Toast.LENGTH_LONG).show()
                         Log.d("MingleFragment", "카테고리 생성 성공")
                         setupFetchCategories(mingleId)
@@ -127,7 +130,7 @@ class MingleFragment : Fragment() {
                 val isTextHex = ColorUtil.isHexColor(binding.inputTextColorValue.text.toString())
                 val isBGColorValid = binding.inputBackgroundColorValue.length() == 6
                 val isBGHex = ColorUtil.isHexColor(binding.inputBackgroundColorValue.text.toString())
-                binding.addCategoryButton.isEnabled = isNameLengthValid && isTextColorValid && isBGColorValid && isTextHex && isBGHex
+                binding.sendCategoryButton.isEnabled = isNameLengthValid && isTextColorValid && isBGColorValid && isTextHex && isBGHex
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -268,7 +271,7 @@ class MingleFragment : Fragment() {
             mingleRepository.getMingle(mingleId)
                 .onSuccess { response ->
                     Log.d("MingleFragment", "밍글 정보 요청 성공")
-                    mingleMemberAdapter.submitList(response.mingleMembers)
+                    mingleMemberPermissionAdapter.submitList(response.mingleMembers)
 
                     (requireActivity() as MainActivity).setToolbarTitle(response.mingleName)
 
@@ -339,7 +342,7 @@ class MingleFragment : Fragment() {
         }
 
         // mingle member recycler view
-        mingleMemberAdapter = MingleMemberAdapter(
+        mingleMemberPermissionAdapter = MingleMemberPermissionAdapter(
             viewLifecycleOwner
         ) { memberId, permissionType, isAllowed ->
 
@@ -372,9 +375,8 @@ class MingleFragment : Fragment() {
             success
         }
 
-        binding.mingleMemberRecyclerView.layoutManager =
-            LinearLayoutManager(requireContext())
-        binding.mingleMemberRecyclerView.adapter = mingleMemberAdapter
+        binding.mingleMemberRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.mingleMemberRecyclerView.adapter = mingleMemberPermissionAdapter
     }
 
     private fun handleEditCategory(mingleId: Int, item: CategoryResponse) {

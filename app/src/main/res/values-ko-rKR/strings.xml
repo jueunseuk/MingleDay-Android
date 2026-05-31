@@ -102,6 +102,47 @@
     <string name="category_bg_color_hint">000000</string>
     <string name="category_delete_alert">을(를) 삭제하시겠습니까?</string>
 
+    <!-- 일정 -->
+    <string name="schedule_date_format">%1$d년 %2$d월</string>
+    <string name="schedule_day_format">%1$d일</string>
+    <string name="sunday">일</string>
+    <string name="monday">월</string>
+    <string name="tuesday">화</string>
+    <string name="wednesday">수</string>
+    <string name="thursday">목</string>
+    <string name="friday">금</string>
+    <string name="saturday">토</string>
+
+    <!--  일정 생성  -->
+    <string name="add_schedule_title">일정 만들기</string>
+    <string name="add_schedule_mingle_select">밍글 선택</string>
+    <string name="add_schedule_category_select">카테고리 선택</string>
+    <string name="add_schedule_name">제목</string>
+    <string name="add_schedule_name_hint">1~15자 사이로 제목 입력</string>
+    <string name="add_schedule_repeat">반복 여부</string>
+    <string name="add_schedule_repeat_false">반복 사용 안 함</string>
+    <string name="add_schedule_repeat_true">반복 사용</string>
+    <string name="add_schedule_repeat_method">반복 방법</string>
+    <string name="add_schedule_repeat_method_daily">매일 반복</string>
+    <string name="add_schedule_repeat_weekly">주마다 반복</string>
+    <string name="add_schedule_repeat_monthly">월마다 반복</string>
+    <string name="add_schedule_repeat_custom">반복 주기 설정</string>
+    <string name="add_schedule_repeat_end">반복 종료 조건</string>
+    <string name="add_schedule_repeat_end_count">반복 횟수 설정</string>
+    <string name="add_schedule_repeat_end_date">종료 날짜 설정</string>
+    <string name="add_schedule_time">시작 및 종료 시각</string>
+    <string name="add_schedule_all_day">하루종일</string>
+    <string name="add_schedule_member">참여 멤버</string>
+    <string name="add_schedule_content">내용</string>
+    <string name="add_schedule_content_hint">자유롭게 일정에 대한 내용 설명</string>
+    <string name="add_schedule_location">장소</string>
+    <string name="add_schedule_location_hint">일정 장소 입력</string>
+    <string name="add_schedule_lock">일정 잠금</string>
+    <string name="add_schedule_lock_visibility">다른 사람은 이 일정을 볼 수 없음</string>
+    <string name="add_schedule_lock_edit">다른 사람은 이 일정을 수정할 수 없음</string>
+    <string name="add_schedule_submit">일정 추가하기</string>
+    <string name="choose_mingle_first">밍글을 먼저 선택해주세요</string>
+
     <!--  검색  -->
     <string name="search_title">검색</string>
     <string name="search_hint">일정 검색</string>

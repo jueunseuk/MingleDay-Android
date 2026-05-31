@@ -4,15 +4,16 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import returns.mingleday.app.data.remote.api.MingleApi
-import returns.mingleday.app.data.remote.model.common.SuccessResponse
 import returns.mingleday.app.data.remote.model.mingle.CreateMingleRequest
 import returns.mingleday.app.data.remote.model.mingle.CreateMingleResponse
 import returns.mingleday.app.data.remote.model.mingle.InviteMingleRequest
 import returns.mingleday.app.data.remote.model.mingle.MingleLogResponse
+import returns.mingleday.app.data.remote.model.mingle.MingleMembersResponse
 import returns.mingleday.app.data.remote.model.mingle.MinglePermissionRequest
 import returns.mingleday.app.data.remote.model.mingle.MingleResponse
 import returns.mingleday.app.data.remote.model.mingle.MinglesResponse
 import returns.mingleday.app.data.remote.model.mingle.MyMingleLogResponse
+import returns.mingleday.app.data.remote.model.mingle.SimpleMingleResponse
 import returns.mingleday.app.data.remote.network.ApiResult
 import returns.mingleday.app.data.remote.network.RetrofitClient
 import returns.mingleday.app.data.remote.network.safeApiCall
@@ -30,11 +31,26 @@ class MingleRepository {
         }
     }
 
+    suspend fun getMyMinglesSimple(
+    ): ApiResult<List<SimpleMingleResponse>> {
+        return safeRawApiCall {
+            mingleApi.getMyMinglesSimple()
+        }
+    }
+
     suspend fun getMingle(
         mingleId: Int
     ): ApiResult<MingleResponse> {
         return safeRawApiCall {
             mingleApi.getMingle(mingleId)
+        }
+    }
+
+    suspend fun getMingleMembers(
+        mingleId: Int
+    ): ApiResult<List<MingleMembersResponse>> {
+        return safeRawApiCall {
+            mingleApi.getMingleMembers(mingleId)
         }
     }
 

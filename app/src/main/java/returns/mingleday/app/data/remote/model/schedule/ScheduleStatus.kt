@@ -1,4 +1,4 @@
-package returns.mingleday.app.data.remote.model.user
+package returns.mingleday.app.data.remote.model.schedule
 
 enum class ScheduleStatus {
     TODO,

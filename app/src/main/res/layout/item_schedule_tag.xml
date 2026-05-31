@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/schedule_tag_text"
+    android:layout_width="match_parent"
+    android:layout_height="18dp"
+    android:layout_marginTop="1dp"
+    android:paddingStart="3dp"
+    android:paddingEnd="3dp"
+    android:gravity="center"
+    android:singleLine="true"
+    android:ellipsize="end"
+    android:textSize="11sp"
+    android:textColor="@android:color/white"
+    android:background="@drawable/bg_schedule_tag" />
