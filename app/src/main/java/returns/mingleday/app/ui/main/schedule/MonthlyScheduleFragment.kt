@@ -35,6 +35,7 @@ class MonthlyScheduleFragment : Fragment() {
     private val categoryRepository = CategoryRepository()
     private lateinit var calendarAdapter: CalendarAdapter
     private lateinit var scheduleCategoryAdapter: ScheduleCategoryAdapter
+    private lateinit var dailyScheduleAdapter: DailyScheduleAdapter
 
     private var year: Int = LocalDate.now().year
     private var month: Int = LocalDate.now().month.value
@@ -70,6 +71,7 @@ class MonthlyScheduleFragment : Fragment() {
             fetchMingleCategory()
         }
         fetchAnniversarySchedules()
+        fetchDailySchedules()
     }
 
     private fun fetchMingleCategory() {
@@ -80,7 +82,7 @@ class MonthlyScheduleFragment : Fragment() {
                     scheduleCategoryAdapter.submitList(response)
                 }
                 .onError {
-                    Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 카테고리 가져오는 중 에러 발생")
+                    Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 카테고리 가져오는 중 에러 발생 - $it")
                 }
                 .onException {
                     Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 카테고리 가져오는 중 예외 발생 - $it")
@@ -89,10 +91,12 @@ class MonthlyScheduleFragment : Fragment() {
     }
 
     private fun setupCalendarRecyclerView() {
+        // calendar recycler view
+        setupDay(day)
         calendarAdapter = CalendarAdapter { day ->
-            fetchDailySchedules(day)
+            setupDay(day)
+            fetchDailySchedules()
         }
-
         binding.calendarRecyclerView.apply {
             layoutManager = GridLayoutManager(requireContext(), 7)
             adapter = calendarAdapter
@@ -101,6 +105,7 @@ class MonthlyScheduleFragment : Fragment() {
         }
         calendarAdapter.submitList(createCalendarDays(year, month))
 
+        // schedule category recycler view
         scheduleCategoryAdapter = ScheduleCategoryAdapter()
         binding.categoryRecyclerView.layoutManager = LinearLayoutManager(
             requireContext(),
@@ -111,9 +116,24 @@ class MonthlyScheduleFragment : Fragment() {
             SpaceItemDecoration(8)
         )
         binding.categoryRecyclerView.adapter = scheduleCategoryAdapter
+
+        // daily schedule recycler view
+        dailyScheduleAdapter = DailyScheduleAdapter { item ->
+            // 해당 스케줄로 이동
+        }
+        binding.dailyScheduleRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = dailyScheduleAdapter
+            isNestedScrollingEnabled = false
+            overScrollMode = View.OVER_SCROLL_NEVER
+        }
+        binding.dailyScheduleRecyclerView.addItemDecoration(
+            SpaceItemDecoration(5)
+        )
+        binding.dailyScheduleRecyclerView.adapter = dailyScheduleAdapter
     }
 
-    private fun fetchDailySchedules(day: Int) {
+    private fun fetchDailySchedules() {
         viewLifecycleOwner.lifecycleScope.launch {
             scheduleRepository.getDailySchedules(mingleId, year, month, day)
                 .onSuccess { response ->
@@ -121,14 +141,12 @@ class MonthlyScheduleFragment : Fragment() {
                         "MonthlyScheduleFragment",
                         "${year}년 ${month}월 ${day}일의 일정 목록 가져오기 성공"
                     )
-                    Log.d("MonthlyScheduleFragment", "$response")
-                    calendarAdapter.submitList(createCalendarDays(year, month))
-                    // 일별 일정 어댑터 여기에 submitList
+                    dailyScheduleAdapter.submitList(response)
                 }
                 .onError {
                     Log.d(
                         "MonthlyScheduleFragment",
-                        "${year}년 ${month}월 ${day}일의 일정 목록 가져오는 중 에러 발생"
+                        "${year}년 ${month}월 ${day}일의 일정 목록 가져오는 중 에러 발생 - $it"
                     )
                 }
                 .onException {
@@ -161,6 +179,16 @@ class MonthlyScheduleFragment : Fragment() {
     private fun setupDate(year: Int, month: Int) {
         binding.dateFormat.text = getString(R.string.schedule_date_format, year, month)
         fetchAnniversarySchedules()
+        if(mingleId == -1) {
+            fetchMySchedules()
+        } else {
+            fetchSchedules()
+        }
+    }
+
+    private fun setupDay(day: Int) {
+        this.day = day
+        binding.dayFormat.text = getString(R.string.schedule_day_format, day)
     }
 
     private fun fetchMySchedules() {
@@ -172,7 +200,7 @@ class MonthlyScheduleFragment : Fragment() {
                     Log.d("MonthlyScheduleFragment", "$response")
                 }
                 .onError {
-                    Log.d("MonthlyScheduleFragment", "내가 속한 ${year}년도 ${month}월 일정 가져오는 중 에러 발생")
+                    Log.d("MonthlyScheduleFragment", "내가 속한 ${year}년도 ${month}월 일정 가져오는 중 에러 발생 - $it")
                 }
                 .onException {
                     Log.d("MonthlyScheduleFragment", "내가 속한 ${year}년도 ${month}월 일정 가져오는 중 예외 발생 - $it")
@@ -193,7 +221,7 @@ class MonthlyScheduleFragment : Fragment() {
                     updateCalendar()
                 }
                 .onError {
-                    Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 ${year}년도 ${month}월 일정 가져오는 중 에러 발생")
+                    Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 ${year}년도 ${month}월 일정 가져오는 중 에러 발생 - $it")
                 }
                 .onException {
                     Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 ${year}년도 ${month}월 일정 가져오는 중 예외 발생 - $it")
@@ -290,6 +318,4 @@ class MonthlyScheduleFragment : Fragment() {
 
         return result
     }
-
-
 }

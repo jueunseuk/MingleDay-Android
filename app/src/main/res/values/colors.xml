@@ -11,6 +11,7 @@
     <color name="orange">#FFD580</color>
     <color name="red">#E24666</color>
     <color name="blue">#4A6CF7</color>
+    <color name="primary_bg">#EAF6FD</color>
 
     <!--  Achromatic Color  -->
     <color name="title">#1A1A1A</color>

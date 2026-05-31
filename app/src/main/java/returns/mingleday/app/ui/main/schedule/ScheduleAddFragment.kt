@@ -264,7 +264,7 @@ class ScheduleAddFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        // my mingle adpater
+        // my mingle adapter
         myMingleAdapter = MyMingleAdapter { mingle ->
             createScheduleRequest.mingleId = mingle.mingleId
             createScheduleRequest.categoryId = -1

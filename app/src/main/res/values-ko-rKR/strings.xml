@@ -104,6 +104,7 @@
 
     <!-- 일정 -->
     <string name="schedule_date_format">%1$d년 %2$d월</string>
+    <string name="schedule_day_format">%1$d일</string>
     <string name="sunday">일</string>
     <string name="monday">월</string>
     <string name="tuesday">화</string>

@@ -12,6 +12,7 @@ import returns.mingleday.app.data.remote.model.schedule.CalendarDayUiModel
 import returns.mingleday.app.util.ColorUtil
 import returns.mingleday.databinding.ItemCalendarDayBinding
 import java.time.LocalDate
+import androidx.core.graphics.toColorInt
 
 class CalendarAdapter(
     private val onDayClick: (Int) -> Unit
@@ -104,7 +105,7 @@ class CalendarAdapter(
                 binding.anniversaryValue.text = ""
             }
 
-            item.schedules.take(5).forEach { schedule ->
+            item.schedules.take(3).forEach { schedule ->
                 val tagView = LayoutInflater.from(binding.root.context)
                     .inflate(
                         R.layout.item_schedule_tag,
@@ -117,12 +118,24 @@ class CalendarAdapter(
 
                 val background = GradientDrawable().apply {
                     shape = GradientDrawable.RECTANGLE
-                    cornerRadius = 4f
+                    cornerRadius = 10f
                     setColor(ColorUtil.getColorInt(schedule.backgroundColor))
                 }
 
                 tagView.background = background
                 binding.scheduleContainer.addView(tagView)
+            }
+
+            val hiddenCount = item.schedules.size - 3
+            if (hiddenCount > 0) {
+                val moreView = TextView(binding.root.context).apply {
+                    text = "+${hiddenCount}"
+                    textSize = 9f
+                    setTextColor("#ADB8C3".toColorInt())
+                    gravity = android.view.Gravity.CENTER
+                }
+
+                binding.scheduleContainer.addView(moreView)
             }
 
             binding.root.setOnClickListener {
@@ -131,10 +144,5 @@ class CalendarAdapter(
                 onDayClick(item.day)
             }
         }
-    }
-
-    fun selectDay(day: Int) {
-        selectedDay = day
-        notifyDataSetChanged()
     }
 }
