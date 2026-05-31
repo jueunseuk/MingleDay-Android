@@ -11,6 +11,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.launch
 import returns.mingleday.R
+import returns.mingleday.app.data.remote.model.schedule.AnniversaryItemWithType
+import returns.mingleday.app.data.remote.model.schedule.CalendarDayUiModel
+import returns.mingleday.app.data.remote.model.schedule.CalendarScheduleUiModel
+import returns.mingleday.app.data.remote.model.schedule.MonthlyScheduleResponse
 import returns.mingleday.app.data.remote.network.onError
 import returns.mingleday.app.data.remote.network.onException
 import returns.mingleday.app.data.remote.network.onSuccess
@@ -36,6 +40,8 @@ class MonthlyScheduleFragment : Fragment() {
     private var month: Int = LocalDate.now().month.value
     private var day: Int = LocalDate.now().dayOfMonth
     private var mingleId: Int = -1
+    private var monthlySchedules: List<MonthlyScheduleResponse> = emptyList()
+    private var anniversarySchedules: List<AnniversaryItemWithType> = emptyList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMonthlyScheduleBinding.inflate(inflater, container, false)
@@ -57,13 +63,13 @@ class MonthlyScheduleFragment : Fragment() {
         setupCalendarRecyclerView()
         if (mingleId == -1) {
             fetchMySchedules()
-            binding.categoryRecyclerView.visibility = View.VISIBLE
-        } else {
-            fetchSchedules(mingleId)
             binding.categoryRecyclerView.visibility = View.GONE
+        } else {
+            fetchSchedules()
+            binding.categoryRecyclerView.visibility = View.VISIBLE
+            fetchMingleCategory()
         }
         fetchAnniversarySchedules()
-        fetchMingleCategory()
     }
 
     private fun fetchMingleCategory() {
@@ -83,21 +89,8 @@ class MonthlyScheduleFragment : Fragment() {
     }
 
     private fun setupCalendarRecyclerView() {
-        calendarAdapter = CalendarAdapter { response ->
-            // 날짜 클릭 시 일별 일정 조회 또는 상세 화면 이동 처리
-            viewLifecycleOwner.lifecycleScope.launch {
-                scheduleRepository.getDailySchedules(mingleId, year, month, day)
-                    .onSuccess { response ->
-                        Log.d("MonthlyScheduleFragment", "${year}년 ${month}월 ${day}일의 일정 목록 가져오기 성공")
-                        Log.d("MonthlyScheduleFragment", "$response")
-                    }
-                    .onError {
-                        Log.d("MonthlyScheduleFragment", "${year}년 ${month}월 ${day}일의 일정 목록 가져오는 중 에러 발생")
-                    }
-                    .onException {
-                        Log.d("MonthlyScheduleFragment", "${year}년 ${month}월 ${day}일의 일정 목록 가져오는 중 예외 발생 - $it")
-                    }
-            }
+        calendarAdapter = CalendarAdapter { day ->
+            fetchDailySchedules(day)
         }
 
         binding.calendarRecyclerView.apply {
@@ -106,6 +99,7 @@ class MonthlyScheduleFragment : Fragment() {
             isNestedScrollingEnabled = false
             overScrollMode = View.OVER_SCROLL_NEVER
         }
+        calendarAdapter.submitList(createCalendarDays(year, month))
 
         scheduleCategoryAdapter = ScheduleCategoryAdapter()
         binding.categoryRecyclerView.layoutManager = LinearLayoutManager(
@@ -114,9 +108,36 @@ class MonthlyScheduleFragment : Fragment() {
             false
         )
         binding.categoryRecyclerView.addItemDecoration(
-            SpaceItemDecoration(16)
+            SpaceItemDecoration(8)
         )
         binding.categoryRecyclerView.adapter = scheduleCategoryAdapter
+    }
+
+    private fun fetchDailySchedules(day: Int) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            scheduleRepository.getDailySchedules(mingleId, year, month, day)
+                .onSuccess { response ->
+                    Log.d(
+                        "MonthlyScheduleFragment",
+                        "${year}년 ${month}월 ${day}일의 일정 목록 가져오기 성공"
+                    )
+                    Log.d("MonthlyScheduleFragment", "$response")
+                    calendarAdapter.submitList(createCalendarDays(year, month))
+                    // 일별 일정 어댑터 여기에 submitList
+                }
+                .onError {
+                    Log.d(
+                        "MonthlyScheduleFragment",
+                        "${year}년 ${month}월 ${day}일의 일정 목록 가져오는 중 에러 발생"
+                    )
+                }
+                .onException {
+                    Log.d(
+                        "MonthlyScheduleFragment",
+                        "${year}년 ${month}월 ${day}일의 일정 목록 가져오는 중 예외 발생 - $it"
+                    )
+                }
+        }
     }
 
     private fun setupChangeDateButton() {
@@ -143,7 +164,6 @@ class MonthlyScheduleFragment : Fragment() {
     }
 
     private fun fetchMySchedules() {
-        // impl
         Log.d("MonthlyScheduleFragment", "내가 속한 밍글들의 스케줄 불러오기 실행")
         viewLifecycleOwner.lifecycleScope.launch {
             scheduleRepository.getMonthlySchedules(mingleId, year, month)
@@ -160,7 +180,7 @@ class MonthlyScheduleFragment : Fragment() {
         }
     }
 
-    private fun fetchSchedules(mingleId: Int) {
+    private fun fetchSchedules() {
         Log.d("MonthlyScheduleFragment", "$mingleId 밍글의 스케줄 불러오기 실행")
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -168,6 +188,9 @@ class MonthlyScheduleFragment : Fragment() {
                 .onSuccess { response ->
                     Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 ${year}년도 ${month}월 일정 가져오기 성공")
                     Log.d("MonthlyScheduleFragment", "$response")
+
+                    monthlySchedules = response
+                    updateCalendar()
                 }
                 .onError {
                     Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 ${year}년도 ${month}월 일정 가져오는 중 에러 발생")
@@ -185,7 +208,8 @@ class MonthlyScheduleFragment : Fragment() {
             anniversaryRepository.getAnniversary(year, month)
                 .onSuccess { response ->
                     Log.d("MonthlyScheduleFragment", "특일의 ${year}년도 ${month}월 일정 가져오기 성공")
-                    // view impl
+                    anniversarySchedules = response
+                    updateCalendar()
                 }
                 .onError {
                     Log.d("MonthlyScheduleFragment", "특일의 ${year}년도 ${month}월 일정 가져오는 중 에러 발생")
@@ -196,8 +220,76 @@ class MonthlyScheduleFragment : Fragment() {
         }
     }
 
+    private fun updateCalendar() {
+        if (!::calendarAdapter.isInitialized) return
+
+        calendarAdapter.submitList(
+            createCalendarDays(
+                year = year,
+                month = month,
+                anniversaries = anniversarySchedules,
+                schedules = monthlySchedules
+            )
+        )
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun createCalendarDays(
+        year: Int,
+        month: Int,
+        anniversaries: List<AnniversaryItemWithType> = emptyList(),
+        schedules: List<MonthlyScheduleResponse> = emptyList()
+    ): List<CalendarDayUiModel> {
+        val result = mutableListOf<CalendarDayUiModel>()
+
+        val firstDate = LocalDate.of(year, month, 1)
+        val lastDay = firstDate.lengthOfMonth()
+        val firstDayOfWeek = firstDate.dayOfWeek.value
+        val emptyCount = if (firstDayOfWeek == 7) 0 else firstDayOfWeek
+        val today = LocalDate.now()
+
+        repeat(emptyCount) {
+            result.add(CalendarDayUiModel(day = null))
+        }
+
+        for (day in 1..lastDay) {
+            val date = LocalDate.of(year, month, day)
+
+            val anniversary = anniversaries.find {
+                it.locdate.takeLast(2).toIntOrNull() == day
+            }
+
+            val schedulesOfDay = schedules.filter { schedule ->
+                val startDate = LocalDate.parse(schedule.scheduleInstance.startAt.substring(0, 10))
+                val endDate = LocalDate.parse(schedule.scheduleInstance.endAt.substring(0, 10))
+
+                !date.isBefore(startDate) && !date.isAfter(endDate)
+            }.map { schedule ->
+                CalendarScheduleUiModel(
+                    title = schedule.title,
+                    backgroundColor = schedule.category.backgroundColor,
+                    textColor = schedule.category.textColor
+                )
+            }
+
+            result.add(
+                CalendarDayUiModel(
+                    day = day,
+                    schedules = schedulesOfDay,
+                    dayOfWeek = date.dayOfWeek.value,
+                    isToday = date == today,
+                    anniversaryName = anniversary?.dateName,
+                    isHoliday = anniversary?.isHoliday == true
+                )
+            )
+        }
+
+        return result
+    }
+
+
 }

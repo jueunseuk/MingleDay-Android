@@ -17,12 +17,14 @@
             android:id="@+id/minus_year_button"
             android:layout_width="12dp"
             android:layout_height="12dp"
+            android:contentDescription="@string/image_alt"
             android:src="@drawable/ic_double_left_arrow_black"/>
 
         <ImageView
             android:id="@+id/minus_month_button"
             android:layout_width="12dp"
             android:layout_height="12dp"
+            android:contentDescription="@string/image_alt"
             android:src="@drawable/ic_left_arrow_black"
             android:layout_marginStart="20dp"/>
 
@@ -43,12 +45,14 @@
             android:layout_width="12dp"
             android:layout_height="12dp"
             android:src="@drawable/ic_right_arrow_black"
+            android:contentDescription="@string/image_alt"
             android:layout_marginEnd="20dp"/>
 
         <ImageView
             android:id="@+id/plus_year_button"
             android:layout_width="12dp"
             android:layout_height="12dp"
+            android:contentDescription="@string/image_alt"
             android:src="@drawable/ic_double_right_arrow_black"/>
     </LinearLayout>
 
@@ -58,6 +62,9 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:nestedScrollingEnabled="false"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         />
 
     <LinearLayout
@@ -125,7 +132,7 @@
             android:layout_height="30dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/monday"
+            android:text="@string/saturday"
             android:fontFamily="@font/semibold"
             android:textColor="@color/blue"/>
     </LinearLayout>

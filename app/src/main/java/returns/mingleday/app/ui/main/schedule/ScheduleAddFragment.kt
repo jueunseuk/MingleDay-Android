@@ -89,10 +89,9 @@ class ScheduleAddFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (requireActivity() as MainActivity).setToolbarTitle(R.string.add_schedule_title)
         createScheduleRequest.mingleId = arguments?.getInt("mingleId") ?: -1
         Log.d("ScheduleAddFragment", "전달 받은 mingleId = ${createScheduleRequest.mingleId}")
-
-        (requireActivity() as MainActivity).setToolbarTitle(R.string.add_mingle_title)
 
         setupRecyclerView()
         setupFetchMyMingleList()

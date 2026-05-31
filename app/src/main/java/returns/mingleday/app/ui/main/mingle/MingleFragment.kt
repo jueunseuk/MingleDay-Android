@@ -97,10 +97,13 @@ class MingleFragment : Fragment() {
                 ))
                     .onSuccess {
                         binding.addCategoryButton.visibility = View.VISIBLE
+                        binding.addCategoryButton.isEnabled = true
                         binding.addCategoryLayout.visibility = View.GONE
                         binding.inputNameValue.setText("")
                         binding.inputDescriptionValue.setText("")
+                        binding.inputTextColorValue.setText("FFFFFF")
                         binding.inputBackgroundColorValue.setText("")
+                        binding.sendCategoryButton.isEnabled = false
                         Toast.makeText(requireContext(), "카테고리를 성공적으로 추가했습니다.", Toast.LENGTH_LONG).show()
                         Log.d("MingleFragment", "카테고리 생성 성공")
                         setupFetchCategories(mingleId)
@@ -127,7 +130,7 @@ class MingleFragment : Fragment() {
                 val isTextHex = ColorUtil.isHexColor(binding.inputTextColorValue.text.toString())
                 val isBGColorValid = binding.inputBackgroundColorValue.length() == 6
                 val isBGHex = ColorUtil.isHexColor(binding.inputBackgroundColorValue.text.toString())
-                binding.addCategoryButton.isEnabled = isNameLengthValid && isTextColorValid && isBGColorValid && isTextHex && isBGHex
+                binding.sendCategoryButton.isEnabled = isNameLengthValid && isTextColorValid && isBGColorValid && isTextHex && isBGHex
             }
 
             override fun afterTextChanged(s: Editable?) {}
