@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,6 +33,7 @@ class ScheduleFragment : Fragment() {
     private lateinit var scheduleMemberMemoAdapter: ScheduleMemberMemoAdapter
 
     private var mingleId: Int = -1
+    private var scheduleId: Long = -1;
     private var scheduleInstanceId: Long = -1
     private var scheduleName: String = "일정"
 
@@ -48,6 +50,7 @@ class ScheduleFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mingleId = arguments?.getInt("mingleId") ?: -1
+        scheduleId = arguments?.getLong("scheduleId") ?: -1
         scheduleInstanceId = arguments?.getLong("scheduleInstanceId") ?: -1
         scheduleName = arguments?.getString("scheduleName") ?: "일정"
 
@@ -57,6 +60,27 @@ class ScheduleFragment : Fragment() {
         setupRecyclerView()
         setupBackButton()
         fetchScheduleInstance()
+        setupDeleteButton()
+    }
+
+    private fun setupDeleteButton() {
+        binding.deleteButton.setOnClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                scheduleRepository.deleteSchedule(mingleId, scheduleId)
+                    .onSuccess { response ->
+                        Log.d("ScheduleFragment", "${scheduleId}번 일정 삭제 성공")
+                        Toast.makeText(requireContext(), "일정 삭제 완료", Toast.LENGTH_SHORT).show()
+                        parentFragmentManager.popBackStack()
+                    }
+                    .onError {
+                        Log.d("ScheduleFragment", "${scheduleId}번 일정 삭제하는 중 에러 발생 - $it")
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                    }
+                    .onException {
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                    }
+            }
+        }
     }
 
     private fun setupRecyclerView() {
@@ -140,8 +164,6 @@ class ScheduleFragment : Fragment() {
         binding.nextInstanceButton.isEnabled = hasNext
         binding.prevInstanceButton.alpha = if (hasPrev) 1f else 0.4f
         binding.nextInstanceButton.alpha = if (hasNext) 1f else 0.4f
-        binding.editButton.visibility = if (response.isLocked) View.GONE
-                                        else View.VISIBLE
         binding.prevInstanceButton.setOnClickListener {
             response.scheduleInstance.prev?.let {
                 scheduleInstanceId = it.scheduleInstanceId

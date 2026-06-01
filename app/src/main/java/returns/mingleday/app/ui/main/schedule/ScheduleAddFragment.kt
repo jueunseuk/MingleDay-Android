@@ -555,6 +555,7 @@ class ScheduleAddFragment : Fragment() {
                         val fragment = ScheduleFragment().apply {
                             arguments = Bundle().apply {
                                 putInt("mingleId", createScheduleRequest.mingleId)
+                                putLong("scheduleId", response.scheduleId)
                                 putLong("scheduleInstanceId", response.scheduleInstance.scheduleInstanceId)
                                 putString("scheduleName", response.title)
                             }

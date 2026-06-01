@@ -124,9 +124,11 @@ class MonthlyScheduleFragment : Fragment() {
 
         // daily schedule recycler view
         dailyScheduleAdapter = DailyScheduleAdapter(year, month, day) { item ->
+            mingleId = item.mingleId
             val fragment = ScheduleFragment().apply {
                 arguments = Bundle().apply {
                     putInt("mingleId", mingleId)
+                    putLong("scheduleId", item.scheduleId)
                     putLong("scheduleInstanceId", item.scheduleInstance.scheduleInstanceId)
                     putString("scheduleName", item.title)
                 }
