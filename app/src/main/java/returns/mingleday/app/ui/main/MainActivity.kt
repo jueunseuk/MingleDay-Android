@@ -98,14 +98,14 @@ class MainActivity : AppCompatActivity() {
             val fragment = MonthlyScheduleFragment().apply {
                 arguments = Bundle().apply {
                     putInt("mingleId", mingle.mingleId)
+                    putString("mingleName", mingle.mingleName)
                 }
             }
 
             replaceFragment(fragment)
         }
 
-        binding.drawerMingleRecyclerView.layoutManager =
-            LinearLayoutManager(this)
+        binding.drawerMingleRecyclerView.layoutManager = LinearLayoutManager(this)
 
         binding.drawerMingleRecyclerView.adapter = mingleDrawerAdapter
 

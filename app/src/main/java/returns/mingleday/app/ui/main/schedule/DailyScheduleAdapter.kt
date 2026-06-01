@@ -5,12 +5,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import returns.mingleday.app.data.remote.model.schedule.DailyScheduleResponse
 import returns.mingleday.app.util.ColorUtil
+import returns.mingleday.app.util.DateFormatter
 import returns.mingleday.app.util.DateFormatter.formatCustom
 import returns.mingleday.databinding.ItemDailyScheduleBinding
+import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class DailyScheduleAdapter(
+    private var year: Int,
+    private var month: Int,
+    private var day: Int,
     private val onClick: (DailyScheduleResponse) -> Unit
 ): RecyclerView.Adapter<DailyScheduleAdapter.ScheduleViewHolder>(
 ) {
@@ -43,7 +47,11 @@ class DailyScheduleAdapter(
 
         fun bind(item: DailyScheduleResponse) {
             binding.scheduleTitleValue.text = item.title
-            binding.timeValue.text = LocalDateTime.parse(item.scheduleInstance.startAt).formatCustom(8) +" ~ "+LocalDateTime.parse(item.scheduleInstance.endAt).formatCustom(8)
+            binding.timeValue.text = makeTimeValue(
+                LocalDate.of(year, month, day),
+                item.scheduleInstance.startAt,
+                item.scheduleInstance.endAt
+            )
             binding.scheduleContentValue.text = item.content
             binding.categoryNameValue.text = item.category.name
             binding.categoryColorBar.setBackgroundColor(
@@ -54,5 +62,33 @@ class DailyScheduleAdapter(
                 onClick(item)
             }
         }
+    }
+
+    private fun makeTimeValue(selectedDate: LocalDate, startStr: String, endStr: String): String {
+        val start = LocalDateTime.parse(startStr)
+        val end = LocalDateTime.parse(endStr)
+
+        return if(DateFormatter.isSameDay(start, end)) {
+            if(DateFormatter.isStartOfDay(start) && DateFormatter.isEndOfDay(end)) {
+                "하루종일"
+            } else {
+                start.formatCustom(8)+" ~ "+end.formatCustom(8)
+            }
+        } else {
+            if(selectedDate == start.toLocalDate()) {
+                start.formatCustom(8)+" ~ 23:59"
+            } else if(selectedDate == end.toLocalDate()) {
+                "00:00 ~ "+end.formatCustom(8)
+            } else {
+                "하루종일"
+            }
+        }
+    }
+
+    fun updateDate(year: Int, month: Int, day: Int) {
+        this.year = year
+        this.month = month
+        this.day = day
+        notifyDataSetChanged()
     }
 }

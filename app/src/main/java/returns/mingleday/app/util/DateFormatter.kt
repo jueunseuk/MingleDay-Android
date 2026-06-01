@@ -59,4 +59,16 @@ object DateFormatter {
             else -> this.toString()
         }
     }
+
+    fun isStartOfDay(time: LocalDateTime): Boolean {
+        return time.hour == 0 && time.minute == 0 && time.second == 0
+    }
+
+    fun isEndOfDay(time: LocalDateTime): Boolean {
+        return time.hour == 23 && time.minute == 59 && time.minute == 0
+    }
+
+    fun isSameDay(day1: LocalDateTime, day2: LocalDateTime): Boolean {
+        return day1.year == day2.year && day1.dayOfYear == day2.dayOfYear
+    }
 }

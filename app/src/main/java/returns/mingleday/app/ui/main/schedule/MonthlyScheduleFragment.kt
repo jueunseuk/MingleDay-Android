@@ -21,6 +21,7 @@ import returns.mingleday.app.data.remote.network.onSuccess
 import returns.mingleday.app.data.repository.AnniversaryRepository
 import returns.mingleday.app.data.repository.CategoryRepository
 import returns.mingleday.app.data.repository.ScheduleRepository
+import returns.mingleday.app.data.repository.UserRepository
 import returns.mingleday.app.ui.common.SpaceItemDecoration
 import returns.mingleday.app.ui.main.MainActivity
 import returns.mingleday.databinding.FragmentMonthlyScheduleBinding
@@ -33,6 +34,7 @@ class MonthlyScheduleFragment : Fragment() {
     private val scheduleRepository = ScheduleRepository()
     private val anniversaryRepository = AnniversaryRepository()
     private val categoryRepository = CategoryRepository()
+    private val userRepository = UserRepository()
     private lateinit var calendarAdapter: CalendarAdapter
     private lateinit var scheduleCategoryAdapter: ScheduleCategoryAdapter
     private lateinit var dailyScheduleAdapter: DailyScheduleAdapter
@@ -41,6 +43,7 @@ class MonthlyScheduleFragment : Fragment() {
     private var month: Int = LocalDate.now().month.value
     private var day: Int = LocalDate.now().dayOfMonth
     private var mingleId: Int = -1
+    private var mingleName: String = "내 일정"
     private var monthlySchedules: List<MonthlyScheduleResponse> = emptyList()
     private var anniversarySchedules: List<AnniversaryItemWithType> = emptyList()
 
@@ -52,10 +55,11 @@ class MonthlyScheduleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val mainActivity = requireActivity() as MainActivity
-        mainActivity.setToolbarTitle(R.string.my_schedule_title)
-
         mingleId = arguments?.getInt("mingleId") ?: -1
+        mingleName = arguments?.getString("mingleName") ?: "내 일정"
+
+        val mainActivity = requireActivity() as MainActivity
+        mainActivity.setToolbarTitle(mingleName)
 
         mainActivity.mingleId = mingleId
 
@@ -95,6 +99,7 @@ class MonthlyScheduleFragment : Fragment() {
         setupDay(day)
         calendarAdapter = CalendarAdapter { day ->
             setupDay(day)
+            dailyScheduleAdapter.updateDate(year, month, day)
             fetchDailySchedules()
         }
         binding.calendarRecyclerView.apply {
@@ -118,8 +123,18 @@ class MonthlyScheduleFragment : Fragment() {
         binding.categoryRecyclerView.adapter = scheduleCategoryAdapter
 
         // daily schedule recycler view
-        dailyScheduleAdapter = DailyScheduleAdapter { item ->
-            // 해당 스케줄로 이동
+        dailyScheduleAdapter = DailyScheduleAdapter(year, month, day) { item ->
+            val fragment = ScheduleFragment().apply {
+                arguments = Bundle().apply {
+                    putInt("mingleId", mingleId)
+                    putLong("scheduleInstanceId", item.scheduleInstance.scheduleInstanceId)
+                    putString("scheduleName", item.title)
+                }
+            }
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.main_frame, fragment)
+                .addToBackStack(null)
+                .commit()
         }
         binding.dailyScheduleRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -135,7 +150,13 @@ class MonthlyScheduleFragment : Fragment() {
 
     private fun fetchDailySchedules() {
         viewLifecycleOwner.lifecycleScope.launch {
-            scheduleRepository.getDailySchedules(mingleId, year, month, day)
+            val result = if (mingleId == -1) {
+                userRepository.getMyDailySchedules(year, month, day, "")
+            } else {
+                scheduleRepository.getDailySchedules(mingleId, year, month, day)
+            }
+
+            result
                 .onSuccess { response ->
                     Log.d(
                         "MonthlyScheduleFragment",
@@ -194,10 +215,12 @@ class MonthlyScheduleFragment : Fragment() {
     private fun fetchMySchedules() {
         Log.d("MonthlyScheduleFragment", "내가 속한 밍글들의 스케줄 불러오기 실행")
         viewLifecycleOwner.lifecycleScope.launch {
-            scheduleRepository.getMonthlySchedules(mingleId, year, month)
+            userRepository.getMyMonthlySchedules(year, month, "")
                 .onSuccess { response ->
                     Log.d("MonthlyScheduleFragment", "내가 속한 ${year}년도 ${month}월 일정 가져오기 성공")
                     Log.d("MonthlyScheduleFragment", "$response")
+                    monthlySchedules = response
+                    updateCalendar()
                 }
                 .onError {
                     Log.d("MonthlyScheduleFragment", "내가 속한 ${year}년도 ${month}월 일정 가져오는 중 에러 발생 - $it")
