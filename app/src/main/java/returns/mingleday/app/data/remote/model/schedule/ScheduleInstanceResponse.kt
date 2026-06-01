@@ -6,6 +6,6 @@ data class ScheduleInstanceResponse(
     val endAt: String,
     val memo: String,
     val scheduleStatus: ScheduleStatus,
-    val prev: SimpleScheduleInstanceResponse,
-    val next: SimpleScheduleInstanceResponse
+    val prev: SimpleScheduleInstanceResponse?,
+    val next: SimpleScheduleInstanceResponse?
 )

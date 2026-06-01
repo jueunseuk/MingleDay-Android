@@ -4,9 +4,9 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:background="@color/bg">
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:background="@color/bg"
@@ -20,18 +20,20 @@
 
         <ImageView
             android:id="@+id/minus_year_button"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="12dp"
             android:contentDescription="@string/image_alt"
             android:src="@drawable/ic_double_left_arrow_black"/>
 
         <ImageView
             android:id="@+id/minus_month_button"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="12dp"
             android:contentDescription="@string/image_alt"
             android:src="@drawable/ic_left_arrow_black"
-            android:layout_marginStart="20dp"/>
+            android:layout_marginStart="10dp"/>
 
         <TextView
             android:id="@+id/date_format"
@@ -41,22 +43,24 @@
             android:textSize="18sp"
             android:textColor="@color/title"
             android:fontFamily="@font/bold"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
             />
 
         <ImageView
             android:id="@+id/plus_month_button"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="12dp"
             android:src="@drawable/ic_right_arrow_black"
             android:contentDescription="@string/image_alt"
-            android:layout_marginEnd="20dp"/>
+            android:layout_marginEnd="10dp"/>
 
         <ImageView
             android:id="@+id/plus_year_button"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="12dp"
             android:contentDescription="@string/image_alt"
             android:src="@drawable/ic_double_right_arrow_black"/>
     </LinearLayout>
