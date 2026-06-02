@@ -33,7 +33,7 @@ class ScheduleFragment : Fragment() {
     private lateinit var scheduleMemberMemoAdapter: ScheduleMemberMemoAdapter
 
     private var mingleId: Int = -1
-    private var scheduleId: Long = -1;
+    private var scheduleId: Long = -1
     private var scheduleInstanceId: Long = -1
     private var scheduleName: String = "일정"
 
@@ -67,7 +67,7 @@ class ScheduleFragment : Fragment() {
         binding.deleteButton.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 scheduleRepository.deleteSchedule(mingleId, scheduleId)
-                    .onSuccess { response ->
+                    .onSuccess {
                         Log.d("ScheduleFragment", "${scheduleId}번 일정 삭제 성공")
                         Toast.makeText(requireContext(), "일정 삭제 완료", Toast.LENGTH_SHORT).show()
                         parentFragmentManager.popBackStack()
