@@ -144,8 +144,8 @@
     <string name="add_schedule_lock_visibility">Others cannot view this schedule</string>
     <string name="add_schedule_lock_edit">Others cannot edit this schedule</string>
     <string name="choose_mingle_first">밍글을 먼저 선택해주세요</string>
-
     <string name="add_schedule_submit">Add Schedule</string>
+    <string name="add_schedule_repeat_hint">반복을 사용하면 여러 날짜의 일정은 만들 수 없어요</string>
 
     <!--  검색  -->
     <string name="search_title">Search</string>

@@ -354,33 +354,47 @@ class ScheduleAddFragment : Fragment() {
 
         binding.repeatDailyButton.isSelected = true
         binding.repeatCountButton.isSelected = true
+        binding.repeatCountValue.visibility = View.VISIBLE
+        binding.repeatEndValue.visibility = View.GONE
 
+        // 종료 날짜 설정은 daily repeat만 가능
         binding.repeatDailyButton.setOnClickListener {
             selectRepeatType(RepeatType.DAILY, it)
+            binding.repeatEndButton.visibility = View.VISIBLE
         }
-
         binding.repeatWeeklyButton.setOnClickListener {
             selectRepeatType(RepeatType.WEEKLY, it)
+            binding.repeatEndButton.visibility = View.GONE
+            binding.repeatCountButton.isSelected = true
+            binding.repeatCountValue.visibility = View.VISIBLE
         }
-
         binding.repeatMonthlyButton.setOnClickListener {
             selectRepeatType(RepeatType.MONTHLY, it)
+            binding.repeatEndButton.visibility = View.GONE
+            binding.repeatCountButton.isSelected = true
+            binding.repeatCountValue.visibility = View.VISIBLE
         }
-
         binding.repeatCustomButton.setOnClickListener {
             selectRepeatType(RepeatType.INTERVAL, it)
+            binding.repeatEndButton.visibility = View.GONE
+            binding.repeatCountButton.isSelected = true
+            binding.repeatCountValue.visibility = View.VISIBLE
         }
 
         binding.repeatCountButton.setOnClickListener {
             createScheduleRequest.endType = EndType.COUNT
             binding.repeatCountButton.isSelected = true
             binding.repeatEndButton.isSelected = false
+            binding.repeatCountValue.visibility = View.VISIBLE
+            binding.repeatEndValue.visibility = View.GONE
         }
 
         binding.repeatEndButton.setOnClickListener {
             createScheduleRequest.endType = EndType.DATE
             binding.repeatCountButton.isSelected = false
             binding.repeatEndButton.isSelected = true
+            binding.repeatCountValue.visibility = View.GONE
+            binding.repeatEndValue.visibility = View.VISIBLE
         }
 
         binding.timeContainer.visibility = View.GONE
