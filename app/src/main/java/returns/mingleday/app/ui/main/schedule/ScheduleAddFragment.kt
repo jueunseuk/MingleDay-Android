@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -492,6 +493,10 @@ class ScheduleAddFragment : Fragment() {
         val isNameValid = binding.inputScheduleNameValue.length() in 1..30
         val isMingleValid = createScheduleRequest.mingleId != -1
         val isDateRangeValid = !endDate.isBefore(startDate)
+        val isDayOfWeekValid = createScheduleRequest.repeatType != RepeatType.WEEKLY || selectedWeekOfDay.isNotEmpty()
+        val isMonthlyValueValid = createScheduleRequest.repeatType != RepeatType.MONTHLY || binding.monthlyPicker.text.isNotEmpty()
+        val isIntervalValueValid = createScheduleRequest.repeatType != RepeatType.INTERVAL || binding.intervalPicker.text.isDigitsOnly()
+        val isCountValidValid = createScheduleRequest.endType != EndType.COUNT || binding.repeatCountValue.text.isDigitsOnly()
         val isEndDateValid = if (
             createScheduleRequest.isRepeated &&
             createScheduleRequest.endType == EndType.DATE
@@ -512,6 +517,10 @@ class ScheduleAddFragment : Fragment() {
         binding.addScheduleButton.isEnabled =   isNameValid &&
                                                 isMingleValid &&
                                                 isDateRangeValid &&
+                                                isDayOfWeekValid &&
+                                                isMonthlyValueValid &&
+                                                isIntervalValueValid &&
+                                                isCountValidValid &&
                                                 isTimeRangeValid &&
                                                 isEndDateValid &&
                                                 scheduleMembers.isNotEmpty() &&
