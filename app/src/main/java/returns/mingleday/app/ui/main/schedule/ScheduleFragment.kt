@@ -12,7 +12,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.launch
 import returns.mingleday.app.data.remote.model.schedule.DetailScheduleResponse
+import returns.mingleday.app.data.remote.model.schedule.ScheduleMemberResponse
 import returns.mingleday.app.data.remote.model.schedule.ScheduleStatus
+import returns.mingleday.app.data.remote.model.schedule.UpdateScheduleMemberRequest
 import returns.mingleday.app.data.remote.network.onError
 import returns.mingleday.app.data.remote.network.onException
 import returns.mingleday.app.data.remote.network.onSuccess
@@ -84,7 +86,9 @@ class ScheduleFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        scheduleMemberMemoAdapter = ScheduleMemberMemoAdapter()
+        scheduleMemberMemoAdapter = ScheduleMemberMemoAdapter { item ->
+            handleEditScheduleMemberMemo(item)
+        }
 
         binding.memberRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -206,6 +210,30 @@ class ScheduleFragment : Fragment() {
                         end.formatCustom(1) + " " + end.formatCustom(8)
             }
         }
+    }
+
+    private fun handleEditScheduleMemberMemo(item: ScheduleMemberResponse) {
+        ScheduleMemberEditDialogFragment(item) { memo ->
+            viewLifecycleOwner.lifecycleScope.launch {
+                scheduleRepository.updateScheduleMember(
+                    mingleId,
+                    scheduleId,
+                    item.scheduleMemberId,
+                    UpdateScheduleMemberRequest(item.scheduleMemberId, memo)
+                )
+                    .onSuccess {
+                        scheduleMemberMemoAdapter.updateMemo(item.scheduleMemberId, memo)
+                        Toast.makeText(requireContext(), "${item.name}의 메모를 ${memo}로 수정 완료", Toast.LENGTH_LONG).show()
+                        Log.d("ScheduleFragment", "${item.name}의 메모를 ${memo}로 수정 완료")
+                    }
+                    .onError {
+                        Log.d("ScheduleFragment", "${item.name}의 메모를 ${memo}로 수정 중 에러 발생")
+                    }
+                    .onException {
+                        Log.d("ScheduleFragment", "${item.name}의 메모를 ${memo}로 수정 중 예외 발생")
+                    }
+            }
+        }.show(parentFragmentManager, "ScheduleMemberEditDialogFragment")
     }
 
     override fun onDestroyView() {

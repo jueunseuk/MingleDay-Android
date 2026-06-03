@@ -590,7 +590,10 @@ class ScheduleAddFragment : Fragment() {
             createScheduleRequest.title = binding.inputScheduleNameValue.text.toString().trim()
             createScheduleRequest.content = binding.inputScheduleContentValue.text.toString().trim()
             createScheduleRequest.location = binding.inputScheduleLocationValue.text.toString().trim()
-            createScheduleRequest.endValue = endDateCondition.format(dateFormatter)
+            createScheduleRequest.endValue = when(createScheduleRequest.endType) {
+                EndType.COUNT -> binding.repeatCountValue.text.toString().trim()
+                EndType.DATE -> endDateCondition.format(dateFormatter)
+            }
             createScheduleRequest.repeatValue = when(createScheduleRequest.repeatType) {
                 RepeatType.WEEKLY -> selectedWeekOfDay.sorted().joinToString(",")
                 RepeatType.MONTHLY -> binding.monthlyPicker.text.toString().trim()
