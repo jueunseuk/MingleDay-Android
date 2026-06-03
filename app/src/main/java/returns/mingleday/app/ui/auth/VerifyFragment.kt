@@ -20,6 +20,7 @@ import returns.mingleday.app.data.remote.network.onException
 import returns.mingleday.app.data.remote.network.onSuccess
 import returns.mingleday.databinding.FragmentVerifyBinding
 import returns.mingleday.app.data.repository.AuthRepository
+import returns.mingleday.app.util.ToastUtil
 
 class VerifyFragment : Fragment() {
 
@@ -92,10 +93,12 @@ class VerifyFragment : Fragment() {
                     }
                     .onError {
                         Log.d("SendFragment", "인증번호 전송 실패: $it")
+                        ToastUtil.makeErrorToast(requireContext())
                         binding.resendButton.isEnabled = true
                     }
                     .onException {
                         Log.e("SendFragment", "인증번호 전송 예외:, $it")
+                        ToastUtil.makeExceptionToast(requireContext(), it)
                         binding.resendButton.isEnabled = true
                     }
             }
@@ -128,13 +131,13 @@ class VerifyFragment : Fragment() {
                         Log.d("SendFragment", "인증번호 확인 실패: $it")
                         binding.checkVerificationCodeButton.isEnabled = true
                         binding.checkVerificationCodeButton.setText(R.string.verify_code_button)
-                        Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
+                        ToastUtil.makeErrorToast(requireContext())
                     }
                     .onException {
                         Log.e("SendFragment", "인증번호 확인 중 예외 발생:, $it")
                         binding.checkVerificationCodeButton.isEnabled = true
                         binding.checkVerificationCodeButton.setText(R.string.verify_code_button)
-                        Toast.makeText(requireContext(), R.string.verification_mismatch, Toast.LENGTH_LONG).show()
+                        ToastUtil.makeExceptionToast(requireContext(), it)
                     }
             }
         }

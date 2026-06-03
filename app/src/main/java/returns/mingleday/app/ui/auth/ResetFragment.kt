@@ -21,6 +21,7 @@ import returns.mingleday.app.data.remote.network.onSuccess
 import returns.mingleday.databinding.FragmentResetBinding
 import returns.mingleday.databinding.FragmentSendBinding
 import returns.mingleday.app.data.repository.AuthRepository
+import returns.mingleday.app.util.ToastUtil
 
 class ResetFragment : Fragment() {
 
@@ -91,13 +92,13 @@ class ResetFragment : Fragment() {
                         Log.d("ResetFragment", "인증번호 전송 실패: $it")
                         binding.sendVerificationCodeButton.isEnabled = true
                         binding.sendVerificationCodeButton.setText(R.string.send_button)
-                        Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
+                        ToastUtil.makeErrorToast(requireContext())
                     }
                     .onException {
                         Log.e("ResetFragment", "인증번호 전송 예외:, $it")
                         binding.sendVerificationCodeButton.isEnabled = true
                         binding.sendVerificationCodeButton.setText(R.string.send_button)
-                        Toast.makeText(requireContext(), R.string.already_exist_email, Toast.LENGTH_LONG).show()
+                        ToastUtil.makeExceptionToast(requireContext(), it)
                     }
             }
         }

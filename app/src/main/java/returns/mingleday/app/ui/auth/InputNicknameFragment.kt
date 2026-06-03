@@ -22,6 +22,7 @@ import returns.mingleday.app.data.remote.network.onException
 import returns.mingleday.app.data.remote.network.onSuccess
 import returns.mingleday.databinding.FragmentInputNicknameBinding
 import returns.mingleday.app.data.repository.AuthRepository
+import returns.mingleday.app.util.ToastUtil
 
 class InputNicknameFragment : Fragment() {
 
@@ -97,12 +98,13 @@ class InputNicknameFragment : Fragment() {
                     .onError {
                         Log.d("SendFragment", "회원가입 요청 실패: $it")
                         binding.signupButton.isEnabled = true
-                        Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
+                        ToastUtil.makeErrorToast(requireContext())
                     }
                     .onException {
                         Log.e("SendFragment", "회원가입 도중 예외 발생:, $it")
                         binding.signupButton.isEnabled = true
                         Toast.makeText(requireContext(), R.string.invalid_input, Toast.LENGTH_LONG).show()
+                        ToastUtil.makeExceptionToast(requireContext(), it)
                     }
             }
         }

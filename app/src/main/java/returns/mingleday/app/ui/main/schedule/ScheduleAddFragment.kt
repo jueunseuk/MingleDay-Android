@@ -29,6 +29,7 @@ import returns.mingleday.app.data.repository.MingleRepository
 import returns.mingleday.app.data.repository.ScheduleRepository
 import returns.mingleday.app.ui.common.SpaceItemDecoration
 import returns.mingleday.app.ui.main.MainActivity
+import returns.mingleday.app.util.ToastUtil
 import returns.mingleday.databinding.FragmentScheduleAddBinding
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -542,9 +543,11 @@ class ScheduleAddFragment : Fragment() {
                 }
                 .onError {
                     Log.d("ScheduleAddFragment", R.string.internal_server_error.toString())
+                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
                     Log.d("ScheduleAddFragment", "단순 내 밍글 목록을 가져오는 중 예외 발생 - $it")
+                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
     }
@@ -560,9 +563,11 @@ class ScheduleAddFragment : Fragment() {
                 }
                 .onError {
                     Log.d("ScheduleAddFragment", R.string.internal_server_error.toString())
+                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
                     Log.d("ScheduleAddFragment", "선택한 밍글의 카테고리를 불러오는 중 예외 발생 - $it")
+                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
     }
@@ -578,9 +583,11 @@ class ScheduleAddFragment : Fragment() {
                 }
                 .onError {
                     Log.d("ScheduleAddFragment", "선택한 밍글의 멤버를 불러오는 중 오류 발생 - $it")
+                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
                     Log.d("ScheduleAddFragment", "선택한 밍글의 멤버를 불러오는 중 예외 발생 - $it")
+                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
     }
@@ -626,11 +633,11 @@ class ScheduleAddFragment : Fragment() {
                             .commit()
                     }
                     .onError {
-                        Toast.makeText(requireContext(), "일정을 추가하는 중 오류 발생 - $it.", Toast.LENGTH_SHORT).show()
+                        ToastUtil.makeErrorToast(requireContext())
                         Log.d("ScheduleAddFragment", R.string.internal_server_error.toString())
                     }
                     .onException {
-                        Toast.makeText(requireContext(), "일정을 추가하는 중 예외 발생 - $it", Toast.LENGTH_SHORT).show()
+                        ToastUtil.makeExceptionToast(requireContext(), it)
                         Log.d("ScheduleAddFragment", "스케줄 생성 중 예외 발생 - $it")
                     }
             }

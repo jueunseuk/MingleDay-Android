@@ -23,6 +23,7 @@ import returns.mingleday.app.ui.main.MainActivity
 import returns.mingleday.app.util.ColorUtil
 import returns.mingleday.app.util.DateFormatter
 import returns.mingleday.app.util.DateFormatter.formatCustom
+import returns.mingleday.app.util.ToastUtil
 import returns.mingleday.databinding.FragmentScheduleBinding
 import java.time.LocalDateTime
 
@@ -76,10 +77,11 @@ class ScheduleFragment : Fragment() {
                     }
                     .onError {
                         Log.d("ScheduleFragment", "${scheduleId}번 일정 삭제하는 중 에러 발생 - $it")
-                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                        ToastUtil.makeErrorToast(requireContext())
                     }
                     .onException {
                         Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                        ToastUtil.makeExceptionToast(requireContext(), it)
                     }
             }
         }
@@ -113,9 +115,11 @@ class ScheduleFragment : Fragment() {
                 }
                 .onError {
                     Log.d("ScheduleFragment", "${scheduleInstanceId}번 일정 인스턴스 가져오는 중 에러 발생 - $it")
+                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
                     Log.d("ScheduleFragment", "${scheduleInstanceId}번 일정 인스턴스 가져오는 중 예외 발생 - $it")
+                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
     }
@@ -228,9 +232,11 @@ class ScheduleFragment : Fragment() {
                     }
                     .onError {
                         Log.d("ScheduleFragment", "${item.name}의 메모를 ${memo}로 수정 중 에러 발생")
+                        ToastUtil.makeErrorToast(requireContext())
                     }
                     .onException {
                         Log.d("ScheduleFragment", "${item.name}의 메모를 ${memo}로 수정 중 예외 발생")
+                        ToastUtil.makeExceptionToast(requireContext(), it)
                     }
             }
         }.show(parentFragmentManager, "ScheduleMemberEditDialogFragment")

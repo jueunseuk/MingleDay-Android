@@ -31,6 +31,7 @@ import returns.mingleday.databinding.FragmentMingleBinding
 import returns.mingleday.app.util.ColorUtil
 import returns.mingleday.app.util.DateFormatter.formatCustom
 import returns.mingleday.app.util.FileUtil
+import returns.mingleday.app.util.ToastUtil
 import java.time.LocalDateTime
 
 class MingleFragment : Fragment() {
@@ -110,11 +111,13 @@ class MingleFragment : Fragment() {
                     }
                     .onError {
                         binding.inputNameValue.requestFocus()
+                        ToastUtil.makeErrorToast(requireContext())
                         Log.d("MingleFragment", "카테고리 생성 실패 - $it")
                     }
                     .onException {
                         binding.inputNameValue.requestFocus()
                         Log.d("MingleFragment", "카테고리 생성 도중 예외 발생 - $it")
+                        ToastUtil.makeExceptionToast(requireContext(), it)
                     }
             }
         }
@@ -157,13 +160,13 @@ class MingleFragment : Fragment() {
                     }
                     .onError {
                         Log.d("MingleFragment", "변경 실패 - $it")
-                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                        ToastUtil.makeErrorToast(requireContext())
                         isRealnameOn = previousState
                         setToggleImage(binding.toggleRealnameValue, isRealnameOn)
                     }
                     .onException {
                         Log.d("MingleFragment", "변경 중 예외 발생 - $it")
-                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                        ToastUtil.makeExceptionToast(requireContext(), it)
                         isRealnameOn = previousState
                         setToggleImage(binding.toggleRealnameValue, isRealnameOn)
                     }
@@ -185,13 +188,13 @@ class MingleFragment : Fragment() {
                     }
                     .onError {
                         Log.d("MingleFragment", "변경 실패 - $it")
-                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                        ToastUtil.makeErrorToast(requireContext())
                         isPermissionOn = previousState
                         setToggleImage(binding.togglePermissionValue, isPermissionOn)
                     }
                     .onException {
                         Log.d("MingleFragment", "변경 중 예외 발생 - $it")
-                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                        ToastUtil.makeExceptionToast(requireContext(), it)
                         isPermissionOn = previousState
                         setToggleImage(binding.togglePermissionValue, isPermissionOn)
                     }
@@ -219,18 +222,10 @@ class MingleFragment : Fragment() {
                                 requireActivity().supportFragmentManager.popBackStack()
                             }
                             .onError {
-                                Toast.makeText(
-                                    requireContext(),
-                                    it,
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                ToastUtil.makeErrorToast(requireContext())
                             }
                             .onException {
-                                Toast.makeText(
-                                    requireContext(),
-                                    "오류가 발생했습니다.",
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                ToastUtil.makeExceptionToast(requireContext(), it)
                             }
                     }
                 }
@@ -256,9 +251,11 @@ class MingleFragment : Fragment() {
                         }
                         .onError {
                             Log.d("MingleFragment", "초대 요청 실패 - $it")
+                            ToastUtil.makeErrorToast(requireContext())
                         }
                         .onException {
                             Log.d("MingleFragment", "초대 중 예외 발생 - $it")
+                            ToastUtil.makeExceptionToast(requireContext(), it)
                         }
                 }
 
@@ -308,11 +305,11 @@ class MingleFragment : Fragment() {
                 }
                 .onError {
                     Log.d("MingleFragment", "밍글 요청 실패 - $it")
-                    Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
+                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
                     Log.d("MingleFragment", "밍글 요청 도중 예외 발생 - $it")
-                    Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
+                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
     }
@@ -335,9 +332,11 @@ class MingleFragment : Fragment() {
                 }
                 .onError {
                     Log.d("MingleFragment", "카테고리 목록 불러오기 실패")
+                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
                     Log.d("MingleFragment", "카테고리 목록 불러오는 중 예외 발생")
+                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
 
@@ -363,12 +362,12 @@ class MingleFragment : Fragment() {
                 }
                 .onError {
                     Log.d("MingleFragment", "권한 변경 실패 - $it")
-                    Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                    ToastUtil.makeErrorToast(requireContext())
                     success = false
                 }
                 .onException {
                     Log.d("MingleFragment", "권한 변경 중 예외 발생 - $it")
-                    Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                    ToastUtil.makeExceptionToast(requireContext(), it)
                     success = false
                 }
 
@@ -400,9 +399,11 @@ class MingleFragment : Fragment() {
                     }
                     .onError {
                         Log.d("MingleFragment", "카테고리 수정 중 에러 발생")
+                        ToastUtil.makeErrorToast(requireContext())
                     }
                     .onException {
                         Log.d("MingleFragment", "카테고리 수정 중 예외 발생")
+                        ToastUtil.makeExceptionToast(requireContext(), it)
                     }
             }
         }.show(parentFragmentManager, "CategoryEditDialogFragment")
@@ -419,9 +420,11 @@ class MingleFragment : Fragment() {
                     }
                     .onError {
                         Log.d("MingleFragment", "카테고리 삭제 실패 - $it")
+                        ToastUtil.makeErrorToast(requireContext())
                     }
                     .onException {
                         Log.d("MingleFragment", "카테고리 삭제 중 예외 발생 - $it")
+                        ToastUtil.makeExceptionToast(requireContext(), it)
                     }
             }
         }.show(parentFragmentManager, "CategoryDeleteDialogFragment")
@@ -435,9 +438,10 @@ class MingleFragment : Fragment() {
                 }
                 .onError {
                     Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
-                    Toast.makeText(requireContext(), "카테고리 조회 중 오류가 발생했습니다.", Toast.LENGTH_LONG).show()
+                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
     }
@@ -470,11 +474,11 @@ class MingleFragment : Fragment() {
                 }
                 .onError {
                     Log.d("MymenuFragment", "배너 이미지 변경 실패: $it")
-                    Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
+                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
                     Log.e("MymenuFragment", "배너 이미지 변경 도중 예외 발생:, $it")
-                    Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
     }

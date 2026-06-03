@@ -20,6 +20,7 @@ import returns.mingleday.app.data.remote.network.onException
 import returns.mingleday.app.data.remote.network.onSuccess
 import returns.mingleday.app.data.repository.MingleRepository
 import returns.mingleday.app.ui.main.MainActivity
+import returns.mingleday.app.util.ToastUtil
 import returns.mingleday.databinding.FragmentMingleAddBinding
 
 class MingleAddFragment : Fragment() {
@@ -148,12 +149,14 @@ class MingleAddFragment : Fragment() {
                     }
                     .onError {
                         Log.d("MingleAddFragment", "밍글 생성 요청 실패 - $it")
+                        ToastUtil.makeErrorToast(requireContext())
 
                         binding.addMingleButton.isEnabled = true
                         binding.addMingleButton.text = getString(R.string.add_mingle_button)
                     }
                     .onException {
                         Log.d("MingleAddFragment", "밍글 생성 요청 도중 예외 발생 - $it")
+                        ToastUtil.makeExceptionToast(requireContext(), it)
                         binding.addMingleButton.isEnabled = true
                         binding.addMingleButton.text = R.string.add_mingle_button.toString()
                     }

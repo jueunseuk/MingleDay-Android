@@ -16,6 +16,7 @@ import returns.mingleday.app.data.remote.network.onException
 import returns.mingleday.app.data.remote.network.onSuccess
 import returns.mingleday.app.data.repository.MingleRepository
 import returns.mingleday.app.ui.main.MainActivity
+import returns.mingleday.app.util.ToastUtil
 import returns.mingleday.databinding.FragmentMingleListBinding
 
 class MingleListFragment : Fragment() {
@@ -79,11 +80,11 @@ class MingleListFragment : Fragment() {
                 }
                 .onError {
                     Log.d("MingleListFragment", "밍글 목록 요청 실패 - $it")
-                    Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
+                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
                     Log.d("MingleListFragment", "밍글 목록 요청 도중 예외 발생 - $it")
-                    Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
+                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
     }
