@@ -21,9 +21,10 @@ class ScheduleRepository {
     private val scheduleApi: ScheduleApi = RetrofitClient.createApi(ScheduleApi::class.java)
 
     suspend fun searchSchedule(
+        keyword: String
     ): ApiResult<List<SearchScheduleInstanceResponse>> {
         return safeRawApiCall {
-            scheduleApi.searchSchedule()
+            scheduleApi.searchSchedule(keyword)
         }
     }
 

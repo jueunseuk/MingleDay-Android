@@ -22,7 +22,9 @@ import returns.mingleday.app.data.remote.model.schedule.UpdateScheduleRequest
 
 interface ScheduleApi {
     @GET("search")
-    suspend fun searchSchedule(): Response<List<SearchScheduleInstanceResponse>>
+    suspend fun searchSchedule(
+        @Query("keyword") keyword: String
+    ): Response<List<SearchScheduleInstanceResponse>>
 
     @POST("mingles/{mingleId}/schedules")
     suspend fun createSchedule(

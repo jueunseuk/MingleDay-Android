@@ -18,7 +18,7 @@
         android:paddingBottom="20dp">
 
         <EditText
-            android:id="@+id/input_search_keyword"
+            android:id="@+id/keyword_value"
             android:inputType="text"
             android:maxLines="1"
             android:layout_width="match_parent"
@@ -35,6 +35,7 @@
             />
 
         <TextView
+            android:id="@+id/empty_result"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="600dp"
@@ -44,5 +45,12 @@
             android:textSize="15sp"
             android:text="@string/search_result_empty"
             android:visibility="visible"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_schedule_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            />
     </LinearLayout>
 </ScrollView>
