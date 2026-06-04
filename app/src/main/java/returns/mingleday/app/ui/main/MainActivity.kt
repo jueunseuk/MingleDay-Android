@@ -91,9 +91,9 @@ class MainActivity : AppCompatActivity() {
                         .onSuccess { response ->
                             notificationAdapter.submitList(response)
 
-                            binding.drawerLayout.openDrawer(
-                                binding.notificationDrawer
-                            )
+                            binding.drawerLayout.post {
+                                binding.drawerLayout.openDrawer(binding.notificationDrawer)
+                            }
                         }
                         .onError {
                             ToastUtil.makeErrorToast(this@MainActivity)
@@ -123,7 +123,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupDrawer() {
         mingleDrawerAdapter = MingleDrawerAdapter { mingle ->
-            binding.drawerLayout.close()
+            binding.drawerLayout.closeDrawer(binding.mingleDrawer)
             val fragment = MonthlyScheduleFragment().apply {
                 arguments = Bundle().apply {
                     putInt("mingleId", mingle.mingleId)
@@ -139,7 +139,7 @@ class MainActivity : AppCompatActivity() {
         binding.drawerMingleRecyclerView.adapter = mingleDrawerAdapter
 
         binding.topBar.setNavigationOnClickListener {
-            binding.drawerLayout.open()
+            binding.drawerLayout.openDrawer(binding.mingleDrawer)
             fetchDrawerMingles()
         }
     }

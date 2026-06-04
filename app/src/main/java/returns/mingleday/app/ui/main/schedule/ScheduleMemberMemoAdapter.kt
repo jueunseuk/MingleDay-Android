@@ -3,6 +3,8 @@ package returns.mingleday.app.ui.main.schedule
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import returns.mingleday.R
 import returns.mingleday.app.data.remote.model.schedule.ScheduleMemberResponse
 import returns.mingleday.databinding.ItemScheduleMemberMemoBinding
 
@@ -52,6 +54,13 @@ class ScheduleMemberMemoAdapter(
         fun bind(item: ScheduleMemberResponse) {
             binding.memberNameValue.text = item.name
             binding.memberMemoValue.text = item.memo.ifBlank { "메모를 추가해주세요" }
+
+            Glide.with(binding.root)
+                .load(item.profileUrl)
+                .placeholder(R.drawable.default_profile)
+                .error(R.drawable.default_profile)
+                .circleCrop()
+                .into(binding.memberProfileImage)
 
             binding.memberMemoValue.setOnClickListener {
                 onEditClick(item)
