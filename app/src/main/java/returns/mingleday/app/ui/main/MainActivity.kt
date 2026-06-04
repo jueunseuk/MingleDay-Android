@@ -2,9 +2,9 @@ package returns.mingleday.app.ui.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -25,6 +25,8 @@ import returns.mingleday.app.ui.main.schedule.ScheduleAddFragment
 import returns.mingleday.app.ui.main.schedule.MonthlyScheduleFragment
 import returns.mingleday.app.ui.main.search.SearchFragment
 import returns.mingleday.app.ui.main.side.MingleDrawerAdapter
+import returns.mingleday.app.ui.main.side.NotificationDrawerAdapter
+import returns.mingleday.app.util.ToastUtil
 import returns.mingleday.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -32,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val mingleRepository = MingleRepository()
     private lateinit var mingleDrawerAdapter: MingleDrawerAdapter
+    private lateinit var notificationAdapter: NotificationDrawerAdapter
 
     var mingleId: Int = -1
 
@@ -54,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupDrawer()
+        setupNotificationDrawer()
         setupBottomNavigation()
         setupSession()
     }
@@ -82,13 +86,38 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.action_alarm -> {
-                // 알림 버튼 클릭
-                // 코드 추가
+                lifecycleScope.launch {
+                    mingleRepository.getMyLogs()
+                        .onSuccess { response ->
+                            notificationAdapter.submitList(response)
+
+                            binding.drawerLayout.openDrawer(
+                                binding.notificationDrawer
+                            )
+                        }
+                        .onError {
+                            ToastUtil.makeErrorToast(this@MainActivity)
+                            Log.d("MainActivity", "내 밍글 로그 불러오기 중 에러 발생 - $it")
+                        }
+                        .onException {
+                            ToastUtil.makeExceptionToast(this@MainActivity, it)
+                            Log.d("MainActivity", "내 밍글 로그 불러오기 중 예외 발생 - $it")
+                        }
+                }
                 true
             }
 
             else ->
                 super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun setupNotificationDrawer() {
+        notificationAdapter = NotificationDrawerAdapter()
+
+        binding.notificationRecyclerView.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = notificationAdapter
         }
     }
 
@@ -120,20 +149,15 @@ class MainActivity : AppCompatActivity() {
             mingleRepository.getMyMingles()
                 .onSuccess { response ->
                     mingleDrawerAdapter.submitList(response)
+                    Log.d("MainActivity", "밍글 선택 Drawer 불러오기")
                 }
                 .onError {
-                    Toast.makeText(
-                        this@MainActivity,
-                        R.string.internal_server_error,
-                        Toast.LENGTH_LONG
-                    ).show()
+                    ToastUtil.makeErrorToast(this@MainActivity)
+                    Log.d("MainActivity", "밍글 선택 Drawer 불러오기 중 에러 발생 - $it")
                 }
                 .onException {
-                    Toast.makeText(
-                        this@MainActivity,
-                        R.string.internal_server_error,
-                        Toast.LENGTH_LONG
-                    ).show()
+                    ToastUtil.makeExceptionToast(this@MainActivity, it)
+                    Log.d("MainActivity", "밍글 선택 Drawer 불러오기 중 예외 발생 - $it")
                 }
         }
     }
