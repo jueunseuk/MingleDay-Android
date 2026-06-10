@@ -1,4 +1,5 @@
 ## Client Architecture
+<img width="6220" height="4604" alt="System Architecture" src="https://github.com/user-attachments/assets/72b429d2-8f6f-414f-8153-5a2aa676eee5" />
 
 MingleDay Android 클라이언트는 **MVVM(Model-View-ViewModel) 아키텍처**를 기반으로 구성되어 있습니다.
 화면을 담당하는 View 계층, UI 상태와 이벤트를 관리하는 ViewModel 계층, 데이터 처리를 담당하는 Repository 계층을 분리하여 유지보수성과 확장성을 높였습니다.
@@ -8,7 +9,6 @@ MingleDay Android 클라이언트는 **MVVM(Model-View-ViewModel) 아키텍처**
 ---
 
 ## Architecture Overview
-<img width="6220" height="4604" alt="System Architecture" src="https://github.com/user-attachments/assets/72b429d2-8f6f-414f-8153-5a2aa676eee5" />
 
 ```text
 View(Activity / Fragment)
