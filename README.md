@@ -285,6 +285,11 @@ returns.mingleday.app
 | `util`                    | 공통 유틸 함수 및 확장 기능 관리        |
 
 ---
+## ERD
+<img width="2701" height="1692" alt="ERD" src="https://github.com/user-attachments/assets/639670f8-73a0-419b-9a09-73e86b37d655" />
+
+
+---
 
 ## Summary
 
