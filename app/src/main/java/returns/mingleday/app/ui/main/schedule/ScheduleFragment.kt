@@ -165,8 +165,8 @@ class ScheduleFragment : Fragment() {
         }
 
         // prev or next
-        val hasPrev = response.scheduleInstance.prev == null
-        val hasNext = response.scheduleInstance.next == null
+        val hasPrev = response.scheduleInstance.prev != null
+        val hasNext = response.scheduleInstance.next != null
         binding.repeatNavigationLayout.visibility = if (hasPrev || hasNext) View.VISIBLE else View.GONE
         binding.prevInstanceButton.isEnabled = hasPrev
         binding.nextInstanceButton.isEnabled = hasNext
