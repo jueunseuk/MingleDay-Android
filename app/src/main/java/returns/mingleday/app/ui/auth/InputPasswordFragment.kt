@@ -18,6 +18,7 @@ import returns.mingleday.app.data.remote.network.onException
 import returns.mingleday.app.data.remote.network.onSuccess
 import returns.mingleday.databinding.FragmentInputPasswordBinding
 import returns.mingleday.app.data.repository.AuthRepository
+import returns.mingleday.app.util.ToastUtil
 
 class InputPasswordFragment : Fragment() {
 
@@ -131,10 +132,12 @@ class InputPasswordFragment : Fragment() {
                     }
                     .onError {
                         Log.d("InputPasswordFragment", "비밀번호 변경 실패: $it")
+                        ToastUtil.makeErrorToast(requireContext())
                         binding.goNextButton.isEnabled = true
                     }
                     .onException {
                         Log.e("InputPasswordFragment", "비밀번호 변경 도중 예외 발생:, $it")
+                        ToastUtil.makeExceptionToast(requireContext(), it)
                         binding.goNextButton.isEnabled = true
                     }
             }

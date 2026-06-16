@@ -24,6 +24,7 @@ import returns.mingleday.app.data.repository.ScheduleRepository
 import returns.mingleday.app.data.repository.UserRepository
 import returns.mingleday.app.ui.common.SpaceItemDecoration
 import returns.mingleday.app.ui.main.MainActivity
+import returns.mingleday.app.util.ToastUtil
 import returns.mingleday.databinding.FragmentMonthlyScheduleBinding
 import java.time.LocalDate
 
@@ -124,9 +125,11 @@ class MonthlyScheduleFragment : Fragment() {
 
         // daily schedule recycler view
         dailyScheduleAdapter = DailyScheduleAdapter(year, month, day) { item ->
+            mingleId = item.mingleId
             val fragment = ScheduleFragment().apply {
                 arguments = Bundle().apply {
                     putInt("mingleId", mingleId)
+                    putLong("scheduleId", item.scheduleId)
                     putLong("scheduleInstanceId", item.scheduleInstance.scheduleInstanceId)
                     putString("scheduleName", item.title)
                 }
@@ -245,9 +248,11 @@ class MonthlyScheduleFragment : Fragment() {
                 }
                 .onError {
                     Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 ${year}년도 ${month}월 일정 가져오는 중 에러 발생 - $it")
+                    ToastUtil.makeToastLong(requireContext(), "${mingleId}번 밍글의 ${year}년도 ${month}월 일정 가져오는 중 에러 발생 - $it")
                 }
                 .onException {
                     Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 ${year}년도 ${month}월 일정 가져오는 중 예외 발생 - $it")
+                    ToastUtil.makeToastLong(requireContext(), "${mingleId}번 밍글의 ${year}년도 ${month}월 일정 가져오는 중 예외 발생 - $it")
                 }
         }
     }

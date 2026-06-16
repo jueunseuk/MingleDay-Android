@@ -21,6 +21,7 @@ import returns.mingleday.app.data.remote.network.onException
 import returns.mingleday.app.data.remote.network.onSuccess
 import returns.mingleday.databinding.FragmentLoginBinding
 import returns.mingleday.app.data.repository.AuthRepository
+import returns.mingleday.app.util.ToastUtil
 
 class LoginFragment : Fragment() {
 
@@ -123,13 +124,13 @@ class LoginFragment : Fragment() {
                         binding.inputEmailValue.setText("")
                         binding.inputPasswordValue.setText("")
                         binding.inputEmailValue.requestFocus()
-                        Toast.makeText(requireContext(), R.string.internal_server_error, Toast.LENGTH_LONG).show()
+                        ToastUtil.makeErrorToast(requireContext())
                     }
                     .onException {
                         Log.e("LoginFragment", "로그인 도중 예외 발생:, $it")
                         binding.loginButton.isEnabled = true
                         binding.loginButton.setText(R.string.login_button)
-                        Toast.makeText(requireContext(), R.string.auth_mismatch, Toast.LENGTH_LONG).show()
+                        ToastUtil.makeExceptionToast(requireContext(), it)
                     }
             }
         }

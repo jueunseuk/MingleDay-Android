@@ -115,6 +115,8 @@
     <string name="complete_schedule_submit">완료로 변경</string>
     <string name="schedule_instance_memo_label">이번 일정 메모</string>
     <string name="schedule_member_label">참여 멤버</string>
+    <string name="schedule_member_memo_label">메모</string>
+    <string name="schedule_member_memo_hint">해당 멤버가 알아야 할 내용을 입력해주세요</string>
 
     <!--  일정 생성  -->
     <string name="add_schedule_title">일정 만들기</string>
@@ -129,11 +131,11 @@
     <string name="add_schedule_repeat_method_daily">매일 반복</string>
     <string name="add_schedule_repeat_weekly">주마다 반복</string>
     <string name="add_schedule_repeat_monthly">월마다 반복</string>
-    <string name="add_schedule_repeat_custom">반복 주기 설정</string>
+    <string name="add_schedule_repeat_custom">반복 간격 설정</string>
     <string name="add_schedule_repeat_end">반복 종료 조건</string>
     <string name="add_schedule_repeat_end_count">반복 횟수 설정</string>
     <string name="add_schedule_repeat_end_date">종료 날짜 설정</string>
-    <string name="add_schedule_time">시작 및 종료 시각</string>
+    <string name="add_schedule_time">시작 및 종료</string>
     <string name="add_schedule_all_day">하루종일</string>
     <string name="add_schedule_member">참여 멤버</string>
     <string name="add_schedule_content">내용</string>
@@ -145,6 +147,7 @@
     <string name="add_schedule_lock_edit">다른 사람은 이 일정을 수정할 수 없음</string>
     <string name="add_schedule_submit">일정 추가하기</string>
     <string name="choose_mingle_first">밍글을 먼저 선택해주세요</string>
+    <string name="add_schedule_repeat_hint">반복 주기 설정을 사용한 경우만 날짜의 범위를 지정할 수 있어요</string>
 
     <!--  검색  -->
     <string name="search_title">검색</string>

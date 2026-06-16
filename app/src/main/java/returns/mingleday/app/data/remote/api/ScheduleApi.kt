@@ -17,11 +17,14 @@ import returns.mingleday.app.data.remote.model.schedule.ScheduleMemberRequest
 import returns.mingleday.app.data.remote.model.schedule.ScheduleStatus
 import returns.mingleday.app.data.remote.model.schedule.SearchScheduleInstanceResponse
 import returns.mingleday.app.data.remote.model.schedule.UpdateScheduleInstanceRequest
+import returns.mingleday.app.data.remote.model.schedule.UpdateScheduleMemberRequest
 import returns.mingleday.app.data.remote.model.schedule.UpdateScheduleRequest
 
 interface ScheduleApi {
     @GET("search")
-    suspend fun searchSchedule(): Response<List<SearchScheduleInstanceResponse>>
+    suspend fun searchSchedule(
+        @Query("keyword") keyword: String
+    ): Response<List<SearchScheduleInstanceResponse>>
 
     @POST("mingles/{mingleId}/schedules")
     suspend fun createSchedule(
@@ -59,10 +62,18 @@ interface ScheduleApi {
     ): Response<SuccessResponse<String>>
 
     @PATCH("mingles/{mingleId}/schedules/{scheduleId}/members")
-    suspend fun updateScheduleMember(
+    suspend fun updateScheduleMembers(
         @Path("mingleId") mingleId: Int,
         @Path("scheduleId") scheduleId: Long,
         @Body request: List<ScheduleMemberRequest>
+    ): Response<SuccessResponse<String>>
+
+    @PATCH("mingles/{mingleId}/schedules/{scheduleId}/members/{scheduleMemberId}")
+    suspend fun updateScheduleMember(
+        @Path("mingleId") mingleId: Int,
+        @Path("scheduleId") scheduleId: Long,
+        @Path("scheduleMemberId") scheduleMemberId: Long,
+        @Body request: UpdateScheduleMemberRequest
     ): Response<SuccessResponse<String>>
 
     @GET("mingles/{mingleId}/schedules/monthly")

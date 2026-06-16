@@ -10,6 +10,7 @@ import returns.mingleday.app.data.remote.model.schedule.ScheduleMemberRequest
 import returns.mingleday.app.data.remote.model.schedule.ScheduleStatus
 import returns.mingleday.app.data.remote.model.schedule.SearchScheduleInstanceResponse
 import returns.mingleday.app.data.remote.model.schedule.UpdateScheduleInstanceRequest
+import returns.mingleday.app.data.remote.model.schedule.UpdateScheduleMemberRequest
 import returns.mingleday.app.data.remote.model.schedule.UpdateScheduleRequest
 import returns.mingleday.app.data.remote.network.ApiResult
 import returns.mingleday.app.data.remote.network.RetrofitClient
@@ -20,9 +21,10 @@ class ScheduleRepository {
     private val scheduleApi: ScheduleApi = RetrofitClient.createApi(ScheduleApi::class.java)
 
     suspend fun searchSchedule(
+        keyword: String
     ): ApiResult<List<SearchScheduleInstanceResponse>> {
         return safeRawApiCall {
-            scheduleApi.searchSchedule()
+            scheduleApi.searchSchedule(keyword)
         }
     }
 
@@ -86,13 +88,24 @@ class ScheduleRepository {
         }
     }
 
-    suspend fun updateScheduleMember(
+    suspend fun updateScheduleMembers(
         mingleId: Int,
         scheduleId: Long,
         request: List<ScheduleMemberRequest>
     ): ApiResult<SuccessResponse<String>> {
         return safeRawApiCall {
-            scheduleApi.updateScheduleMember(mingleId, scheduleId, request)
+            scheduleApi.updateScheduleMembers(mingleId, scheduleId, request)
+        }
+    }
+
+    suspend fun updateScheduleMember(
+        mingleId: Int,
+        scheduleId: Long,
+        scheduleMemberId: Long,
+        request: UpdateScheduleMemberRequest
+    ): ApiResult<SuccessResponse<String>> {
+        return safeRawApiCall {
+            scheduleApi.updateScheduleMember(mingleId, scheduleId, scheduleMemberId, request)
         }
     }
 

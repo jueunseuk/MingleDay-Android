@@ -6,12 +6,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.launch
 import returns.mingleday.app.data.remote.model.schedule.DetailScheduleResponse
+import returns.mingleday.app.data.remote.model.schedule.ScheduleMemberResponse
 import returns.mingleday.app.data.remote.model.schedule.ScheduleStatus
+import returns.mingleday.app.data.remote.model.schedule.UpdateScheduleMemberRequest
 import returns.mingleday.app.data.remote.network.onError
 import returns.mingleday.app.data.remote.network.onException
 import returns.mingleday.app.data.remote.network.onSuccess
@@ -20,6 +23,7 @@ import returns.mingleday.app.ui.main.MainActivity
 import returns.mingleday.app.util.ColorUtil
 import returns.mingleday.app.util.DateFormatter
 import returns.mingleday.app.util.DateFormatter.formatCustom
+import returns.mingleday.app.util.ToastUtil
 import returns.mingleday.databinding.FragmentScheduleBinding
 import java.time.LocalDateTime
 
@@ -32,6 +36,7 @@ class ScheduleFragment : Fragment() {
     private lateinit var scheduleMemberMemoAdapter: ScheduleMemberMemoAdapter
 
     private var mingleId: Int = -1
+    private var scheduleId: Long = -1
     private var scheduleInstanceId: Long = -1
     private var scheduleName: String = "일정"
 
@@ -48,6 +53,7 @@ class ScheduleFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mingleId = arguments?.getInt("mingleId") ?: -1
+        scheduleId = arguments?.getLong("scheduleId") ?: -1
         scheduleInstanceId = arguments?.getLong("scheduleInstanceId") ?: -1
         scheduleName = arguments?.getString("scheduleName") ?: "일정"
 
@@ -57,10 +63,34 @@ class ScheduleFragment : Fragment() {
         setupRecyclerView()
         setupBackButton()
         fetchScheduleInstance()
+        setupDeleteButton()
+    }
+
+    private fun setupDeleteButton() {
+        binding.deleteButton.setOnClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                scheduleRepository.deleteSchedule(mingleId, scheduleId)
+                    .onSuccess {
+                        Log.d("ScheduleFragment", "${scheduleId}번 일정 삭제 성공")
+                        Toast.makeText(requireContext(), "일정 삭제 완료", Toast.LENGTH_SHORT).show()
+                        parentFragmentManager.popBackStack()
+                    }
+                    .onError {
+                        Log.d("ScheduleFragment", "${scheduleId}번 일정 삭제하는 중 에러 발생 - $it")
+                        ToastUtil.makeErrorToast(requireContext())
+                    }
+                    .onException {
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                        ToastUtil.makeExceptionToast(requireContext(), it)
+                    }
+            }
+        }
     }
 
     private fun setupRecyclerView() {
-        scheduleMemberMemoAdapter = ScheduleMemberMemoAdapter()
+        scheduleMemberMemoAdapter = ScheduleMemberMemoAdapter { item ->
+            handleEditScheduleMemberMemo(item)
+        }
 
         binding.memberRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -85,9 +115,11 @@ class ScheduleFragment : Fragment() {
                 }
                 .onError {
                     Log.d("ScheduleFragment", "${scheduleInstanceId}번 일정 인스턴스 가져오는 중 에러 발생 - $it")
+                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
                     Log.d("ScheduleFragment", "${scheduleInstanceId}번 일정 인스턴스 가져오는 중 예외 발생 - $it")
+                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
     }
@@ -133,15 +165,13 @@ class ScheduleFragment : Fragment() {
         }
 
         // prev or next
-        val hasPrev = response.scheduleInstance.prev == null
-        val hasNext = response.scheduleInstance.next == null
+        val hasPrev = response.scheduleInstance.prev != null
+        val hasNext = response.scheduleInstance.next != null
         binding.repeatNavigationLayout.visibility = if (hasPrev || hasNext) View.VISIBLE else View.GONE
         binding.prevInstanceButton.isEnabled = hasPrev
         binding.nextInstanceButton.isEnabled = hasNext
         binding.prevInstanceButton.alpha = if (hasPrev) 1f else 0.4f
         binding.nextInstanceButton.alpha = if (hasNext) 1f else 0.4f
-        binding.editButton.visibility = if (response.isLocked) View.GONE
-                                        else View.VISIBLE
         binding.prevInstanceButton.setOnClickListener {
             response.scheduleInstance.prev?.let {
                 scheduleInstanceId = it.scheduleInstanceId
@@ -184,6 +214,32 @@ class ScheduleFragment : Fragment() {
                         end.formatCustom(1) + " " + end.formatCustom(8)
             }
         }
+    }
+
+    private fun handleEditScheduleMemberMemo(item: ScheduleMemberResponse) {
+        ScheduleMemberEditDialogFragment(item) { memo ->
+            viewLifecycleOwner.lifecycleScope.launch {
+                scheduleRepository.updateScheduleMember(
+                    mingleId,
+                    scheduleId,
+                    item.scheduleMemberId,
+                    UpdateScheduleMemberRequest(item.scheduleMemberId, memo)
+                )
+                    .onSuccess {
+                        scheduleMemberMemoAdapter.updateMemo(item.scheduleMemberId, memo)
+                        Toast.makeText(requireContext(), "${item.name}의 메모를 ${memo}로 수정 완료", Toast.LENGTH_LONG).show()
+                        Log.d("ScheduleFragment", "${item.name}의 메모를 ${memo}로 수정 완료")
+                    }
+                    .onError {
+                        Log.d("ScheduleFragment", "${item.name}의 메모를 ${memo}로 수정 중 에러 발생")
+                        ToastUtil.makeErrorToast(requireContext())
+                    }
+                    .onException {
+                        Log.d("ScheduleFragment", "${item.name}의 메모를 ${memo}로 수정 중 예외 발생")
+                        ToastUtil.makeExceptionToast(requireContext(), it)
+                    }
+            }
+        }.show(parentFragmentManager, "ScheduleMemberEditDialogFragment")
     }
 
     override fun onDestroyView() {

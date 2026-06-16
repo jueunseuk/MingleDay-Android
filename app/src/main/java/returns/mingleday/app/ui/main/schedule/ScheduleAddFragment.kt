@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,6 +29,7 @@ import returns.mingleday.app.data.repository.MingleRepository
 import returns.mingleday.app.data.repository.ScheduleRepository
 import returns.mingleday.app.ui.common.SpaceItemDecoration
 import returns.mingleday.app.ui.main.MainActivity
+import returns.mingleday.app.util.ToastUtil
 import returns.mingleday.databinding.FragmentScheduleAddBinding
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -48,11 +50,13 @@ class ScheduleAddFragment : Fragment() {
     private lateinit var mingleCategoryAdapter: MingleCategoryAdapter
 
     private val scheduleMembers = mutableListOf<ScheduleMemberRequest>()
+    private var selectedWeekOfDay = mutableListOf<Int>()
 
     private var startDate: LocalDate = LocalDate.now()
     private var endDate: LocalDate = LocalDate.now()
     private var startTime: LocalTime? = null
     private var endTime: LocalTime? = null
+    private var endDateCondition: LocalDate = LocalDate.now().plusDays(14)
 
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -106,6 +110,7 @@ class ScheduleAddFragment : Fragment() {
         setupBackButton()
         setupToggles()
         setupAddScheduleButton()
+        setupDaysOfWeek()
     }
 
     private fun setupDateTimeInput() {
@@ -137,7 +142,9 @@ class ScheduleAddFragment : Fragment() {
                     startDate = endDate
                 }
 
+                syncEndTimeIfNeeded()
                 updateDateText()
+                updateTimeText()
                 applyDateTimeToRequest()
                 validateInput()
             }
@@ -154,6 +161,7 @@ class ScheduleAddFragment : Fragment() {
                 startTime = selectedTime.withSecond(0).withNano(0)
 
                 syncEndTimeIfNeeded()
+                updateDateText()
                 updateTimeText()
                 applyDateTimeToRequest()
                 validateInput()
@@ -174,7 +182,20 @@ class ScheduleAddFragment : Fragment() {
 
                 endTime = selectedTime.withSecond(0).withNano(0)
 
+                syncEndTimeIfNeeded()
+                updateDateText()
                 updateTimeText()
+                applyDateTimeToRequest()
+                validateInput()
+            }
+        }
+
+        // 종료 날짜 조건을 위한 선택기
+        binding.repeatEndValue.setOnClickListener {
+            showDatePicker(endDateCondition) { selectedDate ->
+                endDateCondition = selectedDate
+
+                updateDateText()
                 applyDateTimeToRequest()
                 validateInput()
             }
@@ -182,6 +203,21 @@ class ScheduleAddFragment : Fragment() {
     }
 
     private fun syncEndTimeIfNeeded() {
+        if (endDate.isBefore(startDate)) {
+            endDate = startDate
+        }
+
+        if (
+            createScheduleRequest.isRepeated &&
+            createScheduleRequest.repeatType in listOf(
+                RepeatType.DAILY,
+                RepeatType.WEEKLY,
+                RepeatType.MONTHLY
+            )
+        ) {
+            endDate = startDate
+        }
+
         if (createScheduleRequest.isAllDay) return
         if (endDate.isAfter(startDate)) return
 
@@ -196,6 +232,7 @@ class ScheduleAddFragment : Fragment() {
     private fun updateDateText() {
         binding.startDateValue.text = startDate.format(dateFormatter)
         binding.endDateValue.text = endDate.format(dateFormatter)
+        binding.repeatEndValue.text = endDateCondition.format(dateFormatter)
     }
 
     private fun updateTimeText() {
@@ -333,54 +370,40 @@ class ScheduleAddFragment : Fragment() {
     }
 
     private fun setupToggles() {
-        // 반복 조건에 대한 기능 추가 필요
+        // 초기 반복 여부는 false
         binding.repeatFalseButton.isSelected = true
         binding.repeatTrueButton.isSelected = false
         binding.repeatComponent.visibility = View.GONE
 
+        // 반복하지 않음 선택
         binding.repeatFalseButton.setOnClickListener {
-            createScheduleRequest.isRepeated = false
-            binding.repeatFalseButton.isSelected = true
-            binding.repeatTrueButton.isSelected = false
-            binding.repeatComponent.visibility = View.GONE
+            clickNotUseRepeat()
         }
 
+        // 반복 선택
         binding.repeatTrueButton.setOnClickListener {
-            createScheduleRequest.isRepeated = true
-            binding.repeatFalseButton.isSelected = false
-            binding.repeatTrueButton.isSelected = true
-            binding.repeatComponent.visibility = View.VISIBLE
+            clickUseRepeat()
         }
 
-        binding.repeatDailyButton.isSelected = true
-        binding.repeatCountButton.isSelected = true
-
+        // 종료 조건으로 날짜 설정은 daily repeat만 가능
         binding.repeatDailyButton.setOnClickListener {
-            selectRepeatType(RepeatType.DAILY, it)
+            clickDailyRepeat(it)
         }
-
         binding.repeatWeeklyButton.setOnClickListener {
-            selectRepeatType(RepeatType.WEEKLY, it)
+            clickWeeklyRepeat(it)
         }
-
         binding.repeatMonthlyButton.setOnClickListener {
-            selectRepeatType(RepeatType.MONTHLY, it)
+            clickMonthlyRepeat(it)
         }
-
         binding.repeatCustomButton.setOnClickListener {
-            selectRepeatType(RepeatType.INTERVAL, it)
+            clickIntervalRepeat(it)
         }
 
         binding.repeatCountButton.setOnClickListener {
-            createScheduleRequest.endType = EndType.COUNT
-            binding.repeatCountButton.isSelected = true
-            binding.repeatEndButton.isSelected = false
+            clickCount()
         }
-
         binding.repeatEndButton.setOnClickListener {
-            createScheduleRequest.endType = EndType.DATE
-            binding.repeatCountButton.isSelected = false
-            binding.repeatEndButton.isSelected = true
+            clickEnd()
         }
 
         binding.timeContainer.visibility = View.GONE
@@ -434,6 +457,16 @@ class ScheduleAddFragment : Fragment() {
         ).forEach {
             it.isSelected = it == selectedButton
         }
+
+        binding.weeklyPicker.visibility = if (type == RepeatType.WEEKLY) View.VISIBLE else View.GONE
+        binding.monthlyPicker.visibility = if (type == RepeatType.MONTHLY) View.VISIBLE else View.GONE
+        binding.intervalPicker.visibility = if (type == RepeatType.INTERVAL) View.VISIBLE else View.GONE
+
+        syncEndTimeIfNeeded()
+        updateDateText()
+        updateTimeText()
+        applyDateTimeToRequest()
+        validateInput()
     }
 
     private fun setToggleImage(imageView: ImageView, isOn: Boolean) {
@@ -461,6 +494,18 @@ class ScheduleAddFragment : Fragment() {
         val isNameValid = binding.inputScheduleNameValue.length() in 1..30
         val isMingleValid = createScheduleRequest.mingleId != -1
         val isDateRangeValid = !endDate.isBefore(startDate)
+        val isDayOfWeekValid = createScheduleRequest.repeatType != RepeatType.WEEKLY || selectedWeekOfDay.isNotEmpty()
+        val isMonthlyValueValid = createScheduleRequest.repeatType != RepeatType.MONTHLY || binding.monthlyPicker.text.isNotEmpty()
+        val isIntervalValueValid = createScheduleRequest.repeatType != RepeatType.INTERVAL || binding.intervalPicker.text.isDigitsOnly()
+        val isCountValidValid = createScheduleRequest.endType != EndType.COUNT || binding.repeatCountValue.text.isDigitsOnly()
+        val isEndDateValid = if (
+            createScheduleRequest.isRepeated &&
+            createScheduleRequest.endType == EndType.DATE
+        ) {
+            !endDateCondition.isBefore(LocalDate.now())
+        } else {
+            true
+        }
 
         val isTimeRangeValid = if (createScheduleRequest.isAllDay) {
             true
@@ -473,7 +518,12 @@ class ScheduleAddFragment : Fragment() {
         binding.addScheduleButton.isEnabled =   isNameValid &&
                                                 isMingleValid &&
                                                 isDateRangeValid &&
+                                                isDayOfWeekValid &&
+                                                isMonthlyValueValid &&
+                                                isIntervalValueValid &&
+                                                isCountValidValid &&
                                                 isTimeRangeValid &&
+                                                isEndDateValid &&
                                                 scheduleMembers.isNotEmpty() &&
                                                 createScheduleRequest.categoryId != -1L
     }
@@ -493,9 +543,11 @@ class ScheduleAddFragment : Fragment() {
                 }
                 .onError {
                     Log.d("ScheduleAddFragment", R.string.internal_server_error.toString())
+                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
                     Log.d("ScheduleAddFragment", "단순 내 밍글 목록을 가져오는 중 예외 발생 - $it")
+                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
     }
@@ -511,9 +563,11 @@ class ScheduleAddFragment : Fragment() {
                 }
                 .onError {
                     Log.d("ScheduleAddFragment", R.string.internal_server_error.toString())
+                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
                     Log.d("ScheduleAddFragment", "선택한 밍글의 카테고리를 불러오는 중 예외 발생 - $it")
+                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
     }
@@ -529,9 +583,11 @@ class ScheduleAddFragment : Fragment() {
                 }
                 .onError {
                     Log.d("ScheduleAddFragment", "선택한 밍글의 멤버를 불러오는 중 오류 발생 - $it")
+                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
                     Log.d("ScheduleAddFragment", "선택한 밍글의 멤버를 불러오는 중 예외 발생 - $it")
+                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
     }
@@ -541,6 +597,16 @@ class ScheduleAddFragment : Fragment() {
             createScheduleRequest.title = binding.inputScheduleNameValue.text.toString().trim()
             createScheduleRequest.content = binding.inputScheduleContentValue.text.toString().trim()
             createScheduleRequest.location = binding.inputScheduleLocationValue.text.toString().trim()
+            createScheduleRequest.endValue = when(createScheduleRequest.endType) {
+                EndType.COUNT -> binding.repeatCountValue.text.toString().trim()
+                EndType.DATE -> endDateCondition.format(dateFormatter)
+            }
+            createScheduleRequest.repeatValue = when(createScheduleRequest.repeatType) {
+                RepeatType.WEEKLY -> selectedWeekOfDay.sorted().joinToString(",")
+                RepeatType.MONTHLY -> binding.monthlyPicker.text.toString().trim()
+                RepeatType.INTERVAL -> binding.intervalPicker.text.toString().trim()
+                else -> ""
+            }
             applyDateTimeToRequest()
 
             viewLifecycleOwner.lifecycleScope.launch {
@@ -555,6 +621,7 @@ class ScheduleAddFragment : Fragment() {
                         val fragment = ScheduleFragment().apply {
                             arguments = Bundle().apply {
                                 putInt("mingleId", createScheduleRequest.mingleId)
+                                putLong("scheduleId", response.scheduleId)
                                 putLong("scheduleInstanceId", response.scheduleInstance.scheduleInstanceId)
                                 putString("scheduleName", response.title)
                             }
@@ -566,11 +633,11 @@ class ScheduleAddFragment : Fragment() {
                             .commit()
                     }
                     .onError {
-                        Toast.makeText(requireContext(), "일정을 추가하는 중 오류 발생 - $it.", Toast.LENGTH_SHORT).show()
+                        ToastUtil.makeErrorToast(requireContext())
                         Log.d("ScheduleAddFragment", R.string.internal_server_error.toString())
                     }
                     .onException {
-                        Toast.makeText(requireContext(), "일정을 추가하는 중 예외 발생 - $it", Toast.LENGTH_SHORT).show()
+                        ToastUtil.makeExceptionToast(requireContext(), it)
                         Log.d("ScheduleAddFragment", "스케줄 생성 중 예외 발생 - $it")
                     }
             }
@@ -580,5 +647,92 @@ class ScheduleAddFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    // click use repeat button
+    private fun clickUseRepeat() {
+        createScheduleRequest.isRepeated = true
+        binding.repeatFalseButton.isSelected = false
+        binding.repeatTrueButton.isSelected = true
+        binding.repeatComponent.visibility = View.VISIBLE
+        binding.addScheduleRepeatHint.visibility = View.VISIBLE
+
+        clickDailyRepeat(binding.repeatDailyButton)
+        clickCount()
+    }
+
+    private fun clickNotUseRepeat() {
+        createScheduleRequest.isRepeated = false
+        binding.repeatFalseButton.isSelected = true
+        binding.repeatTrueButton.isSelected = false
+        binding.repeatComponent.visibility = View.GONE
+        binding.addScheduleRepeatHint.visibility = View.GONE
+    }
+
+    // click repeat method
+    // count 버튼은 항상 유지
+    // end 버튼은 daily인지에 따라 visibility 달라짐
+    private fun clickDailyRepeat(selectedButton: View) {
+        selectRepeatType(RepeatType.DAILY, selectedButton)
+        binding.repeatCountButton.isSelected = true
+        binding.repeatEndButton.visibility = View.VISIBLE
+        clickCount()
+    }
+
+    private fun clickWeeklyRepeat(selectedButton: View) {
+        selectRepeatType(RepeatType.WEEKLY, selectedButton)
+        binding.repeatEndButton.visibility = View.GONE
+        clickCount()
+    }
+
+    private fun clickMonthlyRepeat(selectedButton: View) {
+        selectRepeatType(RepeatType.MONTHLY, selectedButton)
+        binding.repeatEndButton.visibility = View.GONE
+        clickCount()
+    }
+
+    private fun clickIntervalRepeat(selectedButton: View) {
+        selectRepeatType(RepeatType.INTERVAL, selectedButton)
+        binding.repeatEndButton.visibility = View.GONE
+        clickCount()
+    }
+
+    // click end condition type
+    // clickEnd only for interval method
+    private fun clickCount() {
+        createScheduleRequest.endType = EndType.COUNT
+        binding.repeatCountButton.isSelected = true
+        binding.repeatEndButton.isSelected = false
+        binding.repeatCountValue.visibility = View.VISIBLE
+        binding.repeatEndValue.visibility = View.INVISIBLE
+    }
+
+    private fun clickEnd() {
+        createScheduleRequest.endType = EndType.DATE
+        binding.repeatCountButton.isSelected = false
+        binding.repeatEndButton.isSelected = true
+        binding.repeatCountValue.visibility = View.INVISIBLE
+        binding.repeatEndValue.visibility = View.VISIBLE
+    }
+
+    // click days of week
+    private fun setupDaysOfWeek() {
+        binding.sunday.setOnClickListener { addOrRemove(0, binding.sunday) }
+        binding.monday.setOnClickListener { addOrRemove(1, binding.monday) }
+        binding.tuesday.setOnClickListener { addOrRemove(2, binding.tuesday) }
+        binding.wednesday.setOnClickListener { addOrRemove(3, binding.wednesday) }
+        binding.thursday.setOnClickListener { addOrRemove(4, binding.thursday) }
+        binding.friday.setOnClickListener { addOrRemove(5, binding.friday) }
+        binding.saturday.setOnClickListener { addOrRemove(6, binding.saturday) }
+    }
+
+    private fun addOrRemove(target: Int, button: View) {
+        if(selectedWeekOfDay.contains(target)) {
+            selectedWeekOfDay.remove(target)
+            button.isSelected = false
+        } else {
+            selectedWeekOfDay.add(target)
+            button.isSelected = true
+        }
     }
 }

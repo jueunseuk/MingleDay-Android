@@ -115,6 +115,8 @@
     <string name="complete_schedule_submit">완료로 변경</string>
     <string name="schedule_instance_memo_label">이번 일정 메모</string>
     <string name="schedule_member_label">참여 멤버</string>
+    <string name="schedule_member_memo_label">Memo</string>
+    <string name="schedule_member_memo_hint">해당 멤버가 알아야 할 내용을 입력해주세요</string>
 
     <!-- 일정 생성 -->
     <string name="add_schedule_title">Create Schedule</string>
@@ -144,8 +146,8 @@
     <string name="add_schedule_lock_visibility">Others cannot view this schedule</string>
     <string name="add_schedule_lock_edit">Others cannot edit this schedule</string>
     <string name="choose_mingle_first">밍글을 먼저 선택해주세요</string>
-
     <string name="add_schedule_submit">Add Schedule</string>
+    <string name="add_schedule_repeat_hint">반복 주기 방법을 사용하면 날짜의 범위를 지정할 수 있어요</string>
 
     <!--  검색  -->
     <string name="search_title">Search</string>

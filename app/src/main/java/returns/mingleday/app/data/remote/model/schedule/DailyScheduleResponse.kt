@@ -4,6 +4,7 @@ import returns.mingleday.app.data.remote.model.category.CategoryResponse
 
 data class DailyScheduleResponse(
     val scheduleId: Long,
+    val mingleId: Int,
     val title: String,
     val content: String,
     val isRepeated: Boolean,
