@@ -64,6 +64,28 @@ class ScheduleFragment : Fragment() {
         setupBackButton()
         fetchScheduleInstance()
         setupDeleteButton()
+        setupCompleteButton()
+    }
+
+    private fun setupCompleteButton() {
+        binding.completeScheduleButton.setOnClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                scheduleRepository.updateScheduleInstanceStatus(mingleId, scheduleId, scheduleInstanceId,ScheduleStatus.COMPLETED)
+                    .onSuccess {
+                        Log.d("ScheduleFragment", "일정을 완료로 번경 했습니다.")
+                        ToastUtil.makeSuccessToastLong(requireContext(), "일정을 완료로 변경했습니다.")
+                        binding.completeScheduleButton.visibility = View.GONE
+                    }
+                    .onError {
+                        Log.d("ScheduleFragment", "일정을 완료 처리하는 중 에러 발생 - $it")
+                        ToastUtil.makeErrorToast(requireContext())
+                    }
+                    .onException {
+                        Log.d("ScheduleFragment", "일정을 완료 처리하는 중 예외 발생 - $it")
+                        ToastUtil.makeExceptionToast(requireContext(), it)
+                    }
+            }
+        }
     }
 
     private fun setupDeleteButton() {
@@ -162,6 +184,8 @@ class ScheduleFragment : Fragment() {
         // make complete
         if(response.scheduleInstance.scheduleStatus == ScheduleStatus.TODO) {
             binding.completeScheduleButton.visibility = View.VISIBLE
+        } else {
+            // 취소선 추가
         }
 
         // prev or next
