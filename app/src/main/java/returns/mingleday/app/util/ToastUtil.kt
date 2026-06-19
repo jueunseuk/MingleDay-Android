@@ -13,11 +13,11 @@ object ToastUtil {
         Toast.makeText(context, R.string.internal_server_error.toString(), Toast.LENGTH_SHORT).show()
     }
 
-    fun makeSuccessToastLong(context: Context, content: String) {
+    fun makeToastLong(context: Context, content: String) {
         Toast.makeText(context, content, Toast.LENGTH_LONG).show()
     }
 
-    fun makeSuccessToastShort(context: Context, content: String) {
+    fun makeToastShort(context: Context, content: String) {
         Toast.makeText(context, content, Toast.LENGTH_SHORT).show()
     }
 }

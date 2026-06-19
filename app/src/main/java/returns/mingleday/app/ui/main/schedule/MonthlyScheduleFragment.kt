@@ -172,14 +172,12 @@ class MonthlyScheduleFragment : Fragment() {
                         "MonthlyScheduleFragment",
                         "${year}년 ${month}월 ${day}일의 일정 목록 가져오는 중 에러 발생 - $it"
                     )
-                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
                     Log.d(
                         "MonthlyScheduleFragment",
                         "${year}년 ${month}월 ${day}일의 일정 목록 가져오는 중 예외 발생 - $it"
                     )
-                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
     }
@@ -229,11 +227,9 @@ class MonthlyScheduleFragment : Fragment() {
                 }
                 .onError {
                     Log.d("MonthlyScheduleFragment", "내가 속한 ${year}년도 ${month}월 일정 가져오는 중 에러 발생 - $it")
-                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
                     Log.d("MonthlyScheduleFragment", "내가 속한 ${year}년도 ${month}월 일정 가져오는 중 예외 발생 - $it")
-                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
     }
@@ -252,11 +248,11 @@ class MonthlyScheduleFragment : Fragment() {
                 }
                 .onError {
                     Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 ${year}년도 ${month}월 일정 가져오는 중 에러 발생 - $it")
-                    ToastUtil.makeErrorToast(requireContext())
+                    ToastUtil.makeToastLong(requireContext(), "${mingleId}번 밍글의 ${year}년도 ${month}월 일정 가져오는 중 에러 발생 - $it")
                 }
                 .onException {
                     Log.d("MonthlyScheduleFragment", "${mingleId}번 밍글의 ${year}년도 ${month}월 일정 가져오는 중 예외 발생 - $it")
-                    ToastUtil.makeExceptionToast(requireContext(), it)
+                    ToastUtil.makeToastLong(requireContext(), "${mingleId}번 밍글의 ${year}년도 ${month}월 일정 가져오는 중 예외 발생 - $it")
                 }
         }
     }
@@ -273,11 +269,9 @@ class MonthlyScheduleFragment : Fragment() {
                 }
                 .onError {
                     Log.d("MonthlyScheduleFragment", "특일의 ${year}년도 ${month}월 일정 가져오는 중 에러 발생")
-                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
                     Log.d("MonthlyScheduleFragment", "특일의 ${year}년도 ${month}월 일정 가져오는 중 예외 발생 - $it")
-                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
     }

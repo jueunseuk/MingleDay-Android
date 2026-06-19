@@ -4,5 +4,5 @@ data class ScheduleMemberResponse(
     val scheduleMemberId: Long,
     val name: String,
     val memo: String,
-    val profileUrl: String
+    val profileUrl: String?
 )
