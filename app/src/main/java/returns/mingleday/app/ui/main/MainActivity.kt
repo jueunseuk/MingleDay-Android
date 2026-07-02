@@ -28,6 +28,7 @@ import returns.mingleday.app.ui.main.side.MingleDrawerAdapter
 import returns.mingleday.app.ui.main.side.NotificationDrawerAdapter
 import returns.mingleday.app.util.ToastUtil
 import returns.mingleday.databinding.ActivityMainBinding
+import java.time.LocalDate
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var notificationAdapter: NotificationDrawerAdapter
 
     var mingleId: Int = -1
+    val today = LocalDate.now()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,6 +130,9 @@ class MainActivity : AppCompatActivity() {
                 arguments = Bundle().apply {
                     putInt("mingleId", mingle.mingleId)
                     putString("mingleName", mingle.mingleName)
+                    putInt("year", today.year)
+                    putInt("month", today.month.value)
+                    putInt("day", today.dayOfMonth)
                 }
             }
 

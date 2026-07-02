@@ -59,14 +59,18 @@ class MonthlyScheduleFragment : Fragment() {
         mingleId = arguments?.getInt("mingleId") ?: -1
         mingleName = arguments?.getString("mingleName") ?: "내 일정"
 
+        year = arguments?.getInt("year") ?: LocalDate.now().year
+        month = arguments?.getInt("month") ?: LocalDate.now().month.value
+        day = arguments?.getInt("day") ?: LocalDate.now().dayOfMonth
+
         val mainActivity = requireActivity() as MainActivity
         mainActivity.setToolbarTitle(mingleName)
 
         mainActivity.mingleId = mingleId
 
-        setupDate(year, month)
-        setupChangeDateButton()
         setupCalendarRecyclerView()
+        setupChangeDateButton()
+        setupDate(year, month)
         if (mingleId == -1) {
             fetchMySchedules()
             binding.categoryRecyclerView.visibility = View.GONE
@@ -100,6 +104,7 @@ class MonthlyScheduleFragment : Fragment() {
         setupDay(day)
         calendarAdapter = CalendarAdapter { day ->
             setupDay(day)
+            calendarAdapter.updateSelectedDay(day)
             dailyScheduleAdapter.updateDate(year, month, day)
             fetchDailySchedules()
         }
@@ -201,13 +206,24 @@ class MonthlyScheduleFragment : Fragment() {
     }
 
     private fun setupDate(year: Int, month: Int) {
+        this.year = year
+        this.month = month
+
         binding.dateFormat.text = getString(R.string.schedule_date_format, year, month)
+        binding.dayFormat.text = getString(R.string.schedule_day_format, day)
+
+        calendarAdapter.updateSelectedDay(day)
+        dailyScheduleAdapter.updateDate(year, month, day)
+
         fetchAnniversarySchedules()
-        if(mingleId == -1) {
+
+        if (mingleId == -1) {
             fetchMySchedules()
         } else {
             fetchSchedules()
         }
+
+        fetchDailySchedules()
     }
 
     private fun setupDay(day: Int) {

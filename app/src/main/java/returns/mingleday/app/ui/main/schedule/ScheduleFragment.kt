@@ -7,10 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.launch
+import returns.mingleday.R
 import returns.mingleday.app.data.remote.model.schedule.DetailScheduleResponse
 import returns.mingleday.app.data.remote.model.schedule.ScheduleMemberResponse
 import returns.mingleday.app.data.remote.model.schedule.ScheduleStatus
@@ -25,6 +27,7 @@ import returns.mingleday.app.util.DateFormatter
 import returns.mingleday.app.util.DateFormatter.formatCustom
 import returns.mingleday.app.util.ToastUtil
 import returns.mingleday.databinding.FragmentScheduleBinding
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 class ScheduleFragment : Fragment() {
@@ -39,6 +42,9 @@ class ScheduleFragment : Fragment() {
     private var scheduleId: Long = -1
     private var scheduleInstanceId: Long = -1
     private var scheduleName: String = "일정"
+    private var year: Int = -1
+    private var month: Int = -1
+    private var day: Int = -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,6 +68,7 @@ class ScheduleFragment : Fragment() {
 
         setupRecyclerView()
         setupBackButton()
+        setupSystemBackButton()
         fetchScheduleInstance()
         setupDeleteButton()
         setupCompleteButton()
@@ -73,7 +80,7 @@ class ScheduleFragment : Fragment() {
                 scheduleRepository.updateScheduleInstanceStatus(mingleId, scheduleId, scheduleInstanceId,ScheduleStatus.COMPLETED)
                     .onSuccess {
                         Log.d("ScheduleFragment", "일정을 완료로 번경 했습니다.")
-                        ToastUtil.makeSuccessToastLong(requireContext(), "일정을 완료로 변경했습니다.")
+                        ToastUtil.makeToastLong(requireContext(), "일정을 완료로 변경했습니다.")
                         binding.completeScheduleButton.visibility = View.GONE
                     }
                     .onError {
@@ -121,10 +128,36 @@ class ScheduleFragment : Fragment() {
         }
     }
 
+    private fun moveToMonthlySchedule() {
+        val fragment = MonthlyScheduleFragment().apply {
+            arguments = Bundle().apply {
+                putInt("mingleId", mingleId)
+                putInt("year", year)
+                putInt("month", month)
+                putInt("day", day)
+            }
+        }
+
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.main_frame, fragment)
+            .commit()
+    }
+
     private fun setupBackButton() {
         binding.backButton.setOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+            moveToMonthlySchedule()
         }
+    }
+
+    private fun setupSystemBackButton() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    moveToMonthlySchedule()
+                }
+            }
+        )
     }
 
     private fun fetchScheduleInstance() {
@@ -134,6 +167,9 @@ class ScheduleFragment : Fragment() {
                     Log.d("ScheduleFragment", "${scheduleInstanceId}번 일정 인스턴스 가져오기 성공")
                     Log.d("ScheduleFragment", "$response")
                     bindSchedule(response)
+                    year = LocalDateTime.parse(response.scheduleInstance.startAt).year
+                    month = LocalDateTime.parse(response.scheduleInstance.startAt).month.value
+                    day = LocalDateTime.parse(response.scheduleInstance.startAt).dayOfMonth
                 }
                 .onError {
                     Log.d("ScheduleFragment", "${scheduleInstanceId}번 일정 인스턴스 가져오는 중 에러 발생 - $it")

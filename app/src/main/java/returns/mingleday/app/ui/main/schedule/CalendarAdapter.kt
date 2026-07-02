@@ -20,7 +20,7 @@ class CalendarAdapter(
 
     private val items = mutableListOf<CalendarDayUiModel>()
 
-    private var selectedDay: Int? = LocalDate.now().dayOfMonth
+    private var selectedDay: Int? = null
 
     fun submitList(newItems: List<CalendarDayUiModel>) {
         items.clear()
@@ -42,6 +42,11 @@ class CalendarAdapter(
     }
 
     override fun getItemCount(): Int = items.size
+
+    fun updateSelectedDay(day: Int) {
+        selectedDay = day
+        notifyDataSetChanged()
+    }
 
     inner class CalendarViewHolder(
         private val binding: ItemCalendarDayBinding
@@ -139,8 +144,7 @@ class CalendarAdapter(
             }
 
             binding.root.setOnClickListener {
-                selectedDay = item.day
-                notifyDataSetChanged()
+                updateSelectedDay(item.day)
                 onDayClick(item.day)
             }
         }
