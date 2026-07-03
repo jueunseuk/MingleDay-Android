@@ -332,11 +332,9 @@ class MingleFragment : Fragment() {
                 }
                 .onError {
                     Log.d("MingleFragment", "카테고리 목록 불러오기 실패")
-                    ToastUtil.makeErrorToast(requireContext())
                 }
                 .onException {
                     Log.d("MingleFragment", "카테고리 목록 불러오는 중 예외 발생")
-                    ToastUtil.makeExceptionToast(requireContext(), it)
                 }
         }
 

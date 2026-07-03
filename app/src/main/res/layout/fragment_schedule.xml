@@ -53,18 +53,45 @@
                 android:visibility="visible"/>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/category_value"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:textSize="12sp"
-            android:fontFamily="@font/semibold"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:background="@drawable/bg_schedule_tag" />
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:id="@+id/category_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:textSize="12sp"
+                android:fontFamily="@font/semibold"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/bg_schedule_tag" />
+            <ImageView
+                android:id="@+id/schedule_status_icon"
+                android:layout_width="15dp"
+                android:layout_height="20dp"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="1dp"
+                android:layout_marginEnd="5dp"
+                android:visibility="gone"
+                />
+            <TextView
+                android:id="@+id/schedule_title_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="일정 이름"
+                android:textSize="16sp"
+                android:fontFamily="@font/bold"
+                android:textColor="@color/title"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="1dp"
+                />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/repeat_navigation_layout"
@@ -241,12 +268,30 @@
                 android:textColor="@color/content" />
         </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/complete_schedule_button"
-            style="@style/MainButton"
-            android:text="@string/complete_schedule_submit"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
-            android:visibility="gone"
-            />
+            android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/complete_schedule_button"
+                style="@style/MainButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="@string/complete_schedule_submit"
+                android:textSize="14sp"
+                android:layout_marginEnd="15dp"
+                android:visibility="gone"
+                />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancel_schedule_button"
+                style="@style/MainButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="14sp"
+                android:text="@string/cancel_schedule_submit"
+                android:visibility="gone"
+                />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

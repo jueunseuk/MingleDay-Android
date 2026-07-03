@@ -98,11 +98,9 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                         .onError {
-                            ToastUtil.makeErrorToast(this@MainActivity)
                             Log.d("MainActivity", "내 밍글 로그 불러오기 중 에러 발생 - $it")
                         }
                         .onException {
-                            ToastUtil.makeExceptionToast(this@MainActivity, it)
                             Log.d("MainActivity", "내 밍글 로그 불러오기 중 예외 발생 - $it")
                         }
                 }
@@ -157,11 +155,9 @@ class MainActivity : AppCompatActivity() {
                     Log.d("MainActivity", "밍글 선택 Drawer 불러오기")
                 }
                 .onError {
-                    ToastUtil.makeErrorToast(this@MainActivity)
                     Log.d("MainActivity", "밍글 선택 Drawer 불러오기 중 에러 발생 - $it")
                 }
                 .onException {
-                    ToastUtil.makeExceptionToast(this@MainActivity, it)
                     Log.d("MainActivity", "밍글 선택 Drawer 불러오기 중 예외 발생 - $it")
                 }
         }

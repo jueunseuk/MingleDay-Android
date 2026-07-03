@@ -27,7 +27,6 @@ import returns.mingleday.app.util.DateFormatter
 import returns.mingleday.app.util.DateFormatter.formatCustom
 import returns.mingleday.app.util.ToastUtil
 import returns.mingleday.databinding.FragmentScheduleBinding
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class ScheduleFragment : Fragment() {
@@ -72,6 +71,7 @@ class ScheduleFragment : Fragment() {
         fetchScheduleInstance()
         setupDeleteButton()
         setupCompleteButton()
+        setupCancelButton()
     }
 
     private fun setupCompleteButton() {
@@ -82,6 +82,33 @@ class ScheduleFragment : Fragment() {
                         Log.d("ScheduleFragment", "일정을 완료로 번경 했습니다.")
                         ToastUtil.makeToastLong(requireContext(), "일정을 완료로 변경했습니다.")
                         binding.completeScheduleButton.visibility = View.GONE
+                        binding.cancelScheduleButton.visibility = View.GONE
+                        binding.scheduleStatusIcon.visibility = View.VISIBLE
+                        binding.scheduleStatusIcon.setImageResource(R.drawable.ic_schedule_complete)
+                    }
+                    .onError {
+                        Log.d("ScheduleFragment", "일정을 완료 처리하는 중 에러 발생 - $it")
+                        ToastUtil.makeErrorToast(requireContext())
+                    }
+                    .onException {
+                        Log.d("ScheduleFragment", "일정을 완료 처리하는 중 예외 발생 - $it")
+                        ToastUtil.makeExceptionToast(requireContext(), it)
+                    }
+            }
+        }
+    }
+
+    private fun setupCancelButton() {
+        binding.cancelScheduleButton.setOnClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                scheduleRepository.updateScheduleInstanceStatus(mingleId, scheduleId, scheduleInstanceId,ScheduleStatus.CANCELED)
+                    .onSuccess {
+                        Log.d("ScheduleFragment", "일정을 취소했습니다.")
+                        ToastUtil.makeToastLong(requireContext(), "일정 취소")
+                        binding.completeScheduleButton.visibility = View.GONE
+                        binding.cancelScheduleButton.visibility = View.GONE
+                        binding.scheduleStatusIcon.visibility = View.VISIBLE
+                        binding.scheduleStatusIcon.setImageResource(R.drawable.ic_schedule_cancel)
                     }
                     .onError {
                         Log.d("ScheduleFragment", "일정을 완료 처리하는 중 에러 발생 - $it")
@@ -186,6 +213,7 @@ class ScheduleFragment : Fragment() {
         scheduleName = response.title
         (requireActivity() as MainActivity).setToolbarTitle(response.title)
 
+        binding.scheduleTitleValue.text = response.title
         binding.scheduleContentValue.text = response.content.ifBlank { "내용 없음" }
         binding.scheduleLocationValue.text = response.location.ifBlank { "장소 없음" }
         binding.instanceMemoValue.text = response.scheduleInstance.memo.ifBlank { "메모 없음" }
@@ -218,15 +246,24 @@ class ScheduleFragment : Fragment() {
         binding.instanceMemoLayout.visibility = if (response.scheduleInstance.memo.isBlank()) View.GONE else View.VISIBLE
 
         // make complete
-        if(response.scheduleInstance.scheduleStatus == ScheduleStatus.TODO) {
-            binding.completeScheduleButton.visibility = View.VISIBLE
-        } else {
-            // 취소선 추가
+        when (response.scheduleInstance.scheduleStatus) {
+            ScheduleStatus.TODO -> {
+                binding.completeScheduleButton.visibility = View.VISIBLE
+                binding.cancelScheduleButton.visibility = View.VISIBLE
+            }
+            ScheduleStatus.COMPLETED -> {
+                binding.scheduleStatusIcon.visibility = View.VISIBLE
+                binding.scheduleStatusIcon.setImageResource(R.drawable.ic_schedule_complete)
+            }
+            else -> {
+                binding.scheduleStatusIcon.visibility = View.VISIBLE
+                binding.scheduleStatusIcon.setImageResource(R.drawable.ic_schedule_cancel)
+            }
         }
 
         // prev or next
-        val hasPrev = response.scheduleInstance.prev != null
-        val hasNext = response.scheduleInstance.next != null
+        val hasPrev = (response.scheduleInstance.prev?.scheduleInstanceId ?: 0) > 0
+        val hasNext = (response.scheduleInstance.next?.scheduleInstanceId ?: 0) > 0
         binding.repeatNavigationLayout.visibility = if (hasPrev || hasNext) View.VISIBLE else View.GONE
         binding.prevInstanceButton.isEnabled = hasPrev
         binding.nextInstanceButton.isEnabled = hasNext

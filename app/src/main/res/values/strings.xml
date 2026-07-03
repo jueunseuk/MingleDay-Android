@@ -113,6 +113,7 @@
     <string name="friday">Fri</string>
     <string name="saturday">Sat</string>
     <string name="complete_schedule_submit">완료로 변경</string>
+    <string name="cancel_schedule_submit">취소로 변경</string>
     <string name="schedule_instance_memo_label">이번 일정 메모</string>
     <string name="schedule_member_label">참여 멤버</string>
     <string name="schedule_member_memo_label">Memo</string>
