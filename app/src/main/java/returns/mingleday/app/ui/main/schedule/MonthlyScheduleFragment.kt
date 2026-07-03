@@ -344,7 +344,8 @@ class MonthlyScheduleFragment : Fragment() {
                 CalendarScheduleUiModel(
                     title = schedule.title,
                     backgroundColor = schedule.category.backgroundColor,
-                    textColor = schedule.category.textColor
+                    textColor = schedule.category.textColor,
+                    scheduleStatus = schedule.scheduleInstance.scheduleStatus
                 )
             }
 

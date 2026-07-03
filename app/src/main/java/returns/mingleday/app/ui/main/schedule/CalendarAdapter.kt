@@ -11,8 +11,8 @@ import returns.mingleday.R
 import returns.mingleday.app.data.remote.model.schedule.CalendarDayUiModel
 import returns.mingleday.app.util.ColorUtil
 import returns.mingleday.databinding.ItemCalendarDayBinding
-import java.time.LocalDate
 import androidx.core.graphics.toColorInt
+import returns.mingleday.app.data.remote.model.schedule.ScheduleStatus
 
 class CalendarAdapter(
     private val onDayClick: (Int) -> Unit
@@ -120,6 +120,30 @@ class CalendarAdapter(
 
                 tagView.text = schedule.title
                 tagView.setTextColor(ColorUtil.getColorInt(schedule.textColor))
+
+                when (schedule.scheduleStatus) {
+                    ScheduleStatus.COMPLETED -> {
+                        tagView.setCompoundDrawablesWithIntrinsicBounds(
+                            R.drawable.ic_schedule_complete,
+                            0,
+                            0,
+                            0
+                        )
+                        tagView.compoundDrawablePadding = 3
+                    }
+                    ScheduleStatus.CANCELED -> {
+                        tagView.setCompoundDrawablesWithIntrinsicBounds(
+                            R.drawable.ic_schedule_cancel,
+                            0,
+                            0,
+                            0
+                        )
+                        tagView.compoundDrawablePadding = 3
+                    }
+                    else -> {
+                        tagView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                    }
+                }
 
                 val background = GradientDrawable().apply {
                     shape = GradientDrawable.RECTANGLE
