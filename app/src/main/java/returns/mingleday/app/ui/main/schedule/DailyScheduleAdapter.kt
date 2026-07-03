@@ -1,9 +1,12 @@
 package returns.mingleday.app.ui.main.schedule
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import returns.mingleday.R
 import returns.mingleday.app.data.remote.model.schedule.DailyScheduleResponse
+import returns.mingleday.app.data.remote.model.schedule.ScheduleStatus
 import returns.mingleday.app.util.ColorUtil
 import returns.mingleday.app.util.DateFormatter
 import returns.mingleday.app.util.DateFormatter.formatCustom
@@ -57,6 +60,19 @@ class DailyScheduleAdapter(
             binding.categoryColorBar.setBackgroundColor(
                 ColorUtil.getColorInt(item.category.backgroundColor)
             )
+            when (item.scheduleInstance.scheduleStatus) {
+                ScheduleStatus.TODO -> {
+                    binding.scheduleStatusIcon.visibility = View.GONE
+                }
+                ScheduleStatus.COMPLETED -> {
+                    binding.scheduleStatusIcon.visibility = View.VISIBLE
+                    binding.scheduleStatusIcon.setImageResource(R.drawable.ic_schedule_complete)
+                }
+                else -> {
+                    binding.scheduleStatusIcon.visibility = View.VISIBLE
+                    binding.scheduleStatusIcon.setImageResource(R.drawable.ic_schedule_cancel)
+                }
+            }
 
             binding.root.setOnClickListener {
                 onClick(item)

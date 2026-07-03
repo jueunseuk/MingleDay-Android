@@ -42,6 +42,7 @@ class MingleAdapter(
 
         fun bind(item: MinglesResponse) {
             binding.mingleNameValue.text = item.mingleName
+            binding.mingleMemberCntValue.text = item.memberCnt.toString()
 
             if(item.profileUrl.isBlank()) {
                 when(item.mingleType) {
