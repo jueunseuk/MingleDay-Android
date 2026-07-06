@@ -193,11 +193,27 @@ class MonthlyScheduleFragment : Fragment() {
         }
 
         binding.minusMonthButton.setOnClickListener {
-            setupDate(year, --month)
+            var newYear = year
+            var newMonth = month - 1
+
+            if (newMonth < 1) {
+                newMonth = 12
+                newYear--
+            }
+
+            setupDate(newYear, newMonth)
         }
 
         binding.plusMonthButton.setOnClickListener {
-            setupDate(year, ++month)
+            var newYear = year
+            var newMonth = month + 1
+
+            if (newMonth > 12) {
+                newMonth = 1
+                newYear++
+            }
+
+            setupDate(newYear, newMonth)
         }
 
         binding.plusYearButton.setOnClickListener {
